@@ -410,6 +410,12 @@ since: 0.x.y
 ---
 ```
 
+### Draft contract
+
+A page whose frontmatter sets `draft: true` is not rendered by the
+website; the in-progress page lives on `main` but stays hidden until
+the flag is removed.
+
 The full prose inventory is the page list in §2 (Diátaxis mapping).
 Cross-cutting prose that doesn't fit a quadrant:
 
