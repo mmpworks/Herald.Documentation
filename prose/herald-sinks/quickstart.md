@@ -26,7 +26,7 @@ and the connection details for whatever destination you actually
 use.
 
 If you have not built a Herald pipeline yet, start with
-[the Herald.OSS first-pipeline tutorial](../../herald-oss/tutorials/first-pipeline.md)
+[the Herald.OSS first-pipeline tutorial](../herald-oss/tutorials/first-pipeline.md)
 and come back here when your console sink is working.
 
 ## Install
