@@ -1,0 +1,32 @@
+# Rendered output — produced by scripts, not source of truth.
+# Each consuming repo decides whether to commit its own rendered copy.
+rendered/**
+!rendered/.gitkeep
+
+# Node / tooling
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.pnp
+.pnp.js
+
+# Python / tooling
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# Build artifacts that may land here from local experiments
+dist/
+build/
+out/
