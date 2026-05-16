@@ -133,6 +133,26 @@ and need explicit reference coverage: typed-args, `params
 ReadOnlySpan<LogProperty>`, interpolated handler, level-bound
 interpolated.
 
+### Lock-step with Herald.Sinks
+
+Herald.OSS and Herald.Sinks ship as one packaged release. The docs
+move the same way. The Herald.Sinks documentation plan lives at
+`documentation-guidance/herald-sinks/herald-sinks-documentation-plan.md`
+and inherits every framework-level decision in this plan
+unchanged — same scaffold, same renderer pipeline, same Diátaxis
+mapping, same frontmatter shape.
+
+The cross-link policy is symmetric. Per-product URL roots stand
+(`/documentation/herald-oss/<slug>` and
+`/documentation/herald-sinks/<slug>`), but the prose is free to
+link across products with relative markdown links. An OSS how-to
+that says "pick a transport for these events" links to
+`../../herald-sinks/reference/sinks/index.md` without ceremony. A
+Sinks explainer that needs the kernel model links to
+`../../herald-oss/explanation/kernel-vs-chain.md`. That keeps each
+product's URL root predictable while letting the prose follow how
+the system actually works.
+
 ### Surface observations worth flagging
 
 - **`Quick/` is large.** 29 public types in one namespace. Adopters
