@@ -46,7 +46,7 @@ cd HeraldHello
 ## Step 2 — Add Herald.OSS
 
 ```bash
-dotnet add package MMP.Herald.OSS
+dotnet add package Herald.OSS
 ```
 
 This brings in the logger, the source generators, and the built-in
@@ -57,8 +57,8 @@ console sink. One package.
 Open `Program.cs` and replace its contents with:
 
 ```csharp
-using MMP.Herald.OSS;
-using MMP.Herald.OSS.Quick;
+using MMP.Herald;
+using MMP.Herald.Quick;
 
 var result = QuickLogBuilder
     .Create()

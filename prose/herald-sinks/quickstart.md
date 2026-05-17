@@ -43,8 +43,8 @@ The package's `[ModuleInitializer]` adds itself to
 ## Point the pipeline at the sink
 
 ```csharp
-using MMP.Herald.OSS;
-using MMP.Herald.OSS.Quick;
+using MMP.Herald;
+using MMP.Herald.Quick;
 
 var result = QuickLogBuilder
     .Create()

@@ -19,7 +19,7 @@ and stays out of your way. This page is the five-minute path.
 ## Install
 
 ```bash
-dotnet add package MMP.Herald.OSS
+dotnet add package Herald.OSS
 ```
 
 That one package brings the logger, the source generators, and the
@@ -29,8 +29,8 @@ first run.
 ## The smallest useful pipeline
 
 ```csharp
-using MMP.Herald.OSS;
-using MMP.Herald.OSS.Quick;
+using MMP.Herald;
+using MMP.Herald.Quick;
 
 var result = QuickLogBuilder
     .Create()

@@ -67,7 +67,7 @@ records and capability matrix; she shapes the pitch.
 ### The public surface
 
 Walked from `E:/dev/Herald.OSS/src/` on 2026-05-16. Public types
-exported by `MMP.Herald.OSS`:
+exported by the `Herald.OSS` package (root namespace `MMP.Herald`):
 
 - **Entry point.** `QuickLogBuilder` and its partials
   (`.With`, `.Mutations`, `.Diagnostics`, `.SerializerState`),
