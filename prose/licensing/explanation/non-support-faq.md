@@ -173,29 +173,43 @@ active/passive pricing.
 
 ## 5. Batch fanout above cap
 
-**Plain English:** "You cannot temporarily exceed your license
-limit just because you're running a giant batch job."
+**Plain English:** "Your bill stays predictable. If a batch job
+tries to burst above your purchased capacity, the extra workers
+stop instead of silently turning into a surprise invoice."
 
 **Why we're saying "not yet":** A nightly analytics job might
-burst to 500 workers. At launch: cap is cap. No temporary
-bursting.
+burst to 500 workers. Elastic billing sounds friendly until the
+invoice arrives. At GA, the cap you bought is the cap you pay
+for — no overage charges, no auto-burst billing, no "your run
+cost 4x what you expected." If you know you need batch capacity,
+we'd rather you size for it deliberately.
 
-**What would trigger support later:** When batch hours become a
-billable dimension.
+**What would trigger support later:** When customers ask us for
+a batch-hours SKU with documented overage pricing. We'd rather
+ship that as its own clear product than bolt elastic billing onto
+the per-host model.
 
 ---
 
 ## 6. K8s HPA above cap
 
-**Plain English:** "If Kubernetes tries scaling your app above
-your purchased limit, the extra pods will fail."
+**Plain English:** "Kubernetes can scale your app up to your
+purchased cap. Pods that would push above the cap don't start,
+so a runaway HPA can't quietly turn into a runaway bill."
 
-**Why we're saying "not yet":** We're explicitly NOT doing
-elastic billing, burst licensing, or temporary overage charging.
-Yet.
+**Why we're saying "not yet":** Auto-burst billing is the kind
+of feature that sounds great until 3 a.m. on a holiday weekend
+when an HPA misconfigures and you wake up to a five-figure
+overage. At GA, we'd rather give you a cap you can reason about
+than an elastic ceiling that punishes a bad HPA config. If your
+fleet's real steady-state is above today's tier, the right
+answer is to move to a tier that fits, not to pay overage rates
+per pod-hour.
 
-**What would trigger support later:** When customers ask for
-"soft cap with auto-burst billing."
+**What would trigger support later:** When customers tell us
+their workload genuinely needs a burst tier, and we can design
+one with documented per-host overage rates instead of surprise
+math.
 
 ---
 
@@ -232,16 +246,23 @@ shared-storage air-gap.
 
 ## 9. Customer-of-customer multi-tenancy slot count
 
-**Plain English:** "If your customer hosts THEIR customers, we
-only count machines/processes — not tenants."
+**Plain English:** "If you host your own customers on top of
+Herald, you pay for the hosts you run — full stop. We don't
+meter your tenant count, your org count, or your account count."
 
-**Why we're saying "not yet":** Example: a SaaS platform with
-10,000 tenants. We're NOT yet pricing per customer-tenant, per
-organization, or per account. Only runtime usage. Multi-tenant
-billing gets politically explosive.
+**Why we're saying "not yet":** A SaaS platform with 10,000
+tenants pays the same as a SaaS platform with 100, if they run
+on the same number of hosts. That's deliberate. Per-tenant
+pricing punishes growth and forces our billing system inside
+your application's domain model — neither of those is something
+we want to do at GA. Your tenant boundary is your business; our
+boundary is the host. We expect this to stay this way unless a
+clear customer case for per-tenant billing emerges with a
+pricing shape we can actually defend.
 
-**What would trigger support later:** When a per-tenant pricing
-decision is made.
+**What would trigger support later:** When customers ask us for
+per-tenant pricing and we can design one that doesn't penalize
+growth or require us to crawl through their app's tenant model.
 
 ---
 
