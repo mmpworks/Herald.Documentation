@@ -102,8 +102,8 @@ their portal page and on their invoice changes; the file on
 their instances doesn't.
 
 > :information_source: **Heads up** — this is different from
-> the seat-count adjust flow, which re-issues the file. The
-> auto-rollover is a *pricing* event, not a *capability*
+> the instance-count adjust flow, which re-issues the file.
+> The auto-rollover is a *pricing* event, not a *capability*
 > event. The capability change already happened when the cap
 > was raised.
 
