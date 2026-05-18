@@ -6,7 +6,7 @@ audience: mmpworks-operator
 reading-level: high-school (target = "no glossary needed")
 since: 2.0
 status: published
-last-reviewed: 2026-05-17
+last-reviewed: 2026-05-18
 related:
   - prose/licensing/explanation/how-licensing-works.md
   - prose/licensing/explanation/non-support-faq.md
@@ -27,26 +27,59 @@ in under two minutes and know exactly what buttons to click.
 > When the screens land, we'll drop the real images in. The steps
 > themselves are correct.
 
+> :information_source: **About the SKU-aware articles (9–13).**
+> The licensing rollout ships in phases (A through F). Articles
+> 9–13 cover flows that lean on later-phase capability — auto-
+> rollover (Phase B), Provider TOS + metering (Phase D), the
+> `seg` claim mechanics (Phase A). Each article carries a
+> "Not shipped yet" banner naming the phase that lands it.
+> Until those phases ship, the articles are forward-looking
+> specs; treat them as the operating shape the team is building
+> toward, not as today's portal behavior.
+
 ## The articles
+
+### Day-one operator playbook
 
 1. [Adding a customer](./01-adding-a-customer.md) — a new
    customer signed up; get them into the system.
-2. [Issuing a license](./02-issuing-a-license.md) — the customer
-   paid; give them the file they need.
+2. [Issuing a license](./02-issuing-a-license.md) — the
+   customer paid; give them the file they need. Covers all
+   five Pro segments + Compliance attach.
 3. [Handling a stuck server slot](./03-handling-a-stuck-server-slot.md)
    — the most common support ticket.
 4. [Investigating a collision warning](./04-investigating-a-collision-warning.md)
-   — two servers checked in from the same internet address.
+   — two instances checked in from the same internet address.
    Friend or foe?
 5. [When a customer asks for more licenses](./05-when-a-customer-asks-for-more-licenses.md)
-   — they hit the cap and need more instances.
-6. [Turning off a license](./06-turning-off-a-license.md) — rare,
-   but it happens. Cancellations, abuse, payment failures.
+   — they hit the cap and need more instances. Six branches by
+   segment.
+6. [Turning off a license](./06-turning-off-a-license.md) —
+   rare, but it happens. Cancellations, abuse, payment
+   failures.
 7. [Reading the portal status page](./07-reading-the-portal-status-page.md)
    — a tour of the main landing screen.
 8. [What to do when a customer says "it doesn't work"](./08-what-to-do-when-a-customer-says-it-doesnt-work.md)
-   — the three most common causes and how to spot them in 30
+   — the four most common causes and how to spot them in 30
    seconds.
+
+### SKU-aware flows (some flows ship in later phases)
+
+9. [Auto-rollover from Pro Team to Pro Fleet](./09-auto-rollover-team-to-fleet.md)
+   — what the rollover at 26 instances looks like end-to-end.
+   (Phase B.)
+10. [Onboarding a Pro Provider customer with the MSP TOS](./10-onboarding-a-provider-with-tos.md)
+    — Provider has different legal shape; the click-through
+    has to be done first. (Phase D.)
+11. [Mid-quarter upgrade from Pro Developer to Pro Team](./11-mid-quarter-upgrade-from-developer.md)
+    — the conversion path; usually self-service, sometimes
+    needs an operator. (Phase B.)
+12. [When a customer asks to remove the Demo tag after upgrading](./12-removing-the-demo-tag-after-upgrade.md)
+    — three states, one diagnostic, no server-side toggle.
+    (Phase A.)
+13. [Diagnosing a segment-claim mismatch](./13-diagnosing-a-segment-mismatch.md)
+    — three patterns, three different fixes. Mostly mundane.
+    (Phase A.)
 
 ## When something here is wrong
 
