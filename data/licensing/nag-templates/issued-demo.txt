@@ -1,0 +1,20 @@
+FIRST DRAFT - COUNSEL REVIEW REQUIRED BEFORE DEPLOYMENT.
+This template has not been reviewed by licensed legal counsel and is
+not authorized for production use. Use only as a starting point for
+counsel-led drafting.
+
+---
+
+You are running Herald {productName} on a demo license.
+
+Events published from this installation carry a "LicenseTier: Demo"
+property so downstream sinks and dashboards remember the deployment
+shape is a trial. Herald continues to operate normally; nothing is
+gated and no functionality is withheld.
+
+When you are ready to remove the demo tag, upgrade at
+https://mmpworks.com/pricing or contact sales@mmpworks.com. The
+operator runbook walks through the upgrade in
+"Removing the demo tag after upgrade".
+
+No action is required today. This message is informational.

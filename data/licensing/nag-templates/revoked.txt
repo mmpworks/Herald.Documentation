@@ -1,0 +1,42 @@
+FIRST DRAFT - COUNSEL REVIEW REQUIRED BEFORE DEPLOYMENT.
+This template has not been reviewed by licensed legal counsel and is
+not authorized for production use. Use only as a starting point for
+counsel-led drafting.
+
+---
+
+NOTICE - LICENSE REVOKED
+
+Your Herald {productName} license has been revoked by MMPWorks LLC.
+Herald {productName} shall cease operation immediately and shall not
+publish to any configured sink until the license is restored or
+replaced. The runtime will throw HeraldLicenseRevokedException on
+the next publish attempt; this exception is non-recoverable until
+the license state is resolved on the server side.
+
+GROUNDS. Revocation may result from disputed charges,
+terms-of-service violations, suspected fraud, breach of the License
+Agreement, or other conditions specified in your License Agreement
+with MMPWorks LLC. The specific grounds for this revocation will be
+communicated by the MMPWorks LLC sales or legal team.
+
+OPERATOR ACKNOWLEDGEMENT. By receiving this notice, you, the
+Operator, acknowledge that the license under which Herald
+{productName} was operating has been terminated. Any continued
+attempt to operate Herald {productName} following receipt of this
+notice — including by reverting the installation to a prior license
+state, by suppressing the revocation check, or by any other means —
+may constitute breach of the License Agreement and may be subject to
+remedies including damages, injunctive relief, and attorneys' fees.
+
+BINDING NATURE PENDING DISPUTE. The revocation is binding pending
+resolution. If you dispute the grounds for revocation, you may
+initiate a dispute by contacting sales@mmpworks.com and
+legal@mmpworks.com. Herald {productName} shall remain in the
+revoked state during the dispute. MMPWorks LLC will restore the
+license only upon resolution of the dispute or upon execution of a
+replacement License Agreement.
+
+ACTION REQUIRED. Contact sales@mmpworks.com and
+legal@mmpworks.com to resolve. Reference your installation
+identifier in all correspondence.

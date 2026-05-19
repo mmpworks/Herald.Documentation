@@ -1,0 +1,22 @@
+FIRST DRAFT - COUNSEL REVIEW REQUIRED BEFORE DEPLOYMENT.
+This template has not been reviewed by licensed legal counsel and is
+not authorized for production use. Use only as a starting point for
+counsel-led drafting.
+
+---
+
+Your Herald {productName} license expired on {expirationDate}.
+
+You are currently on day {x} of a 60-day grace period. Herald
+{productName} continues to operate normally during this period and
+nothing is gated. After day 60, the license enters a stricter notice
+phase, and on day 61 Herald {productName} stops publishing events
+to all configured sinks.
+
+To renew, visit https://mmpworks.com/renew or contact
+sales@mmpworks.com. Renewal restores the license in place; no
+configuration change is required on the installation.
+
+If you believe this notice is in error, contact support@mmpworks.com
+with your installation identifier so we can verify the license state
+on the server side.

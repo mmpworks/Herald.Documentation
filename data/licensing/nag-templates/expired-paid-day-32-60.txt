@@ -1,0 +1,37 @@
+FIRST DRAFT - COUNSEL REVIEW REQUIRED BEFORE DEPLOYMENT.
+This template has not been reviewed by licensed legal counsel and is
+not authorized for production use. Use only as a starting point for
+counsel-led drafting.
+
+---
+
+NOTICE - EXPIRED LICENSE / GRACE PERIOD DAY {x} OF 60
+
+Your Herald {productName} license has expired. You are operating
+Herald {productName} under an expired license. On Day 61, Herald
+{productName} shall cease publishing to all configured sinks without
+further notice.
+
+OPERATOR ACKNOWLEDGEMENT. By continuing to operate Herald
+{productName} under an expired license, you, the Operator,
+expressly acknowledge and agree that all costs, fees, charges, and
+liabilities arising from continued event dispatch — including
+without limitation cloud service usage, network egress, storage
+charges, third-party API consumption, vendor billing of any kind,
+and any other costs or claims incurred during continued operation —
+are solely and exclusively your responsibility. MMPWorks LLC shall
+have no liability whatsoever for any such costs, damages, or claims.
+
+BINDING WAIVER. Continued use of Herald {productName} following
+display of this notice constitutes acceptance of the foregoing terms
+and waives any right to assert a claim against MMPWorks LLC arising
+from costs incurred during the grace period. This waiver is in
+addition to, and does not replace, the Limitation of Liability and
+Indemnification clauses of the License Agreement under which Herald
+{productName} was originally licensed.
+
+ACTION REQUIRED. To restore your license and prevent service
+interruption on Day 61, renew at https://mmpworks.com/renew or
+contact sales@mmpworks.com immediately. If you believe this notice
+is in error, contact support@mmpworks.com with your installation
+identifier within 24 hours.

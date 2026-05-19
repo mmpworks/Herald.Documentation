@@ -1,0 +1,110 @@
+{
+  "$schema": "../../../schemas/licensing/nag-template.schema.json",
+  "$comment": "Manifest of license-lifecycle nag templates. The runtime (Glenn's gate primitives per Richard's capability-composition-plan-v1 ADR-211), the operator portal preview (Nancy), the public docs (Heather), and counsel review all read this catalog. The body field of each entry points to the canonical .txt the runtime renders. Change the .txt to change the rendered wording; never re-author wording in a consumer surface. This file is a JSON array per the docs-as-database pattern; the manifest schema validates each element individually.",
+  "templates": [
+    {
+      "key": "issued-demo",
+      "displayName": "Issued demo license - informational reminder",
+      "trigger": "license-issued-demo",
+      "voice": "friendly",
+      "legalForce": false,
+      "graceDay": null,
+      "body": "./issued-demo.txt",
+      "variables": [
+        {
+          "name": "{productName}",
+          "description": "The customer-facing product name resolved from the prd claim on the demo license. Typically 'Pro Developer' or a marketing-trial product label.",
+          "example": "Pro Developer"
+        }
+      ],
+      "sourceOfTruth": "docs/_wip/capability-composition-plan-v1.md Section 4.7 (Demo source 1 - issued demo, no escalation, no day counter)",
+      "status": "draft",
+      "counselReviewRequired": true,
+      "since": "2.1"
+    },
+    {
+      "key": "expired-paid-day-1-30",
+      "displayName": "Expired paid license - soft reminder (day 1-30)",
+      "trigger": "license-expired-grace-soft",
+      "voice": "soft-reminder",
+      "legalForce": false,
+      "graceDay": {
+        "min": 1,
+        "max": 31
+      },
+      "body": "./expired-paid-day-1-30.txt",
+      "variables": [
+        {
+          "name": "{productName}",
+          "description": "The customer-facing product name resolved from the prd claim on the expired license.",
+          "example": "Pro Team"
+        },
+        {
+          "name": "{expirationDate}",
+          "description": "The date the license expired, formatted yyyy-mm-dd. Sourced from the exp claim on the license token.",
+          "example": "2026-04-19"
+        },
+        {
+          "name": "{x}",
+          "description": "Current day in the grace period, 1-31. The runtime increments per Richard's per-tenant state machine.",
+          "example": "12"
+        }
+      ],
+      "sourceOfTruth": "docs/_wip/capability-composition-plan-v1.md Section 4.7 (Expired progression days 1-30 - weekly nag, user-input acknowledgement required)",
+      "status": "draft",
+      "counselReviewRequired": true,
+      "since": "2.1"
+    },
+    {
+      "key": "expired-paid-day-32-60",
+      "displayName": "Expired paid license - stern legal notice (day 32-60)",
+      "trigger": "license-expired-grace-stern",
+      "voice": "stern-legal-notice",
+      "legalForce": true,
+      "graceDay": {
+        "min": 32,
+        "max": 60
+      },
+      "body": "./expired-paid-day-32-60.txt",
+      "variables": [
+        {
+          "name": "{productName}",
+          "description": "The customer-facing product name resolved from the prd claim on the expired license.",
+          "example": "Pro Team"
+        },
+        {
+          "name": "{x}",
+          "description": "Current day in the grace period, capped 1-60. The runtime increments per Richard's per-tenant state machine; day 32-60 selects this template.",
+          "example": "45"
+        }
+      ],
+      "sourceOfTruth": "docs/_wip/capability-composition-plan-v1.md Section 4.7 (Expired progression days 31-60 - daily nag, user-input required) and ADR-211",
+      "restatesClauseFrom": "prose/licensing/legal/agreements/pro-license-agreement.md Section 8 (Limitation of Liability) and Section 9 (Indemnification)",
+      "status": "draft",
+      "counselReviewRequired": true,
+      "since": "2.1"
+    },
+    {
+      "key": "revoked",
+      "displayName": "Revoked license - stern legal notice",
+      "trigger": "license-revoked",
+      "voice": "stern-legal-notice",
+      "legalForce": true,
+      "graceDay": null,
+      "body": "./revoked.txt",
+      "variables": [
+        {
+          "name": "{productName}",
+          "description": "The customer-facing product name resolved from the prd claim on the revoked license.",
+          "example": "Enterprise"
+        }
+      ],
+      "sourceOfTruth": "docs/_wip/capability-composition-plan-v1.md Section 4.8 (Revoked progression - immediate hard-fail on next refresh or restart, no grace period)",
+      "restatesClauseFrom": "prose/licensing/legal/agreements/pro-license-agreement.md Section 10 (Term and Termination) and Section 8 (Limitation of Liability)",
+      "exceptionType": "HeraldLicenseRevokedException",
+      "status": "draft",
+      "counselReviewRequired": true,
+      "since": "2.1"
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://herald.dev/schemas/licensing/nag-template.schema.json",
+  "title": "Nag template",
+  "description": "One license-lifecycle notice rendered to the operator's console, log stream, or operator portal. The runtime (Glenn's gate primitives), the operator portal, the public docs, and counsel review all read this same record. Edit the .txt body once; every consumer surface picks up the change.",
+  "type": "object",
+  "required": [
+    "key",
+    "displayName",
+    "trigger",
+    "voice",
+    "legalForce",
+    "graceDay",
+    "body",
+    "variables",
+    "sourceOfTruth",
+    "status"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "key": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Machine-readable template identifier. Matches the filename stem under data/licensing/nag-templates/. Once a key ships, it cannot be renamed without coordinating with Glenn's runtime."
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 80,
+      "description": "Human-readable name. Used in the operator portal preview, the catalog index, and counsel review correspondence."
+    },
+    "trigger": {
+      "type": "string",
+      "enum": [
+        "license-issued-demo",
+        "license-expired-grace-soft",
+        "license-expired-grace-stern",
+        "license-revoked"
+      ],
+      "description": "The lifecycle event the runtime evaluates to decide whether to render this template. Cross-references Richard's capability-composition-plan-v1 Section 4.7 (Expired progression) and Section 4.8 (Revoked progression)."
+    },
+    "voice": {
+      "type": "string",
+      "enum": [
+        "friendly",
+        "soft-reminder",
+        "stern-legal-notice"
+      ],
+      "description": "Tone classification. Friendly = onboarding nudge; soft-reminder = grace-period day 1-30 reminder; stern-legal-notice = legally weighty notice that restates clauses from the signed agreement."
+    },
+    "legalForce": {
+      "type": "boolean",
+      "description": "True when the template carries notice/acknowledgement/waiver structure intended to restate clauses from the signed license agreement. When true, counsel review is mandatory before any wording change."
+    },
+    "graceDay": {
+      "type": "object",
+      "description": "The grace-period day range during which the runtime selects this template. Use null when the template is not part of the expired-paid progression (issued-demo, revoked).",
+      "additionalProperties": false,
+      "properties": {
+        "min": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max": {
+          "type": "integer",
+          "maximum": 60
+        }
+      }
+    },
+    "body": {
+      "type": "string",
+      "description": "Relative path to the canonical .txt body of the template. The .txt is the single source the runtime reads; this schema entry catalogs the metadata around it."
+    },
+    "variables": {
+      "type": "array",
+      "description": "The substitution tokens the runtime fills in before rendering. Each variable is documented for Glenn (runtime), Nancy (portal preview), and counsel (legal review).",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "description"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^\\{[a-zA-Z][a-zA-Z0-9]*\\}$",
+            "description": "The literal token as it appears in the body, including braces. Example: '{productName}'."
+          },
+          "description": {
+            "type": "string",
+            "minLength": 5,
+            "description": "What the runtime substitutes and where the value comes from."
+          },
+          "example": {
+            "type": "string",
+            "description": "A representative sample value for portal preview rendering."
+          }
+        }
+      }
+    },
+    "sourceOfTruth": {
+      "type": "string",
+      "description": "The architectural decision document this template is bound to. Changes to wording on legal-force templates MUST update the source-of-truth document and trip counsel review."
+    },
+    "restatesClauseFrom": {
+      "type": "string",
+      "description": "Optional pointer to the signed-agreement clause this template restates. Required when legalForce is true and voice is stern-legal-notice."
+    },
+    "exceptionType": {
+      "type": "string",
+      "description": "Optional .NET exception type the runtime throws when the template is the final-state notice (post-grace, post-revocation). Documented here so the public docs match the type customers see in their logs."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "counsel-review",
+        "published"
+      ],
+      "description": "draft = wording in flux; counsel-review = sent to counsel, do not change wording without coordinating; published = counsel-approved, locked to runtime."
+    },
+    "counselReviewRequired": {
+      "type": "boolean",
+      "description": "Reminder flag for the rendering pipeline. When true and status is anything other than 'published', renderers emit the COUNSEL REVIEW REQUIRED banner on every consumer surface."
+    },
+    "since": {
+      "type": "string",
+      "description": "First version of MMP.Licensing.Contracts (or Herald.OSS gate primitives) that shipped this template."
+    }
+  }
+}
