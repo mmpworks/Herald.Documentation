@@ -2,36 +2,36 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://herald.mmpworks.com/schemas/faq.schema.json",
   "title": "Herald FAQ document",
-  "description": "Schema for a Herald FAQ document. One file per surface (e.g. herald-oss.json). Sections group questions; each item carries an HTML answer rendered by the website consumer. Heather (docs author) owns the grouping; the consumer renders sections in file order and items in array order.",
+  "description": "Schema for a Herald FAQ document. One file per product surface (e.g. herald-oss.json). The document is organised into named sections; each section holds one or more Q&A items. The website consumer renders sections in array order and items inside a section in array order. Answers are HTML strings rather than markdown because several existing items need block markup (tables, code blocks, router-link) that survives v-html rendering more cleanly than a markdown-to-HTML pipeline.",
   "type": "object",
-  "required": ["surface", "version", "sections"],
+  "required": ["surface", "version", "title", "sections"],
   "additionalProperties": false,
   "properties": {
     "surface": {
       "type": "string",
-      "description": "Short identifier for the product surface this FAQ covers (e.g. 'herald-oss', 'herald-pro', 'tesseraseal').",
-      "pattern": "^[a-z][a-z0-9-]*$"
+      "description": "Short identifier for the product surface this FAQ covers (e.g. 'herald-oss', 'herald-pro', 'tesseraseal'). Used as the file slug and as a deep-link namespace.",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "minLength": 1
     },
     "version": {
       "type": "string",
-      "description": "ISO-8601 date of the FAQ content's last substantive update (YYYY-MM-DD).",
+      "description": "ISO-8601 date of the document's last substantive update (YYYY-MM-DD). Bumped any time an item is added, removed, or revised in a way that changes meaning.",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
     },
     "title": {
       "type": "string",
-      "description": "Human-readable title for the FAQ document, surfaced on the rendered page hero."
+      "description": "Human-readable title for the FAQ document, rendered on the page hero. Inline emphasis tags (<em>, <strong>) permitted.",
+      "minLength": 1
     },
     "lead": {
       "type": "string",
-      "description": "One-paragraph introduction shown above the first section. Plain text or limited inline HTML (em, strong, code, a)."
+      "description": "Optional one-paragraph introduction shown above the first section. Plain text or limited inline HTML (em, strong, code, a)."
     },
     "sections": {
       "type": "array",
-      "description": "Ordered list of FAQ sections. The consumer renders them in array order.",
+      "description": "Ordered list of FAQ sections. The consumer renders them in array order; the rail navigation lists section titles in the same order.",
       "minItems": 1,
-      "items": {
-        "$ref": "#/definitions/section"
-      }
+      "items": { "$ref": "#/definitions/section" }
     }
   },
   "definitions": {
@@ -42,20 +42,22 @@
       "properties": {
         "id": {
           "type": "string",
-          "description": "URL-safe slug for the section. Used as the v-expansion-panel value and for deep-linking.",
-          "pattern": "^[a-z][a-z0-9-]*$"
+          "description": "URL-safe slug for the section, unique within the document. Used as the rail anchor and for deep-linking (e.g. /herald/faq#getting-started).",
+          "pattern": "^[a-z][a-z0-9-]*$",
+          "minLength": 1
         },
         "title": {
           "type": "string",
-          "description": "Section heading rendered as the expansion-panel title."
+          "description": "Section heading rendered as the rail label and the section header in the content column.",
+          "minLength": 1
         },
         "lead": {
           "type": "string",
-          "description": "Optional one-line summary shown under the section title before the first item."
+          "description": "Optional one-line summary shown under the section title before the first item. Plain text or limited inline HTML."
         },
         "items": {
           "type": "array",
-          "description": "Ordered list of Q&A entries in this section. The consumer renders them in array order.",
+          "description": "Ordered list of Q&A entries in this section. The consumer renders them in array order; collapsed by default with the first item in the first section expanded on landing.",
           "minItems": 1,
           "items": { "$ref": "#/definitions/item" }
         }
@@ -68,21 +70,42 @@
       "properties": {
         "id": {
           "type": "string",
-          "description": "URL-safe slug, unique within the document. Used for deep-linking.",
-          "pattern": "^[a-z][a-z0-9-]*$"
+          "description": "URL-safe slug, unique within the document. Used for deep-linking (e.g. /herald/faq#license-and-repo) and as the expansion-panel value.",
+          "pattern": "^[a-z][a-z0-9-]*$",
+          "minLength": 1
         },
         "question": {
           "type": "string",
-          "description": "Plain-text question."
+          "description": "Plain-text question. No HTML; the consumer renders this in the panel header.",
+          "minLength": 1
         },
         "answer_html": {
           "type": "string",
-          "description": "HTML answer body. Limited inline + block markup: p, ul, ol, li, strong, em, code, pre, a, table/thead/tbody/tr/th/td, router-link. The consumer is responsible for sanitisation if rendered into a v-html target."
+          "description": "HTML answer body. Permitted markup: p, ul, ol, li, strong, em, code, pre, a, br, table/thead/tbody/tr/th/td, router-link. The consumer renders this verbatim into a v-html target; the document author is responsible for keeping it safe to render (no script, no inline event handlers).",
+          "minLength": 1
         },
         "tags": {
           "type": "array",
-          "description": "Optional free-form tags for filtering/search.",
-          "items": { "type": "string" }
+          "description": "Optional free-form tags for client-side filtering or search (e.g. 'license', 'aot', 'pricing'). The consumer may render these as chips above each item.",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "see_also": {
+          "type": "array",
+          "description": "Optional related-reading links rendered as a 'See also' footer under the answer. Use sparingly — only when a reader who just finished this answer is likely to want the linked page next.",
+          "items": {
+            "type": "object",
+            "required": ["label", "href"],
+            "additionalProperties": false,
+            "properties": {
+              "label": { "type": "string", "minLength": 1 },
+              "href": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "updated": {
+          "type": "string",
+          "description": "ISO-8601 date this item was last revised (YYYY-MM-DD). Used by docs tooling to flag stale items; not always rendered.",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
         }
       }
     }

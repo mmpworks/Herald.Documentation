@@ -2,93 +2,135 @@
   "surface": "herald-oss",
   "version": "2026-05-19",
   "title": "The questions everyone asks.",
-  "lead": "Eight collapsible sections. Open any one to see the honest answer. If the question you have isn't here, ask us directly.",
+  "lead": "Four sections, the honest answers. If the question you have isn't here, ask us directly.",
   "sections": [
     {
-      "id": "license",
-      "title": "License, repo, ship date, signed binaries",
+      "id": "getting-started",
+      "title": "Getting started",
+      "lead": "License, repo, runtime targets, and what survives AOT publish.",
       "items": [
         {
           "id": "license-repo-ship",
-          "question": "License, repo, ship date, signed binaries",
-          "answer_html": "<p><strong>License.</strong> Herald.OSS ships under <a href=\"https://www.apache.org/licenses/LICENSE-2.0\" target=\"_blank\" rel=\"noopener\">Apache License 2.0</a>. The LICENSE file lives at the repo root. Every Herald.Sinks.* package ships under Apache 2.0 too. Herald.Server and the Herald Dashboard are in Beta and will ship under Apache 2.0 at GA &mdash; the LICENSE lands with the GA release. Herald.Pro and Herald.Enterprise are commercial today, licensed per service; long-term source-availability terms are announced when those tiers exit Beta.</p><p><strong>Contributing &mdash; CLA for Herald.OSS, DCO for Herald.Sinks.</strong> Two contribution paths. Herald.OSS uses a one-time Contributor License Agreement; Herald.Sinks uses Developer Certificate of Origin sign-off per commit.</p><p><strong>ICLA / CCLA (Herald.OSS).</strong> Both flavours are adapted from the Apache Software Foundation's templates with substantive grants preserved verbatim:</p><ul><li><strong>ICLA</strong> (individuals, based on ASF ICLA v2.2) &mdash; signs once via the CLA bot using GitHub OAuth on Your first PR. Source at <a href=\"https://github.com/mmpworks/Herald.OSS/blob/main/CLA/ICLA.md\" target=\"_blank\" rel=\"noopener\">CLA/ICLA.md</a> in the Herald.OSS repo.</li><li><strong>CCLA</strong> (corporations, based on ASF CCLA v2.0) &mdash; authorised signer emails a signed PDF to <code>legal@mmpworks.com</code>; Schedule A lists employees designated to contribute. Source at <a href=\"https://github.com/mmpworks/Herald.OSS/blob/main/CLA/CCLA.md\" target=\"_blank\" rel=\"noopener\">CLA/CCLA.md</a>.</li></ul><p><strong>DCO (Herald.Sinks).</strong> Every commit in Your pull request carries a <code>Signed-off-by:</code> trailer (added by <code>git commit -s</code>). A GitHub Action fails the build if any commit lacks the sign-off or the sign-off email doesn't match the commit author. No external signature store, no one-time enrollment &mdash; sign-off rides on every commit.</p><p>Why a CLA exists for the kernel but not the sinks: the sublicense right in &sect;2 of both CLA templates is what lets MMPWorks redistribute kernel contributions under any future license terms (including the paid Pro/Enterprise tiers) without needing to chase every contributor for a re-sign. Sinks ship under permissive Apache 2.0 with no relicense agenda, so DCO is the right weight there.</p><p><strong>Repo.</strong> <a href=\"https://github.com/mmpworks/Herald.OSS\" target=\"_blank\" rel=\"noopener\">github.com/mmpworks/Herald.OSS</a>. Source, tests, benchmarks, soak harness, build scripts &mdash; everything that produced the numbers on this site.</p><p><strong>NuGet.</strong> <code>dotnet add package Herald.OSS</code>. Multi-target for net8.0 / net9.0 / net10.0. AOT-clean public surface.</p><p><strong>Available.</strong> Herald.OSS 1.0.0 on NuGet 2026-05-18. Subsequent point releases follow the standard SemVer cadence.</p><p><strong>Signed binaries.</strong> Pro and Enterprise distributions are strong-named (PublicSign on for Apache 2.0 Herald.OSS; full Authenticode signing on the commercial tiers). Public key fingerprint is published in the repo's <code>SECURITY.md</code>.</p>"
-        }
-      ]
-    },
-    {
-      "id": "migration",
-      "title": "Migration from Serilog / NLog / log4net / MEL",
-      "items": [
-        {
-          "id": "migration-paths",
-          "question": "Migration from Serilog / NLog / log4net / MEL",
-          "answer_html": "<p><strong>Serilog.</strong> One-line builder swap on the host side; existing <code>ILogger&lt;T&gt;</code> call sites stay unchanged via the MEL provider:</p><pre><code>// Program.cs\nbuilder.Logging.AddHeraldLogging(opts =&gt; opts\n    .WithMinimumLevel(\"info\")\n    .WithConsoleSink());</code></pre><p>Typical migration cost: 1&ndash;2 days per service if you stay on the MEL bridge; another 1&ndash;3 days if you switch high-volume call sites to Herald typed-args for the zero-allocation accept path.</p><p><strong>NLog.</strong> Replace <code>NLog.LogManager.GetCurrentClassLogger()</code> with <code>HeraldRegistry.GetLogger&lt;T&gt;()</code>. NLog targets map 1:1 to Herald sinks; the typed-args call shape is identical. Concretely:</p><pre><code>// NLog before\nprivate static readonly NLog.Logger _log = NLog.LogManager.GetCurrentClassLogger();\n_log.Info(\"User {Id} signed in\", userId);\n\n// Herald after\nprivate static readonly ILogger _log = HeraldRegistry.GetLogger&lt;MyService&gt;();\n_log.Info(\"User {Id} signed in\", userId);</code></pre><p>NLog config files (<code>nlog.config</code>) are not directly compatible &mdash; Herald uses fluent <code>QuickLogBuilder</code> at host startup or JSON config via <code>HeraldRegistry.LoadFromJson()</code>. The <code>herald migrate</code> CLI tool reads an <code>nlog.config</code> and emits the equivalent Herald JSON config. Typical NLog &rarr; Herald migration: 2&ndash;3 days per service including config translation.</p><p><strong>log4net.</strong> log4net's appender model has the loosest mapping &mdash; two paths depending on how your codebase uses it:</p><ul><li><strong>If you use log4net through MEL</strong> (modern ASP.NET Core hosts via <code>ILogger&lt;T&gt;</code>): swap providers; call sites unchanged. Same as Serilog above.</li><li><strong>If you use log4net directly</strong> (<code>LogManager.GetLogger(...)</code> + <code>InfoFormat</code>): replace with <code>HeraldRegistry.GetLogger&lt;T&gt;()</code> + typed args. <code>InfoFormat(template, arg0, arg1)</code> becomes <code>Info(template, arg0, arg1)</code>. Appenders map to Herald sinks via the <code>herald migrate --from-log4net-config</code> tool that reads <code>log4net.config</code> XML and emits Herald JSON.</li></ul><p>Typical log4net &rarr; Herald migration: 3&ndash;5 days per service. The longest part is replacing call sites; the appender-to-sink mapping is mechanical.</p><p><strong>MEL.</strong> Already using <code>ILogger&lt;T&gt;</code>? Add Herald as a provider. Zero call-site changes. Pick up the zero-allocation accept path by switching <code>LogInformation</code> to the Herald typed-args overloads at hot sites.</p>"
-        }
-      ]
-    },
-    {
-      "id": "sinks",
-      "title": "Sink catalog — what destinations are supported?",
-      "items": [
-        {
-          "id": "sink-catalog",
-          "question": "Sink catalog — what destinations are supported?",
-          "answer_html": "<p>Native sinks shipped in Herald.Core / Herald.Sinks packages, plus indirect support via OTLP for the major observability platforms.</p><table><thead><tr><th>Destination</th><th>Status</th><th>Package</th></tr></thead><tbody><tr><td>Console</td><td>Native</td><td><code>Herald.OSS</code></td></tr><tr><td>File / ndjson</td><td>Native</td><td><code>Herald.Sinks.File</code></td></tr><tr><td>OTLP (gRPC / HTTP)</td><td>Native</td><td><code>Herald.Sinks.Otlp</code></td></tr><tr><td>HTTP JSON</td><td>Native</td><td><code>Herald.Sinks.Http</code></td></tr><tr><td>TCP JSON-lines</td><td>Native</td><td><code>Herald.Sinks.Tcp</code></td></tr><tr><td>UDP</td><td>Native</td><td><code>Herald.Sinks.Udp</code></td></tr><tr><td>Elasticsearch</td><td>Native</td><td><code>Herald.Sinks.Elasticsearch</code></td></tr><tr><td>Slack</td><td>Native</td><td><code>Herald.Sinks.Slack</code></td></tr><tr><td>Webhook</td><td>Native</td><td><code>Herald.Sinks.Webhook</code></td></tr><tr><td>MessagePack</td><td>Native</td><td><code>Herald.Sinks.MessagePack</code></td></tr><tr><td>Loki</td><td>Native</td><td><code>Herald.Sinks.Loki</code></td></tr><tr><td>Azure Blob / Tables</td><td>Native</td><td><code>Herald.Core.Azure</code></td></tr><tr><td>AWS S3</td><td>Native</td><td><code>Herald.Core.Aws</code></td></tr><tr><td>Datadog</td><td>Native (via OTLP)</td><td><code>Herald.Sinks.Otlp</code></td></tr><tr><td>Splunk</td><td>Native (via OTLP)</td><td><code>Herald.Sinks.Otlp</code></td></tr><tr><td>CloudWatch</td><td>Native (via OTLP)</td><td><code>Herald.Sinks.Otlp</code></td></tr><tr><td>Honeycomb</td><td>Native (via OTLP)</td><td><code>Herald.Sinks.Otlp</code></td></tr><tr><td>Sumo Logic</td><td>Native (via OTLP)</td><td><code>Herald.Sinks.Otlp</code></td></tr><tr><td>Seq</td><td>Community</td><td><code>mmp-herald-community/seq-sink</code></td></tr></tbody></table>"
-        }
-      ]
-    },
-    {
-      "id": "aot",
-      "title": "AOT + trim-publish behavior",
-      "items": [
+          "question": "License, repo, ship date, NuGet",
+          "updated": "2026-05-19",
+          "tags": ["license", "repo", "nuget"],
+          "answer_html": "<p><strong>License.</strong> Herald.OSS ships under <a href=\"https://www.apache.org/licenses/LICENSE-2.0\" target=\"_blank\" rel=\"noopener\">Apache License 2.0</a>. The LICENSE file lives at the repo root. Every Herald.Sinks.* package ships under Apache 2.0 too. Herald.Server and the Herald Dashboard are in Beta and will ship under Apache 2.0 at GA &mdash; the LICENSE lands with the GA release. Herald.Pro and Herald.Enterprise are commercial today, licensed per service; long-term source-availability terms are announced when those tiers exit Beta.</p><p><strong>Repo.</strong> <a href=\"https://github.com/mmpworks/Herald.OSS\" target=\"_blank\" rel=\"noopener\">github.com/mmpworks/Herald.OSS</a>. Source, tests, benchmarks, soak harness, build scripts &mdash; everything that produced the numbers on this site.</p><p><strong>NuGet.</strong> <code>dotnet add package Herald.OSS</code>. Multi-target for net8.0 / net9.0 / net10.0. AOT-clean public surface.</p><p><strong>Available.</strong> Herald.OSS 1.0.0 on NuGet 2026-05-18. Subsequent point releases follow the standard SemVer cadence.</p>",
+          "see_also": [
+            { "label": "Contributing — CLA and DCO", "href": "#contributing-cla-dco" },
+            { "label": "Signed binaries", "href": "#signed-binaries" }
+          ]
+        },
         {
           "id": "aot-trim-publish",
-          "question": "AOT + trim-publish behavior",
+          "question": "AOT and trim-publish behavior",
+          "updated": "2026-05-19",
+          "tags": ["aot", "trim", "publish"],
           "answer_html": "<p>Herald.Core sets <code>&lt;IsAotCompatible&gt;true&lt;/IsAotCompatible&gt;</code> and ships with <code>EnableAotAnalyzer</code> + <code>EnableTrimAnalyzer</code> on. Every JSON path on the public surface routes through a source-generated <code>JsonSerializerContext</code> &mdash; no reflection-based serialisation.</p><p>The source generator <code>TypedArgsOverloadGenerator</code> emits annotation-free call sites (no <code>[RequiresUnreferencedCode]</code> at the public boundary), so consumer <code>PublishAot</code> builds compile without warnings on the Herald-attributable surface.</p><p>The Apache Core CI runs <code>PublishAot=true</code> on every commit and asserts the resulting single-file binary boots and emits one event &mdash; if a PR regresses AOT cleanliness it fails before merge. Pro and Enterprise loggers are AOT-compatible too; no reflection paths in the resilience or audit code.</p>"
         }
       ]
     },
     {
-      "id": "production",
-      "title": "Production status, design partners, GA milestones",
+      "id": "migration",
+      "title": "Migration from another logger",
+      "lead": "One item per source logger. Pick the one you're coming from.",
+      "items": [
+        {
+          "id": "migration-serilog",
+          "question": "Migrating from Serilog",
+          "updated": "2026-05-19",
+          "tags": ["migration", "serilog"],
+          "answer_html": "<p>One-line builder swap on the host side; existing <code>ILogger&lt;T&gt;</code> call sites stay unchanged via the MEL provider:</p><pre><code>// Program.cs\nbuilder.Logging.AddHeraldLogging(opts =&gt; opts\n    .WithMinimumLevel(\"info\")\n    .WithConsoleSink());</code></pre><p>Typical migration cost: 1&ndash;2 days per service if you stay on the MEL bridge; another 1&ndash;3 days if you switch high-volume call sites to Herald typed-args for the zero-allocation accept path.</p>"
+        },
+        {
+          "id": "migration-nlog",
+          "question": "Migrating from NLog",
+          "updated": "2026-05-19",
+          "tags": ["migration", "nlog"],
+          "answer_html": "<p>Replace <code>NLog.LogManager.GetCurrentClassLogger()</code> with <code>HeraldRegistry.GetLogger&lt;T&gt;()</code>. NLog targets map 1:1 to Herald sinks; the typed-args call shape is identical. Concretely:</p><pre><code>// NLog before\nprivate static readonly NLog.Logger _log = NLog.LogManager.GetCurrentClassLogger();\n_log.Info(\"User {Id} signed in\", userId);\n\n// Herald after\nprivate static readonly ILogger _log = HeraldRegistry.GetLogger&lt;MyService&gt;();\n_log.Info(\"User {Id} signed in\", userId);</code></pre><p>NLog config files (<code>nlog.config</code>) are not directly compatible &mdash; Herald uses fluent <code>QuickLogBuilder</code> at host startup or JSON config via <code>HeraldRegistry.LoadFromJson()</code>. The <code>herald migrate</code> CLI tool reads an <code>nlog.config</code> and emits the equivalent Herald JSON config. Typical NLog &rarr; Herald migration: 2&ndash;3 days per service including config translation.</p>"
+        },
+        {
+          "id": "migration-log4net",
+          "question": "Migrating from log4net",
+          "updated": "2026-05-19",
+          "tags": ["migration", "log4net"],
+          "answer_html": "<p>log4net's appender model has the loosest mapping &mdash; two paths depending on how your codebase uses it:</p><ul><li><strong>If you use log4net through MEL</strong> (modern ASP.NET Core hosts via <code>ILogger&lt;T&gt;</code>): swap providers; call sites unchanged. Same as Serilog.</li><li><strong>If you use log4net directly</strong> (<code>LogManager.GetLogger(...)</code> + <code>InfoFormat</code>): replace with <code>HeraldRegistry.GetLogger&lt;T&gt;()</code> + typed args. <code>InfoFormat(template, arg0, arg1)</code> becomes <code>Info(template, arg0, arg1)</code>. Appenders map to Herald sinks via the <code>herald migrate --from-log4net-config</code> tool that reads <code>log4net.config</code> XML and emits Herald JSON.</li></ul><p>Typical log4net &rarr; Herald migration: 3&ndash;5 days per service. The longest part is replacing call sites; the appender-to-sink mapping is mechanical.</p>"
+        },
+        {
+          "id": "migration-mel",
+          "question": "Migrating from Microsoft.Extensions.Logging (MEL)",
+          "updated": "2026-05-19",
+          "tags": ["migration", "mel", "microsoft-extensions-logging"],
+          "answer_html": "<p>Already using <code>ILogger&lt;T&gt;</code>? Add Herald as a provider. Zero call-site changes. Pick up the zero-allocation accept path by switching <code>LogInformation</code> to the Herald typed-args overloads at hot sites.</p>"
+        }
+      ]
+    },
+    {
+      "id": "catalog",
+      "title": "Sink catalog",
+      "lead": "What destinations are supported, and which package they live in.",
+      "items": [
+        {
+          "id": "sink-catalog",
+          "question": "What destinations are supported?",
+          "updated": "2026-05-19",
+          "tags": ["sinks", "destinations", "otlp"],
+          "answer_html": "<p>Native sinks shipped in Herald.Core / Herald.Sinks packages, plus indirect support via OTLP for the major observability platforms.</p><table><thead><tr><th>Destination</th><th>Status</th><th>Package</th></tr></thead><tbody><tr><td>Console</td><td>Native</td><td><code>Herald.OSS</code></td></tr><tr><td>File / ndjson</td><td>Native</td><td><code>Herald.Sinks.File</code></td></tr><tr><td>OTLP (gRPC / HTTP)</td><td>Native</td><td><code>Herald.Sinks.Otlp</code></td></tr><tr><td>HTTP JSON</td><td>Native</td><td><code>Herald.Sinks.Http</code></td></tr><tr><td>TCP JSON-lines</td><td>Native</td><td><code>Herald.Sinks.Tcp</code></td></tr><tr><td>UDP</td><td>Native</td><td><code>Herald.Sinks.Udp</code></td></tr><tr><td>Elasticsearch</td><td>Native</td><td><code>Herald.Sinks.Elasticsearch</code></td></tr><tr><td>Slack</td><td>Native</td><td><code>Herald.Sinks.Slack</code></td></tr><tr><td>Webhook</td><td>Native</td><td><code>Herald.Sinks.Webhook</code></td></tr><tr><td>MessagePack</td><td>Native</td><td><code>Herald.Sinks.MessagePack</code></td></tr><tr><td>Loki</td><td>Native</td><td><code>Herald.Sinks.Loki</code></td></tr><tr><td>Azure Blob / Tables</td><td>Native</td><td><code>Herald.Core.Azure</code></td></tr><tr><td>AWS S3</td><td>Native</td><td><code>Herald.Core.Aws</code></td></tr><tr><td>Datadog</td><td>Native (via OTLP)</td><td><code>Herald.Sinks.Otlp</code></td></tr><tr><td>Splunk</td><td>Native (via OTLP)</td><td><code>Herald.Sinks.Otlp</code></td></tr><tr><td>CloudWatch</td><td>Native (via OTLP)</td><td><code>Herald.Sinks.Otlp</code></td></tr><tr><td>Honeycomb</td><td>Native (via OTLP)</td><td><code>Herald.Sinks.Otlp</code></td></tr><tr><td>Sumo Logic</td><td>Native (via OTLP)</td><td><code>Herald.Sinks.Otlp</code></td></tr><tr><td>Seq</td><td>Community</td><td><code>mmp-herald-community/seq-sink</code></td></tr></tbody></table>"
+        }
+      ]
+    },
+    {
+      "id": "production-readiness",
+      "title": "Production readiness",
+      "lead": "GA status, what we measure, and what the \"$0\" claim actually covers.",
       "items": [
         {
           "id": "production-status",
           "question": "Production status, design partners, GA milestones",
+          "updated": "2026-05-19",
+          "tags": ["ga", "production", "design-partners"],
           "answer_html": "<p><strong>Herald.Core 1.0.0 is available 2026-05-18 under Apache 2.0.</strong> The kernel and its tests have been validated extensively against the published benchmark harness and 6-hour soak before release, but Herald ships <strong>without pre-1.0 design partners</strong> &mdash; no paid pilots, no NDA references, no production testimonials yet.</p><p><strong>Pro</strong> reliability decorators are GA. The HMAC-chain <strong>Enterprise</strong> audit decorator is GA with a 90-day post-release window during which the chain canonicalisation format is locked under a stability promise.</p><p>The case for trusting the product rests on what you can verify yourself: the benchmark harness, soak harness, and competitive bench are all in the public repo. Run them. If your own measurements land where ours did, you have your own data point &mdash; not someone else's reference story.</p>"
-        }
-      ]
-    },
-    {
-      "id": "pricing",
-      "title": "Pro / Enterprise pricing",
-      "items": [
-        {
-          "id": "pricing-tiers",
-          "question": "Pro / Enterprise pricing",
-          "answer_html": "<table><thead><tr><th>Tier</th><th>What it adds</th><th>Indicative price</th></tr></thead><tbody><tr><td><strong>Community</strong></td><td>Zero-allocation kernel, full sink catalog, dashboard, hot-reload, FlightRecorder (200-event ring + Error-triggered drain)</td><td><strong>Free</strong> (Apache 2.0)</td></tr><tr><td><strong>Pro</strong></td><td>Reliability bundle: CircuitBreaker / Retry / DurableBuffer / Fallback / configurable FlightRecorder (bufferSize, min-level override, custom trigger)</td><td>$79 / service / yr<br/>custom above 1,000</td></tr><tr><td><strong>Enterprise</strong></td><td>Pro + AuditLogger (HMAC chain) + 4-hr sev-1 SLA</td><td>From $24,999/yr<br/>(up to 250 services)</td></tr></tbody></table><p>Pricing is calibrated to sit comfortably below the measured GC-waste savings (Pro) and the cost of a single avoided audit finding (Enterprise). At 500 services Pro costs $39,500/yr against $60,120/yr in conservative savings &mdash; net $20,620 saved before reliability coverage is valued.</p>"
-        }
-      ]
-    },
-    {
-      "id": "support",
-      "title": "Support SLA, security disclosure, who we are",
-      "items": [
-        {
-          "id": "support-sla",
-          "question": "Support SLA, security disclosure, who we are",
-          "answer_html": "<p><strong>Company.</strong> MMPWorks LLC. Steve Muchow is the technical lead. Engineering and support are MMPWorks-employed, not contracted.</p><p><strong>Support SLAs.</strong></p><ul><li><strong>Community</strong> &mdash; GitHub Issues, best-effort, no SLA.</li><li><strong>Pro</strong> &mdash; business-hours response, 24-hour acknowledgement on critical issues.</li><li><strong>Enterprise</strong> &mdash; 4-hour sev-1 response, 24&times;7 critical coverage, named support contact.</li></ul><p><strong>Security disclosure.</strong> 90-day coordinated disclosure window. Report vulnerabilities to <code>security@mmpworks.com</code>; PGP key in the repo <code>SECURITY.md</code>. Public advisories ship as GitHub Security Advisories with CVE assignment where applicable.</p><p><strong>Signed binaries.</strong> Pro and Enterprise NuGet packages are Authenticode-signed by MMPWorks LLC. Apache Core packages carry strong-name signatures (PublicSign on); the key fingerprint is published in <code>SECURITY.md</code> so consumers can verify provenance.</p>"
-        }
-      ]
-    },
-    {
-      "id": "zero-claim",
-      "title": "The \"$0\" claim — what it covers, what it doesn't",
-      "items": [
+        },
         {
           "id": "zero-dollar-claim",
           "question": "The \"$0\" claim — what it covers, what it doesn't",
+          "updated": "2026-05-19",
+          "tags": ["pricing", "gc", "allocations", "cost"],
           "answer_html": "<p>The strikethrough &rarr; $0 cards on the home page refer to the <strong>GC-waste line item only</strong> &mdash; the bytes per call your current logger allocates onto the managed heap, the CPU cycles the .NET garbage collector then has to spend cleaning them up, and the memory-tier overhead from a working set that sustains those allocations. Herald's zero-allocation accept path eliminates that line item.</p><p><strong>You still pay your cloud provider for:</strong> sink egress (Datadog/Splunk/CloudWatch ingest), log storage, the CPU your service's actual work consumes, and the infrastructure your application runs on. Herald doesn't change any of that &mdash; it removes the allocator tax that logging would otherwise stack on top.</p><p>The \"2.5 TB/day per service\" figure is a measured value: at 40 kHz / service sustained, 720 B per Serilog call &times; 86400 seconds = 2.49 TB/day of allocation pressure the GC has to manage. Herald produces 0 B on the same workload &mdash; confirmed by the 6-hour soak (zero Gen0/Gen1/Gen2 collections across the run).</p><p>The dollar figures ($6K / $60K / $601K) are the conservative model: 40 kHz/service, 7% GC-overhead share of CPU, 1.5 GB memory-tier delta per service, $0.05/vCPU-hour, $5/GB-month. Every assumption is in the <router-link to=\"/herald/competitors\">Competitors page</router-link> cost matrix and can be substituted with your own cloud rates.</p>"
+        }
+      ]
+    },
+    {
+      "id": "commercial",
+      "title": "Commercial, contributing, and trust",
+      "lead": "Pricing for Pro and Enterprise, the support SLA, security disclosure, and how to contribute.",
+      "items": [
+        {
+          "id": "pricing-tiers",
+          "question": "Pro and Enterprise pricing",
+          "updated": "2026-05-19",
+          "tags": ["pricing", "pro", "enterprise"],
+          "answer_html": "<table><thead><tr><th>Tier</th><th>What it adds</th><th>Indicative price</th></tr></thead><tbody><tr><td><strong>Community</strong></td><td>Zero-allocation kernel, full sink catalog, dashboard, hot-reload, FlightRecorder (200-event ring + Error-triggered drain)</td><td><strong>Free</strong> (Apache 2.0)</td></tr><tr><td><strong>Pro</strong></td><td>Reliability bundle: CircuitBreaker / Retry / DurableBuffer / Fallback / configurable FlightRecorder (bufferSize, min-level override, custom trigger)</td><td>$79 / service / yr<br/>custom above 1,000</td></tr><tr><td><strong>Enterprise</strong></td><td>Pro + AuditLogger (HMAC chain) + 4-hr sev-1 SLA</td><td>From $24,999/yr<br/>(up to 250 services)</td></tr></tbody></table><p>Pricing is calibrated to sit comfortably below the measured GC-waste savings (Pro) and the cost of a single avoided audit finding (Enterprise). At 500 services Pro costs $39,500/yr against $60,120/yr in conservative savings &mdash; net $20,620 saved before reliability coverage is valued.</p>"
+        },
+        {
+          "id": "support-sla",
+          "question": "Support SLA, security disclosure, who we are",
+          "updated": "2026-05-19",
+          "tags": ["support", "sla", "security", "company"],
+          "answer_html": "<p><strong>Company.</strong> MMPWorks LLC. Steve Muchow is the technical lead. Engineering and support are MMPWorks-employed, not contracted.</p><p><strong>Support SLAs.</strong></p><ul><li><strong>Community</strong> &mdash; GitHub Issues, best-effort, no SLA.</li><li><strong>Pro</strong> &mdash; business-hours response, 24-hour acknowledgement on critical issues.</li><li><strong>Enterprise</strong> &mdash; 4-hour sev-1 response, 24&times;7 critical coverage, named support contact.</li></ul><p><strong>Security disclosure.</strong> 90-day coordinated disclosure window. Report vulnerabilities to <code>security@mmpworks.com</code>; PGP key in the repo <code>SECURITY.md</code>. Public advisories ship as GitHub Security Advisories with CVE assignment where applicable.</p>"
+        },
+        {
+          "id": "contributing-cla-dco",
+          "question": "Contributing — CLA for Herald.OSS, DCO for Herald.Sinks",
+          "updated": "2026-05-19",
+          "tags": ["contributing", "cla", "dco", "license"],
+          "answer_html": "<p>Two contribution paths. Herald.OSS uses a one-time Contributor License Agreement; Herald.Sinks uses Developer Certificate of Origin sign-off per commit.</p><p><strong>ICLA / CCLA (Herald.OSS).</strong> Both flavours are adapted from the Apache Software Foundation's templates with substantive grants preserved verbatim:</p><ul><li><strong>ICLA</strong> (individuals, based on ASF ICLA v2.2) &mdash; signs once via the CLA bot using GitHub OAuth on Your first PR. Source at <a href=\"https://github.com/mmpworks/Herald.OSS/blob/main/CLA/ICLA.md\" target=\"_blank\" rel=\"noopener\">CLA/ICLA.md</a> in the Herald.OSS repo.</li><li><strong>CCLA</strong> (corporations, based on ASF CCLA v2.0) &mdash; authorised signer emails a signed PDF to <code>legal@mmpworks.com</code>; Schedule A lists employees designated to contribute. Source at <a href=\"https://github.com/mmpworks/Herald.OSS/blob/main/CLA/CCLA.md\" target=\"_blank\" rel=\"noopener\">CLA/CCLA.md</a>.</li></ul><p><strong>DCO (Herald.Sinks).</strong> Every commit in Your pull request carries a <code>Signed-off-by:</code> trailer (added by <code>git commit -s</code>). A GitHub Action fails the build if any commit lacks the sign-off or the sign-off email doesn't match the commit author. No external signature store, no one-time enrollment &mdash; sign-off rides on every commit.</p><p>Why a CLA exists for the kernel but not the sinks: the sublicense right in &sect;2 of both CLA templates is what lets MMPWorks redistribute kernel contributions under any future license terms (including the paid Pro/Enterprise tiers) without needing to chase every contributor for a re-sign. Sinks ship under permissive Apache 2.0 with no relicense agenda, so DCO is the right weight there.</p>"
+        },
+        {
+          "id": "signed-binaries",
+          "question": "Signed binaries and provenance",
+          "updated": "2026-05-19",
+          "tags": ["signing", "authenticode", "strong-name", "provenance"],
+          "answer_html": "<p>Pro and Enterprise NuGet packages are Authenticode-signed by MMPWorks LLC. Apache Core packages carry strong-name signatures (PublicSign on for Apache 2.0 Herald.OSS; full Authenticode signing on the commercial tiers). The public key fingerprint is published in the repo's <code>SECURITY.md</code> so consumers can verify provenance.</p>"
         }
       ]
     }
