@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../schemas/licensing/preset.schema.json",
+  "product": "herald-pro",
+  "segment": "team",
+  "displayName": "Pro Team",
+  "capabilities": [
+    "pro-base",
+    "resilience-decorators",
+    "event-processing-pro"
+  ],
+  "operatorNote": "Pro Team explicit. Same cap-set as the segment-less Pro preset; segment is on the wire for billing-side rollover.",
+  "since": "2.1"
+}

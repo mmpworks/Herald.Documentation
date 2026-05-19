@@ -1,0 +1,15 @@
+{
+  "$schema": "../../../schemas/licensing/capability.schema.json",
+  "key": "event-processing-pro",
+  "displayName": "Advanced event editing",
+  "summary": "Lets the customer redact, rename, or transform log events as they pass through the pipeline.",
+  "tooltip": "Turns on the advanced editors that change what an event looks like before it leaves the pipeline. Common uses: hiding credit card numbers, renaming fields to match a customer's existing format, or splitting one event into two. Customers with privacy or formatting requirements need this; customers happy with logs as-they-come don't.",
+  "category": "Basic features",
+  "tier": "Pro",
+  "status": "active",
+  "relatedCapabilities": [
+    "pro-base",
+    "compliance-overlay"
+  ],
+  "since": "2.1"
+}

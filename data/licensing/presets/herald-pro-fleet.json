@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../schemas/licensing/preset.schema.json",
+  "product": "herald-pro",
+  "segment": "fleet",
+  "displayName": "Pro Fleet",
+  "capabilities": [
+    "pro-base",
+    "resilience-decorators",
+    "event-processing-pro"
+  ],
+  "operatorNote": "Same capability shape as Pro Team. Fleet is a billing-side segment (26+ instances, $10K floor) — no new capabilities, just a different price curve.",
+  "since": "2.1"
+}

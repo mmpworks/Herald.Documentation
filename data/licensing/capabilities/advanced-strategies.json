@@ -1,0 +1,11 @@
+{
+  "$schema": "../../../schemas/licensing/capability.schema.json",
+  "key": "advanced-strategies",
+  "displayName": "Advanced pipeline shapes",
+  "summary": "Lets the customer use the high-performance and special-purpose pipeline arrangements (fast path, flight recorder, custom orderings).",
+  "tooltip": "Turns on the pipeline arrangements that go beyond the standard 'events in, events out' shape. The fast path makes the hot route as quick as possible; the flight recorder keeps a rolling buffer of recent events for after-the-fact investigation; custom orderings let the customer reshape the pipeline to match an unusual workflow. Customers running heavy production workloads or doing incident-response work usually want this.",
+  "category": "Resilience",
+  "tier": "Enterprise",
+  "status": "active",
+  "since": "2.1"
+}

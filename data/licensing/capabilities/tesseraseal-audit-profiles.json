@@ -1,0 +1,18 @@
+{
+  "$schema": "../../../schemas/licensing/capability.schema.json",
+  "key": "tesseraseal-audit-profiles",
+  "displayName": "Tag events with audit profiles",
+  "summary": "Lets the customer mark events with audit profiles (SOC2, HIPAA, FINRA, PCI) and have the runtime enforce the matching rules.",
+  "tooltip": "Think of color-coded folders in a filing cabinet — red for HIPAA, blue for PCI, green for SOC2 — and a rule that says 'red folders never leave the building.' This turns on the matching shape for log events: developers tag the events that belong to a regulated profile, and the runtime enforces the rules for that profile (where it can go, how long it lives, who can read it). Customers running mixed-workload systems where some events are regulated and most aren't need this; single-profile customers usually don't.",
+  "category": "Audit and compliance",
+  "tier": "TesseraSeal",
+  "status": "active",
+  "implies": [
+    "compliance-overlay"
+  ],
+  "relatedCapabilities": [
+    "compliance-overlay",
+    "ffiec-chain"
+  ],
+  "since": "2.1"
+}

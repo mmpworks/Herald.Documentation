@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://herald.dev/schemas/licensing/capability.schema.json",
+  "title": "Capability",
+  "description": "One row in the operator-portal capability catalog. The minter, the verifier, the portal, and the customer-facing documentation all read this same record. Edit one file; the renders regenerate.",
+  "type": "object",
+  "required": [
+    "key",
+    "displayName",
+    "summary",
+    "tooltip",
+    "category",
+    "tier",
+    "status"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "key": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Machine-readable capability identifier. Lowercase, hyphen-separated. This is the string that lands in the token caps[] claim and the string the gate checks. Once a key ships, it cannot be renamed without an API break."
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 60,
+      "description": "The checkbox label the operator sees in the portal. 3-6 words; no jargon. Reads as a thing the customer can do, not as a feature name."
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 160,
+      "description": "One-line answer to 'what does turning this on let the customer do?'. Used in the catalog index and the preview pane. Plain English; no Herald-internal vocabulary."
+    },
+    "tooltip": {
+      "type": "string",
+      "minLength": 30,
+      "maxLength": 400,
+      "contentMediaType": "text/markdown",
+      "description": "The 30-60 word body the portal shows on hover. Practical 'what this means for me' framing for non-technical IT staff. May include a short analogy when the underlying concept is technical (audit chain, multi-tenant routing). Markdown allowed but kept light — bold and inline code only."
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Basic features",
+        "Resilience",
+        "Multi-tenancy",
+        "Audit and compliance",
+        "Premium destinations",
+        "Provider features",
+        "Developer mode"
+      ],
+      "description": "The portal grouping. Picked from a fixed list so the catalog renders as a consistent set of sections."
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "Pro",
+        "Enterprise",
+        "Compliance Pack",
+        "TesseraSeal",
+        "Pro Developer"
+      ],
+      "description": "The SKU this capability normally ships with. Used in the portal copy ('this is normally a Pro feature') and in the public docs. A capability can be added to any token via the caps[] override regardless of tier; this field describes the default home."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "deprecated",
+        "sentinel"
+      ],
+      "description": "active = available in the catalog; deprecated = grandfathered, hidden from new mints; sentinel = not a customer-facing feature (e.g. demo-watermark — present for runtime side-effects only)."
+    },
+    "deprecatedSince": {
+      "type": "string",
+      "format": "date",
+      "description": "Set when status is deprecated. The portal renders the row strikethrough with this date."
+    },
+    "replacedBy": {
+      "type": "string",
+      "description": "Set when a deprecated capability has a successor. Value is the successor's key."
+    },
+    "relatedCapabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "description": "Capability keys that pair with this one. Used by the portal to render 'turning this on also enables...' links and by the catalog renderer to build cross-references in the prose explainer.",
+      "x-references": "https://herald.dev/schemas/licensing/capability.schema.json"
+    },
+    "implies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "description": "Capability keys that are auto-granted when this one is granted. The verifier expands implies[] transitively. Used to model dependencies (e.g. ffiec-chain implies compliance-overlay) so the minter doesn't have to list both.",
+      "x-references": "https://herald.dev/schemas/licensing/capability.schema.json"
+    },
+    "operatorNote": {
+      "type": "string",
+      "maxLength": 400,
+      "contentMediaType": "text/markdown",
+      "description": "Optional extra context the portal can surface in a 'learn more' drawer. Use when the tooltip can't carry the full story (regulatory framing, billing notes, segment-specific quirks)."
+    },
+    "since": {
+      "type": "string",
+      "description": "First version of MMP.Licensing.Contracts that shipped this capability. Renderer-only; never affects gate behavior."
+    }
+  }
+}

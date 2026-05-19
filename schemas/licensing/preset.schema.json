@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://herald.dev/schemas/licensing/preset.schema.json",
+  "title": "Edition Capability Preset",
+  "description": "One row in EditionCapabilityPresets. Maps a (product, segment) pair to the default cap-set. The minter expands this on the server side; the verifier expands it on the client side. Both sides must read the same table — that's why the table lives here.",
+  "type": "object",
+  "required": [
+    "product",
+    "capabilities"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "product": {
+      "type": "string",
+      "enum": [
+        "herald-pro",
+        "herald-enterprise",
+        "herald-tesseraseal"
+      ],
+      "description": "The token prd claim. Matches the values the minter writes and the verifier reads."
+    },
+    "segment": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        null,
+        "dev",
+        "team",
+        "fleet",
+        "provider",
+        "enterprise"
+      ],
+      "description": "The token seg claim. null means 'segment not set' (the legacy single-axis token shape)."
+    },
+    "displayName": {
+      "type": "string",
+      "description": "Operator-facing preset name ('Pro Team', 'Enterprise', 'Pro Developer'). The portal renders this on the preset-shortcut row."
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "description": "Capability keys this preset expands to. Every key must exist in the capability catalog (validation step in the render pipeline).",
+      "x-references": "https://herald.dev/schemas/licensing/capability.schema.json"
+    },
+    "operatorNote": {
+      "type": "string",
+      "maxLength": 400,
+      "contentMediaType": "text/markdown",
+      "description": "Portal copy explaining what the preset is good for. Surfaces under the preset-shortcut button."
+    },
+    "since": {
+      "type": "string",
+      "description": "First version of MMP.Licensing.Contracts that shipped this preset."
+    }
+  }
+}

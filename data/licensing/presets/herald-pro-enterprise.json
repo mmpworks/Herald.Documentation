@@ -1,0 +1,17 @@
+{
+  "$schema": "../../../schemas/licensing/preset.schema.json",
+  "product": "herald-pro",
+  "segment": "enterprise",
+  "displayName": "Pro Enterprise",
+  "capabilities": [
+    "pro-base",
+    "resilience-decorators",
+    "event-processing-pro",
+    "multi-tenant",
+    "advanced-strategies",
+    "premium-sinks",
+    "compliance-overlay"
+  ],
+  "operatorNote": "The $50K+ negotiated Pro tier. Steve ratified 2026-05-19 that Pro Enterprise gets the full Enterprise cap-set — it ships every capability the herald-enterprise preset carries. Compliance Pack lights up by default at this tier; sales handles the BAA / SOC paperwork delivery.",
+  "since": "2.1"
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "../../../schemas/licensing/preset.schema.json",
+  "product": "herald-enterprise",
+  "segment": null,
+  "displayName": "Enterprise",
+  "capabilities": [
+    "pro-base",
+    "resilience-decorators",
+    "event-processing-pro",
+    "multi-tenant",
+    "advanced-strategies",
+    "premium-sinks",
+    "compliance-overlay"
+  ],
+  "operatorNote": "The full Enterprise cap-set. Includes everything Pro Team has, plus multi-tenancy, advanced pipeline shapes, premium destinations, and the compliance overlay. The Pro Enterprise segment expands to this same cap-set.",
+  "since": "2.1"
+}

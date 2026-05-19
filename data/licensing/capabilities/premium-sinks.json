@@ -1,0 +1,11 @@
+{
+  "$schema": "../../../schemas/licensing/capability.schema.json",
+  "key": "premium-sinks",
+  "displayName": "Premium destination types",
+  "summary": "Lets the customer send logs to the premium destinations (Splunk, Datadog, the cloud-only sinks).",
+  "tooltip": "Turns on the destinations that need extra licensing or a paid integration on the receiving side — Splunk, Datadog, and similar enterprise-only systems. The standard destinations (files, common cloud storage, OpenTelemetry) work without this. If the customer asks 'can I send logs to Splunk?' this is the box that answers yes.",
+  "category": "Premium destinations",
+  "tier": "Enterprise",
+  "status": "active",
+  "since": "2.1"
+}

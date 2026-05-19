@@ -1,0 +1,15 @@
+{
+  "$schema": "../../../schemas/licensing/capability.schema.json",
+  "key": "audit-aggregation-py",
+  "displayName": "Audit data feed for Python tools",
+  "summary": "Lets a separate Python aggregator pull audit data out of the customer's audit pipeline.",
+  "tooltip": "Customers running the Python audit aggregator (a separate tool that bundles audit chains into reports for regulators) need this box checked so the aggregator is allowed to read the audit feed. If the customer isn't using the Python aggregator, leave this off — it doesn't do anything else.",
+  "category": "Audit and compliance",
+  "tier": "TesseraSeal",
+  "status": "active",
+  "relatedCapabilities": [
+    "compliance-overlay",
+    "ffiec-chain"
+  ],
+  "since": "2.1"
+}

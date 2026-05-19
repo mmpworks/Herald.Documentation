@@ -1,0 +1,14 @@
+{
+  "$schema": "../../../schemas/licensing/capability.schema.json",
+  "key": "resilience-decorators",
+  "displayName": "Keep working when things break",
+  "summary": "Lets the customer add automatic retry, circuit-break, and buffer-to-disk protections to their log pipeline.",
+  "tooltip": "Think of it as a safety net for the log pipeline. When a downstream system gets slow or stops responding, this turns on the protections that retry, slow down, or temporarily save events to disk instead of dropping them. Customers running production workloads almost always want this on; customers running a quick demo usually don't need it.",
+  "category": "Resilience",
+  "tier": "Pro",
+  "status": "active",
+  "relatedCapabilities": [
+    "pro-base"
+  ],
+  "since": "2.1"
+}

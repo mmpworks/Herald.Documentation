@@ -1,0 +1,14 @@
+{
+  "$schema": "../../../schemas/licensing/preset.schema.json",
+  "product": "herald-tesseraseal",
+  "segment": null,
+  "displayName": "TesseraSeal",
+  "capabilities": [
+    "compliance-overlay",
+    "ffiec-chain",
+    "audit-aggregation-py",
+    "tesseraseal-audit-profiles"
+  ],
+  "operatorNote": "The audit-only product. Carries the four audit-and-compliance capabilities and nothing else — no Pro pipeline features, no premium destinations. Customers who want both audit and Pro features pick Enterprise (or Pro + Compliance Pack) instead.",
+  "since": "2.1"
+}

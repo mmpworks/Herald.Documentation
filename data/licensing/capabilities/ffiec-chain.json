@@ -1,0 +1,18 @@
+{
+  "$schema": "../../../schemas/licensing/capability.schema.json",
+  "key": "ffiec-chain",
+  "displayName": "Banking audit-chain format",
+  "summary": "Lets the customer produce audit chains in the FFIEC chain-of-custody format banks and bank examiners expect.",
+  "tooltip": "Think of a tamper-evident envelope a bank courier uses — sealed at the source, every handoff signed, opening it without a record is impossible. FFIEC is the specific shape of that envelope U.S. bank examiners look for. This turns on the matching audit-chain output. Customers in banking, credit unions, or anyone the FFIEC examines need this; everyone else can leave it off.",
+  "category": "Audit and compliance",
+  "tier": "TesseraSeal",
+  "status": "active",
+  "implies": [
+    "compliance-overlay"
+  ],
+  "relatedCapabilities": [
+    "compliance-overlay",
+    "tesseraseal-audit-profiles"
+  ],
+  "since": "2.1"
+}

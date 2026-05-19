@@ -1,0 +1,15 @@
+{
+  "$schema": "../../../schemas/licensing/capability.schema.json",
+  "key": "pro-base",
+  "displayName": "Pro features",
+  "summary": "Lets the customer use the Pro pipeline features that ship with every paid Pro license.",
+  "tooltip": "Turns on the standard Pro toolset: advanced filtering, premium template options, and the richer pipeline configuration the free tier doesn't include. This is the floor every Pro license starts from. If the customer asked for 'Pro,' this is the box that gets checked first; the other Pro-adjacent boxes layer on top.",
+  "category": "Basic features",
+  "tier": "Pro",
+  "status": "active",
+  "relatedCapabilities": [
+    "resilience-decorators",
+    "event-processing-pro"
+  ],
+  "since": "2.1"
+}

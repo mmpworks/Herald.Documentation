@@ -1,0 +1,14 @@
+{
+  "$schema": "../../../schemas/licensing/capability.schema.json",
+  "key": "multi-tenant",
+  "displayName": "Serve multiple customer organizations",
+  "summary": "Lets one installation handle logging for several separate customer organizations at the same time, keeping each one's data isolated.",
+  "tooltip": "Think of an apartment building. One building, but each unit is fully sealed off from the others — separate keys, separate mailboxes, separate everything. This turns on the same shape for log pipelines: one server installation can serve many customer organizations and keep each one's events, settings, and dashboards isolated. Almost always what providers (MSPs) need; rarely what a single-company customer needs.",
+  "category": "Multi-tenancy",
+  "tier": "Enterprise",
+  "status": "active",
+  "relatedCapabilities": [
+    "msp-billing"
+  ],
+  "since": "2.1"
+}

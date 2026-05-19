@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../schemas/licensing/preset.schema.json",
+  "product": "herald-pro",
+  "segment": null,
+  "displayName": "Pro",
+  "capabilities": [
+    "pro-base",
+    "resilience-decorators",
+    "event-processing-pro"
+  ],
+  "operatorNote": "Standard Pro license with no segment specified. The 95% case: pick this when sales hands you a Pro Team order and the segment claim is implicit.",
+  "since": "2.1"
+}

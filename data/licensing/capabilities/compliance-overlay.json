@@ -1,0 +1,16 @@
+{
+  "$schema": "../../../schemas/licensing/capability.schema.json",
+  "key": "compliance-overlay",
+  "displayName": "Audit chain and regulated-industry protections",
+  "summary": "Lets the customer turn on the audit-chain and personal-information protections that regulated industries require.",
+  "tooltip": "Think of a chain-of-custody log at a hospital pharmacy — every handoff is signed, the chain can't be edited without leaving a mark. This turns on the same shape for log events plus the personal-information redactions that SOC2, HIPAA, FINRA, and PCI customers need to pass an audit. Customers in regulated industries almost always need this; everyone else can leave it off. This is the Compliance Pack add-on box.",
+  "category": "Audit and compliance",
+  "tier": "Compliance Pack",
+  "status": "active",
+  "relatedCapabilities": [
+    "ffiec-chain",
+    "tesseraseal-audit-profiles"
+  ],
+  "operatorNote": "Compliance Pack is an add-on, not a license of its own. Customers buy Pro Team / Fleet / Enterprise and attach this capability — the parent license keeps working unchanged; this box just turns on the extras.",
+  "since": "2.1"
+}

@@ -1,0 +1,12 @@
+{
+  "$schema": "../../../schemas/licensing/capability.schema.json",
+  "key": "demo-watermark",
+  "displayName": "Stamp every event with a Demo tag",
+  "summary": "Turns on the Demo watermark the free Pro Developer tier carries. Sentinel capability — not a customer-facing feature.",
+  "tooltip": "Internal sentinel. When present, the customer's instances stamp every log event with a `LicenseTier: Demo` property as it leaves the pipeline. This is the shape of the free Pro Developer tier — it's how customers and downstream tools tell free-tier traffic apart from paid traffic. Don't check this on a paid license; it would tag the customer's production events with the Demo marker.",
+  "category": "Developer mode",
+  "tier": "Pro Developer",
+  "status": "sentinel",
+  "operatorNote": "The portal hides this row by default. It appears only when the operator picks the Pro Developer preset — that preset checks the box automatically and locks it. If a customer asks 'how do I get rid of the Demo tag?' the answer is 'upgrade to Pro Team,' which mints a token without demo-watermark.",
+  "since": "2.1"
+}

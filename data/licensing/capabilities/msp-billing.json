@@ -1,0 +1,15 @@
+{
+  "$schema": "../../../schemas/licensing/capability.schema.json",
+  "key": "msp-billing",
+  "displayName": "Manage licenses for downstream customers",
+  "summary": "Lets a managed-service provider issue and bill for licenses on behalf of the customer organizations they serve.",
+  "tooltip": "For Provider customers — the MSPs who resell our product to their own customers. This turns on the reporting and billing-handoff features they need so the licenses they hand to their customers get tracked back to the Provider's account. Direct customers (companies running their own logging) never need this; only check it for Provider segment licenses.",
+  "category": "Provider features",
+  "tier": "Pro",
+  "status": "active",
+  "relatedCapabilities": [
+    "multi-tenant"
+  ],
+  "operatorNote": "This capability goes hand-in-hand with the MSP Terms of Service click-through during onboarding. If msp-billing is checked but the TOS isn't accepted, the portal blocks the mint. See operator-runbook article 10.",
+  "since": "2.1"
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "../../../schemas/licensing/preset.schema.json",
+  "product": "herald-pro",
+  "segment": "provider",
+  "displayName": "Pro Provider",
+  "capabilities": [
+    "pro-base",
+    "resilience-decorators",
+    "event-processing-pro",
+    "msp-billing"
+  ],
+  "operatorNote": "MSP-shaped Pro license. Adds the msp-billing capability so the Provider can issue downstream licenses and have them billed back. The MSP Terms of Service must be accepted in sales before the portal allows this preset.",
+  "since": "2.1"
+}

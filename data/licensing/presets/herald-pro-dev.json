@@ -1,0 +1,14 @@
+{
+  "$schema": "../../../schemas/licensing/preset.schema.json",
+  "product": "herald-pro",
+  "segment": "dev",
+  "displayName": "Pro Developer",
+  "capabilities": [
+    "pro-base",
+    "resilience-decorators",
+    "event-processing-pro",
+    "demo-watermark"
+  ],
+  "operatorNote": "The free Developer tier. Carries the same Pro cap-set plus the Demo watermark sentinel. The portal locks the watermark box on this preset so the operator can't accidentally mint a Developer license without it.",
+  "since": "2.1"
+}
