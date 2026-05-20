@@ -1,0 +1,48 @@
+# {packageName}
+
+{packageRole}
+
+<!-- IF companionPackage -->
+This package ships alongside `{companionPackage}`. Both packages
+ship under the same license terms.
+<!-- ENDIF -->
+
+This is a **commercial MMPWorks product**, not open-source software.
+
+## License
+
+This package is governed by the proprietary license in `LICENSE.txt`.
+Installation and use are permitted only under a currently-effective
+Herald Pro, Herald Enterprise, or TesseraSeal license agreement signed
+with MMPWorks LLC. The license in `LICENSE.txt` does not on its own grant
+the right to use the paid Herald products; that right comes from the
+separately-signed product license agreement.
+
+Read `LICENSE.txt` for the full terms covering NuGet installation,
+internal redistribution within a licensee's organization, and reference
+from CI and automated build agents.
+
+## Where to get a license
+
+Contact `sales@mmpworks.com`. The license team will issue the product
+license agreement, the License Token your installations consume, and a
+private channel for renewals.
+
+## Documentation
+
+The canonical Herald documentation, including licensing operator
+guidance and the integration reference for `{packageName}`, lives at
+`https://mmpworks.com/herald/docs`.
+
+The product license agreements are published at:
+
+- Herald Pro: `https://mmpworks.com/herald/docs/licensing/pro`
+- Herald Enterprise: `https://mmpworks.com/herald/docs/licensing/enterprise`
+- TesseraSeal: `https://mmpworks.com/herald/docs/licensing/tesseraseal`
+
+## Support
+
+Operational questions about the package, license-token issuance, or
+installation belong on the support channel established under your product
+license agreement. General questions about commercial licensing belong to
+`sales@mmpworks.com`.

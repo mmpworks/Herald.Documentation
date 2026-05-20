@@ -1,0 +1,222 @@
+FIRST DRAFT - COUNSEL REVIEW REQUIRED BEFORE DEPLOYMENT.
+
+This file has not been reviewed by licensed legal counsel and is not
+authorized for production use. It is provided as a starting point for
+counsel-led drafting. The shape and clauses below reflect MMPWorks's
+intent; counsel-language review is still required.
+
+================================================================================
+
+                      {packageName} PACKAGE LICENSE
+
+                       Copyright (c) 2026 MMPWorks LLC
+                            All rights reserved.
+
+================================================================================
+
+This license governs the {packageName} NuGet package (the "Package")
+published by MMPWorks LLC, a Texas limited liability company
+("MMPWorks"). The Package is proprietary software. It is not open
+source. Installation and use of the Package are permitted only under
+the terms set forth below.
+
+{packageRole}
+
+The Package is intended for use with MMPWorks's paid Herald products
+(Herald Pro, Herald Enterprise, and TesseraSeal, collectively the
+"Paid Herald Products"). The Package on its own does not grant any
+right to use the Paid Herald Products. That right is granted only
+under a separately signed Herald Pro License Agreement, Herald
+Enterprise License Agreement, or TesseraSeal License Agreement between
+MMPWorks and the licensee (each a "Product License Agreement").
+
+<!-- IF companionPackage -->
+The Package ships alongside {companionPackage}, which is governed by a
+separate copy of this same license under its own package banner.
+<!-- ENDIF -->
+
+--------------------------------------------------------------------------------
+1. DEFINITIONS
+--------------------------------------------------------------------------------
+
+1.1 "Licensee" means the individual or legal entity that installs or
+uses the Package.
+
+1.2 "Product License Agreement" means a Herald Pro License Agreement,
+Herald Enterprise License Agreement, or TesseraSeal License Agreement
+signed by Licensee and MMPWorks and currently in effect.
+
+1.3 "Instance" has the meaning given in the applicable Product License
+Agreement.
+
+1.4 "Internal Workflow" means Licensee's internal software development,
+build, packaging, testing, and deployment activities, conducted by
+Licensee's employees or by contractors acting on Licensee's behalf.
+
+--------------------------------------------------------------------------------
+2. GRANT OF PERMITTED USE
+--------------------------------------------------------------------------------
+
+Subject to the terms of this license and the existence of a Product
+License Agreement currently in effect, MMPWorks grants Licensee the
+following permitted uses of the Package:
+
+2.1 Install from NuGet for use under a Paid Herald Product. Licensee
+may install the Package via the NuGet package manager on any Instance
+covered by a Product License Agreement, and may resolve the Package as
+a transitive dependency of a Paid Herald Product. Installation absent a
+currently-effective Product License Agreement is not licensed.
+
+2.2 Internal redistribution within Licensee's organization. Licensee
+may copy the Package and the binaries produced from it to internal
+package mirrors, internal artifact repositories, build caches, and
+deployment targets within Licensee's organization, provided that all
+such copies remain within the scope of the Instance count and the
+seat count granted under the applicable Product License Agreement.
+Distribution of the Package to any third party, whether by Licensee or
+by any agent of Licensee, is not permitted under this license.
+
+2.3 Reference from continuous integration and automated build systems.
+Licensee may reference and resolve the Package from continuous
+integration servers, build agents, container build pipelines, and
+other automated runners operated as part of Licensee's Internal
+Workflow, provided that the Instances on which the Package is
+installed or executed are covered by the applicable Product License
+Agreement.
+
+The rights granted under this Section 2 are non-exclusive,
+non-transferable, and non-sublicensable. They terminate automatically
+on termination of the applicable Product License Agreement, on
+revocation of the License Token issued under that agreement, or on
+breach of this license.
+
+--------------------------------------------------------------------------------
+3. RESTRICTIONS
+--------------------------------------------------------------------------------
+
+Licensee shall not:
+
+3.1 Distribute, publish, sublicense, sell, rent, lease, lend, or
+otherwise make the Package available to any third party, except for
+the internal redistribution expressly permitted under Section 2.2.
+
+3.2 Reverse engineer, decompile, disassemble, or otherwise attempt to
+derive the source code, structure, sequence, or organization of the
+Package, except to the extent such restriction is expressly prohibited
+by applicable law.
+
+3.3 Modify, adapt, translate, or create derivative works of the
+Package.
+
+3.4 Use the Package, or any portion of it, to construct, validate,
+forge, or alter a license token for any MMPWorks product without a
+currently-effective Product License Agreement that grants such use.
+
+3.5 Use the Package to develop or operate a product or service that
+competes with the Paid Herald Products.
+
+3.6 Remove, alter, or obscure any copyright notice, trademark notice,
+or other proprietary notice on the Package or in any copy of it.
+
+3.7 Use the Package in any manner that violates the applicable Product
+License Agreement, including by exceeding the Instance count, seat
+count, capability set, tier, or segment granted under that agreement.
+
+--------------------------------------------------------------------------------
+4. INTELLECTUAL PROPERTY
+--------------------------------------------------------------------------------
+
+MMPWorks and its licensors retain all right, title, and interest in
+and to the Package, including all intellectual property rights
+therein. No rights are granted to Licensee under this license other
+than the limited permitted uses expressly set forth in Section 2.
+
+--------------------------------------------------------------------------------
+5. NO WARRANTY
+--------------------------------------------------------------------------------
+
+THE PACKAGE IS PROVIDED "AS IS" AND MMPWORKS HEREBY DISCLAIMS ALL
+WARRANTIES, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE,
+INCLUDING WITHOUT LIMITATION ANY IMPLIED WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+MMPWORKS DOES NOT WARRANT THAT THE PACKAGE WILL BE UNINTERRUPTED,
+ERROR-FREE, OR FREE OF HARMFUL COMPONENTS. ANY WARRANTIES THAT APPLY
+TO THE PAID HERALD PRODUCTS UNDER THE APPLICABLE PRODUCT LICENSE
+AGREEMENT ARE SET FORTH IN THAT AGREEMENT AND ARE NOT REPEATED HERE.
+
+--------------------------------------------------------------------------------
+6. LIMITATION OF LIABILITY
+--------------------------------------------------------------------------------
+
+IN NO EVENT SHALL MMPWORKS BE LIABLE FOR ANY INDIRECT, INCIDENTAL,
+SPECIAL, CONSEQUENTIAL, PUNITIVE, OR EXEMPLARY DAMAGES, INCLUDING
+WITHOUT LIMITATION LOST PROFITS, LOST REVENUES, LOST DATA, LOSS OF
+GOODWILL, OR BUSINESS INTERRUPTION, ARISING OUT OF OR RELATED TO THE
+PACKAGE OR THIS LICENSE, WHETHER IN CONTRACT, TORT (INCLUDING
+NEGLIGENCE), STRICT LIABILITY, OR ANY OTHER THEORY, EVEN IF MMPWORKS
+HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+The aggregate limitation on MMPWorks's liability is set forth in the
+applicable Product License Agreement and applies to claims arising
+under this license to the same extent and on the same terms.
+
+--------------------------------------------------------------------------------
+7. TERMINATION
+--------------------------------------------------------------------------------
+
+7.1 The permitted uses granted under Section 2 terminate automatically
+and without notice upon (a) termination or expiration of the
+applicable Product License Agreement, (b) revocation of the License
+Token issued under that agreement, or (c) Licensee's breach of any
+term of this license.
+
+7.2 Upon termination, Licensee shall cease all use of the Package,
+shall remove the Package from all Instances and from all internal
+mirrors, artifact repositories, and build caches under Licensee's
+control, and shall not resolve the Package from NuGet or from any
+other source unless and until a new Product License Agreement comes
+into effect.
+
+7.3 Sections 3, 4, 5, 6, 7, and 8 survive termination.
+
+--------------------------------------------------------------------------------
+8. MISCELLANEOUS
+--------------------------------------------------------------------------------
+
+8.1 Governing law and venue. This license is governed by the laws of
+the State of Texas, without regard to its conflict of laws principles.
+The parties consent to the exclusive jurisdiction of the state and
+federal courts located in Williamson County, Texas for any action
+arising out of or related to this license.
+
+8.2 Relationship to Product License Agreement. In the event of
+conflict between this license and the applicable Product License
+Agreement, the Product License Agreement controls with respect to the
+conflicting term.
+
+8.3 Severability. If any provision of this license is held invalid or
+unenforceable, that provision shall be reformed to the minimum extent
+necessary to render it enforceable, and the remaining provisions shall
+continue in full force and effect.
+
+8.4 No waiver. No failure or delay by MMPWorks in exercising any right
+under this license shall operate as a waiver thereof.
+
+8.5 Entire license. This license, together with the applicable Product
+License Agreement, constitutes the entire agreement between MMPWorks
+and Licensee with respect to the Package and supersedes any prior
+agreement, understanding, or communication regarding the Package.
+
+================================================================================
+
+For questions regarding this license, contact MMPWorks at
+sales@mmpworks.com.
+
+For the canonical Product License Agreements, see:
+  Herald Pro:        https://mmpworks.com/herald/docs/licensing/pro
+  Herald Enterprise: https://mmpworks.com/herald/docs/licensing/enterprise
+  TesseraSeal:       https://mmpworks.com/herald/docs/licensing/tesseraseal
+
+================================================================================
+
+FIRST DRAFT - COUNSEL REVIEW REQUIRED BEFORE DEPLOYMENT.

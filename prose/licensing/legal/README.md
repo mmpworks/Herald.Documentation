@@ -27,10 +27,12 @@ counsel-review-required: true
 # Licensing legal documents
 
 This page is the single index for every legal artifact in the Herald
-licensing surface. Eight artifacts live here today: two signed
+licensing surface. Eleven artifacts live here today: two signed
 agreements, four runtime nag templates, a JSON manifest that ties
-the runtime templates to the wording counsel reviews, and the JSON
-Schema the manifest validates against.
+the runtime templates to the wording counsel reviews, the JSON
+Schema the manifest validates against, and two package-banner
+templates (LICENSE.txt + README.md) plus their index, embedded in
+every paid `MMP.*` NuGet package MMPWorks publishes.
 
 The discipline is docs-as-database. Each artifact has one canonical
 source. The runtime, the operator portal, the public docs, and
@@ -49,6 +51,9 @@ every consumer surface picks up the change.
 | Nag template - revoked | `data/licensing/nag-templates/revoked.txt` | Stern legal | **Required (load-bearing)** |
 | Nag template manifest | `data/licensing/nag-templates/manifest.json` | n/a (metadata) | Counsel-aware (links templates to agreement clauses) |
 | Nag template schema | `schemas/licensing/nag-template.schema.json` | n/a (metadata) | n/a |
+| Package-banner LICENSE.txt template | `prose/licensing/legal/package-banners/LICENSE.txt.template` | Formal legal | **Required (load-bearing)** |
+| Package-banner README.md template | `prose/licensing/legal/package-banners/README.md.template` | Plainspoken (install-surface) | Required |
+| Package-banner index | `prose/licensing/legal/package-banners/README.md` | Plainspoken | Required |
 
 ## How the artifacts fit together
 
@@ -75,6 +80,16 @@ and (c) the agreement clause the template restates. When counsel
 reviews the stern templates, the `restatesClauseFrom` field on each
 manifest entry points to the exact agreement section that must
 remain consistent.
+
+The package-banner templates at
+`prose/licensing/legal/package-banners/` are the third axis. Every
+paid `MMP.*` NuGet package embeds a `LICENSE.txt` and a `README.md`
+rendered from those templates. Counsel reviews the canonical
+templates once; every paid package picks up the approved wording
+at publish time. See the package-banners
+[index](package-banners/README.md) for the substitution contract,
+adoption status, and the workflow Glenn follows when bumping a
+package's banner version.
 
 ## Roles and responsibilities
 
