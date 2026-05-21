@@ -12,16 +12,18 @@ status: phase-1-in-progress
 # TesseraSeal Verifier User's Guide
 
 The user's guide for the TesseraSeal Verifier. Implementation-agnostic
-(.NET / Python / Go all produce the same verdict surface). The reader
-audience is auditors, IT operators, and compliance officers; engineers
-setting up the verifier in their pipelines are the secondary audience.
+across the three references: Verus (Go), Herald.Compliance (.NET), and
+Visus (Python). All three produce the same verdict surface against the
+same chain format. The reader audience is auditors, IT operators, and
+compliance officers; engineers setting up the verifier in their
+pipelines are the secondary audience.
 
 Companion content:
 
 - `ffiec/docs/examiner-quickstart.md` — 5-minute orientation for
   examiners who have never run the verifier
-- `ffiec/docs/runbook-verifier.md` — operator-mechanic deep-dive
-  runbook (Jared, Commit 6)
+- `ffiec/docs/runbook-verus.md` — operator-mechanic deep-dive
+  runbook for Verus (Jared, Commit 6)
 - `ffiec/docs/auditor-stories/` — plain-spoken narrative companions
   showing the verifier in actual engagements
 - `ffiec-public/spec/chain-of-custody-DRAFT-0.2.0.md` — normative

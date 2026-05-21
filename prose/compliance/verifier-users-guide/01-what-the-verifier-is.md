@@ -129,21 +129,21 @@ against the same chain format. Section 4 covers how to choose between
 them; the short version is that the choice depends on where you are
 running, not on what you are verifying.
 
-- **The Go binary** (`ffiec/verifier`) is a single static executable
-  with no dependencies. This is what most examiners run. It is the
-  default whenever the trusted-computing-base needs to be as small
-  as possible, including examiner laptops and air-gapped deployments.
+- **Verus** is the Go reference. A single static executable with no
+  dependencies. This is what most examiners run. It is the default
+  whenever the trusted-computing-base needs to be as small as
+  possible, including examiner laptops and air-gapped deployments.
   One binary, one set of command-line arguments, no configuration
-  files.
-- **The .NET reference** (`Herald.Compliance`) is the verifier
-  embedded inside the bank's own Herald pipeline. Banks running
+  files. The CLI is `verus`.
+- **Herald.Compliance** is the .NET reference. The verifier embedded
+  inside the bank's own Herald pipeline. Banks running
   Herald.Compliance can verify their own chain in-process as part of
   normal operations. Daily seal verification, pre-export smoke-tests,
   and integration into the bank's internal control framework all use
   the same verdict surface.
-- **The Python reference** (`Herald.Py` / Vidimus) is the verifier
-  available to Python-based Herald consumers. Same verdict surface,
-  invoked through a Python API or a small Python wrapper script.
+- **Visus** is the Python reference. The verifier embedded as a
+  library inside Python pipelines. Same verdict surface, invoked
+  through a Python API or a small wrapper script.
 
 All three produce the same `Status` / `Step` / `Reason` /
 `Verdict-Object` surface and the same §10.12 exit codes. The
@@ -185,5 +185,5 @@ check.
   in plain English. The deeper cryptographic material lives in the
   spec at §4.
 - **You want to run the verifier right now.** Section 5 covers
-  invocation. The Go binary's README at
-  `ffiec/verifier/README.md` has the build and CLI reference.
+  invocation. Verus's README at `ffiec/verus/README.md` has the
+  build and CLI reference.

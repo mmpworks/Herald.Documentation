@@ -26,14 +26,16 @@ customers depend on as the integrity-proof primitive. Three reference
 implementations exist or are under construction:
 
 - **Herald.Compliance** — the .NET reference (shipped)
-- **Herald.Py** — the Python reference (shipped)
-- **`ffiec/verifier`** — the Go binary (Jared, Commit 1 in progress)
+- **Visus** — the Python reference (shipped; renamed from Vidimus
+  2026-05-21 per Laura's brand-family round)
+- **Verus** — the Go reference (Jared, Commit 1 in progress; the
+  `ffiec/verus` repo path)
 
 The user's guide is implementation-agnostic. Auditors do not care which
 binary they run; they care about the verdict. The guide explains what
 the verifier proves, how to invoke it, what each output field means,
 and what to do when verification fails. The runbook
-(`ffiec/docs/runbook-verifier.md`, Jared Commit 6) is the operator
+(`ffiec/docs/runbook-verus.md`, Jared Commit 6) is the operator
 deep-dive companion — this guide is the front door.
 
 ## Source-of-truth decision
@@ -173,9 +175,10 @@ One-sentence descriptions per section:
    decision was right).
 3. **The four primitives.** Plain-English walkthrough of HMAC chain,
    Merkle root, HSM-rooted root signature, OpenTelemetry-native wire.
-4. **Choosing an implementation.** Go for examiner laptops + air-gapped
-   deployments; .NET for integration inside Herald.Compliance pipelines;
-   Python for Vidimus/Herald.Py consumers.
+4. **Choosing an implementation.** Verus (Go) for examiner laptops
+   and air-gapped deployments; Herald.Compliance (.NET) for in-process
+   verification inside Herald pipelines; Visus (Python) for Python-
+   based Herald consumers.
 5. **Invoking the verifier.** The implementation-neutral flag catalog
    plus per-impl invocation examples.
 6. **Reading the verdict.** The Status / Step / Reason / Verdict-Object
@@ -258,11 +261,12 @@ shape; Richard reviews if spec ambiguities surface.
   MMPWorks default but the verifier guide is sober regulatory
   documentation; the herald-website architecture-page SVG vocabulary
   is the right anchor.
-- **Jared.** Section 5 (invocation) draws on the Go verifier's flag
-  surface. The current `ffiec/verifier/README.md` is the source of
-  truth for the Go side until Commit 1 lands. Heather will read the
-  Commit 1 surface when it ships and update the prose if anything
-  diverges from the README.
+- **Jared.** Section 5 (invocation) draws on Verus's flag surface.
+  The current `ffiec/verus/README.md` (renamed from `ffiec/verifier`
+  per Steve's 2026-05-21 naming lock) is the source of truth for the
+  Go side until Commit 1 lands. Heather will read the Commit 1
+  surface when it ships and update the prose if anything diverges
+  from the README.
 - **Richard.** Any spec ambiguity Heather encounters surfaces to
   Richard via the standard architecture-designer dispatch, with a
   note that the disposition feeds PRD-3 amendments.
