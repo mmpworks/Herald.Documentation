@@ -28,15 +28,20 @@ implementations exist or are under construction:
 - **Herald.Compliance** — the .NET reference (shipped)
 - **Visus** — the Python reference (shipped; renamed from Vidimus
   2026-05-21 per Laura's brand-family round)
-- **Verus** — the Go reference (Jared, Commit 1 in progress; the
-  `ffiec/verus` repo path)
+- **The Go reference** (Jared, Commit 1 in progress; the
+  `ffiec/verifier` repo path today). Product-name pick paused
+  2026-05-21 — Pearl's collision sweep ruled out the round-1
+  candidate (literal CLI conflict with `verus-lang/verus`, CMU's
+  Rust formal verifier); Steve revisiting from Laura's round-2
+  runners-up.
 
 The user's guide is implementation-agnostic. Auditors do not care which
 binary they run; they care about the verdict. The guide explains what
 the verifier proves, how to invoke it, what each output field means,
 and what to do when verification fails. The runbook
-(`ffiec/docs/runbook-verus.md`, Jared Commit 6) is the operator
-deep-dive companion — this guide is the front door.
+(`ffiec/docs/runbook-verifier.md`, Jared Commit 6 — filename will
+rename when the Go product name locks) is the operator deep-dive
+companion. This guide is the front door.
 
 ## Source-of-truth decision
 
@@ -175,10 +180,10 @@ One-sentence descriptions per section:
    decision was right).
 3. **The four primitives.** Plain-English walkthrough of HMAC chain,
    Merkle root, HSM-rooted root signature, OpenTelemetry-native wire.
-4. **Choosing an implementation.** Verus (Go) for examiner laptops
-   and air-gapped deployments; Herald.Compliance (.NET) for in-process
-   verification inside Herald pipelines; Visus (Python) for Python-
-   based Herald consumers.
+4. **Choosing an implementation.** The Go reference for examiner
+   laptops and air-gapped deployments; Herald.Compliance (.NET) for
+   in-process verification inside Herald pipelines; Visus (Python)
+   for Python-based Herald consumers.
 5. **Invoking the verifier.** The implementation-neutral flag catalog
    plus per-impl invocation examples.
 6. **Reading the verdict.** The Status / Step / Reason / Verdict-Object
@@ -261,12 +266,13 @@ shape; Richard reviews if spec ambiguities surface.
   MMPWorks default but the verifier guide is sober regulatory
   documentation; the herald-website architecture-page SVG vocabulary
   is the right anchor.
-- **Jared.** Section 5 (invocation) draws on Verus's flag surface.
-  The current `ffiec/verus/README.md` (renamed from `ffiec/verifier`
-  per Steve's 2026-05-21 naming lock) is the source of truth for the
-  Go side until Commit 1 lands. Heather will read the Commit 1
-  surface when it ships and update the prose if anything diverges
-  from the README.
+- **Jared.** Section 5 (invocation) draws on the Go reference's flag
+  surface. The current `ffiec/verifier/README.md` is the source of
+  truth for the Go side until Commit 1 lands. The repository path
+  and any name-bearing prose will land cleanly once Steve picks the
+  Go product name (Pearl's round-1 collision rejection paused the
+  pick 2026-05-21). Heather will read the Commit 1 surface when it
+  ships and update the prose if anything diverges from the README.
 - **Richard.** Any spec ambiguity Heather encounters surfaces to
   Richard via the standard architecture-designer dispatch, with a
   note that the disposition feeds PRD-3 amendments.

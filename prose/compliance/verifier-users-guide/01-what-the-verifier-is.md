@@ -129,12 +129,14 @@ against the same chain format. Section 4 covers how to choose between
 them; the short version is that the choice depends on where you are
 running, not on what you are verifying.
 
-- **Verus** is the Go reference. A single static executable with no
+- **The Go reference** is a single static executable with no
   dependencies. This is what most examiners run. It is the default
   whenever the trusted-computing-base needs to be as small as
   possible, including examiner laptops and air-gapped deployments.
   One binary, one set of command-line arguments, no configuration
-  files. The CLI is `verus`.
+  files. (Product name pending Steve's pick — Pearl's collision
+  sweep ruled out the round-1 candidate; round-2 disambiguation in
+  progress.)
 - **Herald.Compliance** is the .NET reference. The verifier embedded
   inside the bank's own Herald pipeline. Banks running
   Herald.Compliance can verify their own chain in-process as part of
@@ -185,5 +187,6 @@ check.
   in plain English. The deeper cryptographic material lives in the
   spec at §4.
 - **You want to run the verifier right now.** Section 5 covers
-  invocation. Verus's README at `ffiec/verus/README.md` has the
-  build and CLI reference.
+  invocation. The Go reference's README at `ffiec/verifier/README.md`
+  has the build and CLI reference. (The repository path will rename
+  once Steve picks the locked product name.)
