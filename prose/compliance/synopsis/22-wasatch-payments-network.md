@@ -1,6 +1,6 @@
-# Story 22 — Crescent Payments Network (US payments network ahead of OCC + Fed + nine state examiners + FTC inquiry)
+# Story 22 — Wasatch Payments Network (US payments network ahead of OCC + Fed + nine state examiners + FTC inquiry)
 
-**Story file:** `docs/auditor-stories/22-crescent-payments-network.md`
+**Story file:** `docs/auditor-stories/22-wasatch-payments-network.md`
 **Engagement type:** Pre-engagement readiness pass before a coordinated multi-regulator examination cycle
 **Posture going in:** Chained in production for 8 months; sub-100ms decision time, billions of decisions per day; the streaming-mode design points already operational
 **Outcome posture:** WISHLIST; surfaces §10.27-§10.31 streaming-mode family; the engagement is the canonical streaming-mode reference and confirms the spec sections were forward-thinking enough to anticipate institutions on this clock

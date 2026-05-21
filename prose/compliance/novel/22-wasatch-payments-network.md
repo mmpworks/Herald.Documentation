@@ -1,10 +1,10 @@
-# 22 — Crescent Payments Network
+# 22 — Wasatch Payments Network
 
-> A US payments network, ~$1.8T annual transaction volume, headquartered Salt Lake City. AI fraud-decisioning at sub-100ms decision time, billions of decisions per day. TesseraSeal in production for 8 months on the fraud-decisioning path. The team is on-site at the request of Crescent's Chief Risk Officer ahead of a coordinated examination cycle: OCC + Federal Reserve, nine issuing-bank state examiners, and an FTC inquiry on a recently-publicized chargeback dispute. The engagement is two days. The story is structurally different from any of the prior 11 — Crescent's clock runs faster than the spec's daily seal, and TesseraSeal's §10.27-§10.31 streaming-mode design points are exactly what the institution exercises in production.
+> A US payments network, ~$1.8T annual transaction volume, headquartered Salt Lake City. AI fraud-decisioning at sub-100ms decision time, billions of decisions per day. TesseraSeal in production for 8 months on the fraud-decisioning path. The team is on-site at the request of Wasatch's Chief Risk Officer ahead of a coordinated examination cycle: OCC + Federal Reserve, nine issuing-bank state examiners, and an FTC inquiry on a recently-publicized chargeback dispute. The engagement is two days. The story is structurally different from any of the prior 11 — Wasatch's clock runs faster than the spec's daily seal, and TesseraSeal's §10.27-§10.31 streaming-mode design points are exactly what the institution exercises in production.
 
 ## The team and the day
 
-The full eight travel: Dawn, Raj, Elena, Mike, Diana, Luis, Chen, Tom. Salt Lake City field-office is in the engagement-letter copy; the actual day-one work happens in Crescent's Operations Center (a hardened building in suburban West Valley City with biometric vestibules and a small museum-quality display of historic payment terminals at the lobby). The OCC + Fed examiner team will arrive Day 3; the team's job is the pre-engagement readiness pass plus the spec-section confirmation memo to Crescent's CRO before the formal examination opens.
+The full eight travel: Dawn, Raj, Elena, Mike, Diana, Luis, Chen, Tom. Salt Lake City field-office is in the engagement-letter copy; the actual day-one work happens in Wasatch's Operations Center (a hardened building in suburban West Valley City with biometric vestibules and a small museum-quality display of historic payment terminals at the lobby). The OCC + Fed examiner team will arrive Day 3; the team's job is the pre-engagement readiness pass plus the spec-section confirmation memo to Wasatch's CRO before the formal examination opens.
 
 ## The drive-in monologue
 
@@ -13,7 +13,7 @@ The full eight travel: Dawn, Raj, Elena, Mike, Diana, Luis, Chen, Tom. Salt Lake
                           Raj in the passenger seat with his coffee.
 ```
 
-**Dawn:** "Eleven prior engagements in the rear-view, in order. Northbridge was the high-water mark. Mercator was the bifurcation. Stelvio was the IT/OT split. Atrio was the multi-tenant proof. Helmstad was the biopharma maturity-bound. Pacific Crescent was the public-safety. Olmstead was the lawsuit-motivated. NetiVa was the nation-state. Sun-Won was the multi-jurisdiction. Salt Pond was the multi-location. Eberhardt × Lumière was the cross-vendor. And now Crescent Payments — same word in the name, different problem."
+**Dawn:** "Eleven prior engagements in the rear-view, in order. Northbridge was the high-water mark. Mercator was the bifurcation. Stelvio was the IT/OT split. Atrio was the multi-tenant proof. Helmstad was the biopharma maturity-bound. Pacific Crescent was the public-safety. Olmstead was the lawsuit-motivated. NetiVa was the nation-state. Sun-Won was the multi-jurisdiction. Salt Pond was the multi-location. Eberhardt × Lumière was the cross-vendor. And now Wasatch Payments — different problem."
 
 **Raj:** "Different problem how?"
 
@@ -21,11 +21,11 @@ The full eight travel: Dawn, Raj, Elena, Mike, Diana, Luis, Chen, Tom. Salt Lake
 
 **Raj:** "Ah. The clock."
 
-**Dawn:** "The clock. The CRO's letter said it as plainly as I've ever read: *the regulators want our 11 AM transaction's evidence to be integrity-bound by 11:00:01 AM the same day, not by 4 AM tomorrow*. The spec normates configurable cadence per §10.27 — Crescent runs `\"per_second\"`. Two-layer integrity from the moment of capture is exactly what §10.27 was designed to deliver."
+**Dawn:** "The clock. The CRO's letter said it as plainly as I've ever read: *the regulators want our 11 AM transaction's evidence to be integrity-bound by 11:00:01 AM the same day, not by 4 AM tomorrow*. The spec normates configurable cadence per §10.27 — Wasatch runs `\"per_second\"`. Two-layer integrity from the moment of capture is exactly what §10.27 was designed to deliver."
 
 **Raj:** "And the per-event MAC is real-time."
 
-**Dawn:** "Real-time at capture, yes. Layer one. Layer two completes one second later when the cadence-interval seal record signs the Merkle root over that second's events under the HSM key. Two-layer integrity from the moment of capture for institutions on Crescent's clock."
+**Dawn:** "Real-time at capture, yes. Layer one. Layer two completes one second later when the cadence-interval seal record signs the Merkle root over that second's events under the HSM key. Two-layer integrity from the moment of capture for institutions on Wasatch's clock."
 
 **Raj:** "What do we tell them?"
 
@@ -33,7 +33,7 @@ The full eight travel: Dawn, Raj, Elena, Mike, Diana, Luis, Chen, Tom. Salt Lake
 
 **Raj:** "It never is."
 
-**Dawn:** "It never is. But Crescent exercises the streaming-mode design points at scale, in production, under live regulator review. The question is whether every section holds under operational reality."
+**Dawn:** "It never is. But Wasatch exercises the streaming-mode design points at scale, in production, under live regulator review. The question is whether every section holds under operational reality."
 
 ## 7:45 AM — Lobby
 
@@ -57,13 +57,13 @@ A man in his late 50s, gray suit, half-rimmed reading glasses, steps forward and
 
 **Tom:** "We learn something every time."
 
-**John:** "What we'll learn here is whether Crescent's deployment exercises the streaming-mode design points cleanly across all five §10 sections."
+**John:** "What we'll learn here is whether Wasatch's deployment exercises the streaming-mode design points cleanly across all five §10 sections."
 
 **Dawn:** "It's structural. We're going to find that and document it."
 
 ## 9:00 AM — The fraud path walk-through
 
-Crescent's lead architect for fraud-decisioning — Anika Holzer, late 30s, sharp, ex-Google Pay — walks the team through the architecture. The fraud-decisioning system is a fan-out: every authorization request hits a routing layer that forwards to one of three model-serving regions (West Coast, Central, East Coast), each region runs an ensemble of three models (a baseline gradient-boosted-trees, a transformer-based sequence model, and a graph-neural-network for merchant-network analysis), and the ensemble's decision is returned within a 100ms budget.
+Wasatch's lead architect for fraud-decisioning — Anika Holzer, late 30s, sharp, ex-Google Pay — walks the team through the architecture. The fraud-decisioning system is a fan-out: every authorization request hits a routing layer that forwards to one of three model-serving regions (West Coast, Central, East Coast), each region runs an ensemble of three models (a baseline gradient-boosted-trees, a transformer-based sequence model, and a graph-neural-network for merchant-network analysis), and the ensemble's decision is returned within a 100ms budget.
 
 The chain instruments the routing layer and each of the three model serves at every region. A single transaction generates one routing chain entry and three model-call chain entries, all within the same `run_id`. With billions of transactions per day, the chain volume is approximately twelve billion entries per day, peak rate roughly 250,000 entries per second.
 
@@ -87,7 +87,7 @@ The chain instruments the routing layer and each of the three model serves at ev
 
 **Anika:** "Yes."
 
-**Dawn:** "Good. Let's walk the streaming-mode design points: §10.27 cadence, §10.28 rotation discipline, §10.29 verifier, §10.30 trusted-time, §10.31 subtree disclosure. Each one is in production at Crescent. The memo confirms the conformance for the OCC team."
+**Dawn:** "Good. Let's walk the streaming-mode design points: §10.27 cadence, §10.28 rotation discipline, §10.29 verifier, §10.30 trusted-time, §10.31 subtree disclosure. Each one is in production at Wasatch. The memo confirms the conformance for the OCC team."
 
 ## 10:30 AM — Per-event MAC sufficiency under FRE 902
 
@@ -122,15 +122,15 @@ DAILY SEAL: covers all entries for the tenant-day, signed Ed25519 in HSM
 
 **John:** "Which is exactly what every multi-record dispute would want."
 
-**Dawn:** "Yes. So for a single-transaction dispute response — the FTC's inquiry on the Provo-stadium dispute — the chain provides full per-event integrity at the moment of capture, and the seal completes the day-level cross-event integrity by tomorrow morning. That's defensible. But it's not what Crescent wants."
+**Dawn:** "Yes. So for a single-transaction dispute response — the FTC's inquiry on the Provo-stadium dispute — the chain provides full per-event integrity at the moment of capture, and the seal completes the day-level cross-event integrity by tomorrow morning. That's defensible. But it's not what Wasatch wants."
 
-**John:** "What does Crescent want?"
+**John:** "What does Wasatch want?"
 
 **Dawn:** "Two-layer integrity from the moment of capture. The institution operates in a real-time decisioning regime. Daily seal is a posture mismatch."
 
 **Anika:** "The §10.27 streaming cadence is what we run today."
 
-**Dawn:** "And §10.27 is in the spec for exactly Crescent's clock. Yes."
+**Dawn:** "And §10.27 is in the spec for exactly Wasatch's clock. Yes."
 
 ## 11:30 AM — The streaming-seal-cadence design conversation
 
@@ -144,7 +144,7 @@ The whiteboard fills with sketches.
 
 **Anika:** "Per-second is what we'd want. It puts our integrity-claim asymmetry at one second instead of twenty-four hours."
 
-**Dawn:** "Then let's confirm what §10.27 says: spec normates cadence as a configurable parameter from per-second through weekly, with daily as the default. The cadence is recorded in every seal record's `cadence` field, bound under the §4.3 `sign_payload` form. Crescent runs `\"per_second\"` and the verifier confirms continuity end-to-end. Test vector `020-streaming-seal-cadence-1s` is the byte-identical reference."
+**Dawn:** "Then let's confirm what §10.27 says: spec normates cadence as a configurable parameter from per-second through weekly, with daily as the default. The cadence is recorded in every seal record's `cadence` field, bound under the §4.3 `sign_payload` form. Wasatch runs `\"per_second\"` and the verifier confirms continuity end-to-end. Test vector `020-streaming-seal-cadence-1s` is the byte-identical reference."
 
 **Diana** (IAM, but she does threat-model analysis when she's not running access reviews): "What about the threat model? Streaming seal at one-second granularity exposes the seal-job process to compromise more frequently. The HSM partition would have to sign once per second instead of once per day. That's about 86,400 signing operations per day instead of 1."
 
@@ -152,13 +152,13 @@ The whiteboard fills with sketches.
 
 **Diana:** "And key rotation — the IKM rotation per §10.10 is designed for daily seal boundaries. Crossing a per-second seal boundary every second would be operationally awkward."
 
-**Dawn:** "Right. §10.28 is the streaming-mode rotation discipline — extends §10.10 boundary-crossing to cadence-interval boundaries at sub-daily cadence. Crescent's annual rotation passed under this section."
+**Dawn:** "Right. §10.28 is the streaming-mode rotation discipline — extends §10.10 boundary-crossing to cadence-interval boundaries at sub-daily cadence. Wasatch's annual rotation passed under this section."
 
 The whiteboard fills more.
 
 ## 12:30 PM — Lunch in the cafeteria
 
-The Crescent cafeteria has a curved skylight and Wasatch Range views. The team takes a corner booth. John joins.
+The Wasatch cafeteria has a curved skylight and Wasatch Range views. The team takes a corner booth. John joins.
 
 **Tom:** "The two confirmations so far — §10.27 configurable cadence, §10.28 streaming rotation discipline. What else does the day surface?"
 
@@ -166,15 +166,15 @@ The Crescent cafeteria has a curved skylight and Wasatch Range views. The team t
 
 **John** (mid-sandwich): "The OCC examiner specifically asked us last cycle whether we could provide a real-time view of the chain — a live-feed of integrity-bound decisions. We said no. That was on us. The chain spec has an admin-SPA visibility surface but it's explicitly NOT integrity-bound per §4 ('In-process observation of partially-formed entries is NOT a spec-conformant view'). The real ask is a wire-bound streaming view that the verifier produces incrementally."
 
-**Dawn:** "§10.29 is the streaming-mode verifier subprocedure. Each issuing-bank examiner runs the open-source verifier in streaming mode, consuming the live chain stream and producing incremental PASS/FAIL. The §10.12 exit-code contract extends to streaming-state codes (4/5/6). Crescent's OCC team will exercise it Wednesday."
+**Dawn:** "§10.29 is the streaming-mode verifier subprocedure. Each issuing-bank examiner runs the open-source verifier in streaming mode, consuming the live chain stream and producing incremental PASS/FAIL. The §10.12 exit-code contract extends to streaming-state codes (4/5/6). Wasatch's OCC team will exercise it Wednesday."
 
 **Chen:** "And §10.14 trusted-time integration is informative right now. For streaming-mode operation at sub-second granularity, the trusted-time integration becomes load-bearing — the regulator wants to know the institution's clock isn't drifting and producing chain entries with timestamps that don't match real wall-clock."
 
-**Dawn:** "§10.30 makes trusted-time integration normative at sub-daily cadence — institutions integrate a trusted-time source (NIST, USNO, GPS-disciplined, or RFC 3161 timestamp authority). Crescent runs GPS-disciplined PTP across all three regions. The `clock.drift_detected` operational event in §10.2 has fired three times in eight months — each triggered a brief re-sync."
+**Dawn:** "§10.30 makes trusted-time integration normative at sub-daily cadence — institutions integrate a trusted-time source (NIST, USNO, GPS-disciplined, or RFC 3161 timestamp authority). Wasatch runs GPS-disciplined PTP across all three regions. The `clock.drift_detected` operational event in §10.2 has fired three times in eight months — each triggered a brief re-sync."
 
-**John:** "What about the regulators? Each of the nine issuing-bank state examiners wants a per-issuer slice of the chain — only the transactions on their issued cards. Not the full Crescent stream."
+**John:** "What about the regulators? Each of the nine issuing-bank state examiners wants a per-issuer slice of the chain — only the transactions on their issued cards. Not the full Wasatch stream."
 
-**Dawn:** "§10.31 is the per-cohort subtree disclosure — the institution selects leaves matching a cohort filter and produces a Merkle audit path showing those leaves are part of the sealed root. The verifier's partial-disclosure mode validates the cohort-bounded subtree against the seal's signed root. Crescent's nine state examiners will each pull their issuing-bank subtree concurrently."
+**Dawn:** "§10.31 is the per-cohort subtree disclosure — the institution selects leaves matching a cohort filter and produces a Merkle audit path showing those leaves are part of the sealed root. The verifier's partial-disclosure mode validates the cohort-bounded subtree against the seal's signed root. Wasatch's nine state examiners will each pull their issuing-bank subtree concurrently."
 
 **John:** "All five sections become the spec-section confirmation memo for the OCC?"
 
@@ -238,11 +238,11 @@ Marcia in her office. Floor-to-ceiling windows facing the Wasatch Range. Sun low
 
 **Marcia:** "And the spec sections?"
 
-**Dawn:** "Five sections, all currently exercised. §10.27 configurable seal cadence (the headline — Crescent runs per-second). §10.28 streaming rotation discipline (last June's rotation). §10.29 streaming-mode verifier (OCC team will exercise Wednesday). §10.30 trusted-time integration normative (GPS-disciplined PTP). §10.31 per-cohort subtree disclosure (nine issuing-bank slices)."
+**Dawn:** "Five sections, all currently exercised. §10.27 configurable seal cadence (the headline — Wasatch runs per-second). §10.28 streaming rotation discipline (last June's rotation). §10.29 streaming-mode verifier (OCC team will exercise Wednesday). §10.30 trusted-time integration normative (GPS-disciplined PTP). §10.31 per-cohort subtree disclosure (nine issuing-bank slices)."
 
 **Marcia:** "And the spec covers all five?"
 
-**Dawn:** "All five are normative in the current spec. None breaks wire-format compatibility — additive within the `'v1'` wire-format identifier. Crescent's deployment is the canonical institutional reference. And one more for the Fed side of the room — §10.71 normates `audit.wire.fedwire_originated`, `audit.wire.fedwire_received`, `audit.ach.originated`, and `audit.ach.received` event kinds with cross-institution registry-discovery cross-anchor binding (`cross_anchor_state` ∈ {`bound`, `unbound`, `published-pending-counterpart`}) at typically-90-second post-settlement publication; Crescent operating between issuing banks and merchants on Fedwire and ACH rails is the natural canonical-adjacent reference for that section's cross-institution chain integrity."
+**Dawn:** "All five are normative in the current spec. None breaks wire-format compatibility — additive within the `'v1'` wire-format identifier. Wasatch's deployment is the canonical institutional reference. And one more for the Fed side of the room — §10.71 normates `audit.wire.fedwire_originated`, `audit.wire.fedwire_received`, `audit.ach.originated`, and `audit.ach.received` event kinds with cross-institution registry-discovery cross-anchor binding (`cross_anchor_state` ∈ {`bound`, `unbound`, `published-pending-counterpart`}) at typically-90-second post-settlement publication; Wasatch operating between issuing banks and merchants on Fedwire and ACH rails is the natural canonical-adjacent reference for that section's cross-institution chain integrity."
 
 **Marcia:** "And our message to the OCC on Wednesday?"
 
@@ -258,17 +258,17 @@ Marcia in her office. Floor-to-ceiling windows facing the Wasatch Range. Sun low
 
 The team gathers in the hotel restaurant. Tom has the spec-section confirmation memo notebook open.
 
-**Tom:** "Five sections. All exercised in production at Crescent."
+**Tom:** "Five sections. All exercised in production at Wasatch."
 
 **Dawn:** "Yes."
 
 **Raj:** "What's the OCC team going to say?"
 
-**Dawn:** "I think they'll cite Crescent's deployment as the canonical streaming-mode reference. §10.27 cadence at per-second is the headline. §10.29 streaming verifier is what they'll exercise themselves. §10.30 trusted-time integration is what gives Crescent's clock the regulator-grade integrity claim. §10.28 rotation discipline and §10.31 subtree disclosure handle the operational and per-cohort edges."
+**Dawn:** "I think they'll cite Wasatch's deployment as the canonical streaming-mode reference. §10.27 cadence at per-second is the headline. §10.29 streaming verifier is what they'll exercise themselves. §10.30 trusted-time integration is what gives Wasatch's clock the regulator-grade integrity claim. §10.28 rotation discipline and §10.31 subtree disclosure handle the operational and per-cohort edges."
 
 **Tom:** "Quote for the engagement debrief?"
 
-**Dawn:** "The spec was forward-thinking enough to anticipate institutions on Crescent's clock. §10.27's configurable cadence, §10.29's streaming-mode verifier, §10.30's normative trusted-time integration — these are the design points TesseraSeal carried into the field for institutions whose clocks don't match the calendar. Crescent operates them all in production."
+**Dawn:** "The spec was forward-thinking enough to anticipate institutions on Wasatch's clock. §10.27's configurable cadence, §10.29's streaming-mode verifier, §10.30's normative trusted-time integration — these are the design points TesseraSeal carried into the field for institutions whose clocks don't match the calendar. Wasatch operates them all in production."
 
 **Tom** (writing): "*From the moment of capture.* Good."
 
@@ -282,55 +282,55 @@ The §10.15 multi-region reconciliation walk goes cleanly. Three regions, one Me
 
 The spec-section confirmation memo finalizes by 4 PM.
 
-The team flies home. Wednesday morning the OCC + Federal Reserve + nine state examiners + FTC inquiry team begin work; Crescent's CRO has the memo, John's CAE team supports the examiners, and the engagement closes from the team's side.
+The team flies home. Wednesday morning the OCC + Federal Reserve + nine state examiners + FTC inquiry team begin work; Wasatch's CRO has the memo, John's CAE team supports the examiners, and the engagement closes from the team's side.
 
-## TesseraSeal forward-thinking design points Crescent exercises
+## TesseraSeal forward-thinking design points Wasatch exercises
 
-Crescent's deployment exercises five spec sections that TesseraSeal's design anticipated for real-time decisioning institutions. Each is articulated below with what Crescent operates and which spec section the institution is conformant against.
+Wasatch's deployment exercises five spec sections that TesseraSeal's design anticipated for real-time decisioning institutions. Each is articulated below with what Wasatch operates and which spec section the institution is conformant against.
 
 ### Section 1 — Configurable seal cadence (§10.27)
 
-**What Crescent operates.** 1-second seal cadence in production across all three regions. Per-second Merkle aggregation across ~250,000-leaf trees at peak; HSM signing on AWS CloudHSM `us-east-1` with co-signing replicas in `us-west-2` and `us-east-2`; ~86,400 Ed25519 signatures per day per region. Two-layer integrity (per-event MAC plus signed Merkle root) reaches every chain entry within one second of capture. The institution's CC8.1 names the cadence and the change-management procedure. Verifier confirms cadence-record continuity end-to-end.
+**What Wasatch operates.** 1-second seal cadence in production across all three regions. Per-second Merkle aggregation across ~250,000-leaf trees at peak; HSM signing on AWS CloudHSM `us-east-1` with co-signing replicas in `us-west-2` and `us-east-2`; ~86,400 Ed25519 signatures per day per region. Two-layer integrity (per-event MAC plus signed Merkle root) reaches every chain entry within one second of capture. The institution's CC8.1 names the cadence and the change-management procedure. Verifier confirms cadence-record continuity end-to-end.
 
 **Why TesseraSeal designed for this.** §10.27 normates cadence as a configurable parameter from per-second through weekly precisely so payments networks, real-time fraud-decisioning, and other sub-second-clock institutions are not asymmetric on the cadence axis. Daily-cadence institutions remain the default; streaming-mode institutions opt in.
 
 ### Section 2 — Streaming-mode IKM rotation discipline (§10.28)
 
-**What Crescent operates.** Annual IKM rotation per §10.10 (boundary-crossing rotation), with the streaming-mode extension at §10.28 governing cadence-interval boundaries. The rotation completed June 14, 2025 — at 03:14 UTC — across all three regions. Per §10.28 the cadence-interval crossing the rotation event was sealed under both prior and new key generations; the seal records covering that one-second interval listed `key_versions: [4, 5]`. The verifier dispatched per-entry `key_version` lookup at §7 step 7 across the rotation interval; both key generations remain valid for the chain entries they signed.
+**What Wasatch operates.** Annual IKM rotation per §10.10 (boundary-crossing rotation), with the streaming-mode extension at §10.28 governing cadence-interval boundaries. The rotation completed June 14, 2025 — at 03:14 UTC — across all three regions. Per §10.28 the cadence-interval crossing the rotation event was sealed under both prior and new key generations; the seal records covering that one-second interval listed `key_versions: [4, 5]`. The verifier dispatched per-entry `key_version` lookup at §7 step 7 across the rotation interval; both key generations remain valid for the chain entries they signed.
 
-**Why TesseraSeal designed for this.** §10.28 extends the §10.10 boundary-crossing discipline to cadence-interval boundaries at sub-daily cadence. Crescent's rotation was one second of two-key-version sealing; the verifier handles it as a normal multi-key-version interval.
+**Why TesseraSeal designed for this.** §10.28 extends the §10.10 boundary-crossing discipline to cadence-interval boundaries at sub-daily cadence. Wasatch's rotation was one second of two-key-version sealing; the verifier handles it as a normal multi-key-version interval.
 
 ### Section 3 — Streaming-mode verifier (§10.29)
 
-**What Crescent operates.** Each issuing-bank examiner runs the open-source verifier in streaming mode, consuming the live chain stream and producing incremental PASS/FAIL. The OCC team runs streaming-mode verification on the production stream concurrent with their on-site visit. Exit code 4 (streaming, all-pass-so-far) is observed throughout the audit period; no exit code 5 (anomaly-detected) events occurred.
+**What Wasatch operates.** Each issuing-bank examiner runs the open-source verifier in streaming mode, consuming the live chain stream and producing incremental PASS/FAIL. The OCC team runs streaming-mode verification on the production stream concurrent with their on-site visit. Exit code 4 (streaming, all-pass-so-far) is observed throughout the audit period; no exit code 5 (anomaly-detected) events occurred.
 
 **Why TesseraSeal designed for this.** §10.29 normates the streaming subprocedure of §7. Live-sample examination becomes tractable: regulators consume the same wire stream the institution produces, in real time, with byte-identical incremental verdicts.
 
 ### Section 4 — Trusted-time integration normative for streaming-mode (§10.30)
 
-**What Crescent operates.** Each region has a GPS-disciplined master clock with NIST-traceable network time fanned out via PTP (IEEE 1588) to all model-serving hosts. Median clock drift across the fleet is 18 microseconds; alerting threshold is 100 milliseconds; a `clock.drift_detected` event has fired three times in eight months — each triggered a brief (<2 minute) re-sync. The institution's CC8.1 names the trusted-time architecture.
+**What Wasatch operates.** Each region has a GPS-disciplined master clock with NIST-traceable network time fanned out via PTP (IEEE 1588) to all model-serving hosts. Median clock drift across the fleet is 18 microseconds; alerting threshold is 100 milliseconds; a `clock.drift_detected` event has fired three times in eight months — each triggered a brief (<2 minute) re-sync. The institution's CC8.1 names the trusted-time architecture.
 
 **Why TesseraSeal designed for this.** §10.30 makes trusted-time integration normative at sub-daily cadence because clock drift becomes load-bearing for the integrity-claim asymmetry argument. The `clock.drift_detected` operational event in §10.2 gives the streaming-mode verifier the per-entry temporal context it needs.
 
 ### Section 5 — Per-cohort subtree disclosure (§10.31)
 
-**What Crescent operates.** Each issuing-bank state examiner pulls a per-issuer subtree disclosure for their day's chain entries. The verifier's partial-disclosure mode validates the cohort-bounded subtree against the seal's signed root. Nine state examiners pull their nine subtrees concurrently during the audit week; each examiner sees only their bank's transactions but each examiner's subtree verifies under the same single signed Merkle root.
+**What Wasatch operates.** Each issuing-bank state examiner pulls a per-issuer subtree disclosure for their day's chain entries. The verifier's partial-disclosure mode validates the cohort-bounded subtree against the seal's signed root. Nine state examiners pull their nine subtrees concurrently during the audit week; each examiner sees only their bank's transactions but each examiner's subtree verifies under the same single signed Merkle root.
 
 **Why TesseraSeal designed for this.** §10.31 normates Merkle subtree extraction for cohort-bounded examination. Multi-tenant SaaS, payments networks, and any institution serving multiple downstream regulator-jurisdictions get per-cohort visibility without compromising single-Merkle-root integrity.
 
 ## Engagement debrief — Dawn's voice
 
-> "It never is. But Crescent's deployment is the most complete exercise of the spec's streaming-mode design points I've seen in eight months. Per-second cadence. Streaming-mode verifier under live regulator review. GPS-disciplined trusted-time integration with clock-drift events firing exactly when we'd expect them. Per-issuer subtree disclosure for the nine state examiners — same single signed Merkle root, nine independent partial-disclosure verifications, all PASS.
+> "It never is. But Wasatch's deployment is the most complete exercise of the spec's streaming-mode design points I've seen in eight months. Per-second cadence. Streaming-mode verifier under live regulator review. GPS-disciplined trusted-time integration with clock-drift events firing exactly when we'd expect them. Per-issuer subtree disclosure for the nine state examiners — same single signed Merkle root, nine independent partial-disclosure verifications, all PASS.
 >
 > "TesseraSeal's design anticipated payments-network operators years before this engagement. §10.27 through §10.31 are why we walked into a coordinated examination with OCC + Fed + nine state examiners + an FTC inquiry and watched every part of the integrity story hold under live observation. Marcia gets to send the OCC team home with sealed evidence at 1-second integrity-claim asymmetry; John's CAE team will be quoting §10.29's streaming-mode verifier exit codes for the next decade.
 >
-> "The next time we visit a real-time decisioning institution, this engagement is the canonical reference. Crescent ran it the way the spec normates."
+> "The next time we visit a real-time decisioning institution, this engagement is the canonical reference. Wasatch ran it the way the spec normates."
 
 ## Cross-references
 
 - **Spec impact**: §4.2 (cadence), §7 (streaming-mode subprocedure), §10.2 (operational events for clock drift), §10.28 (streaming rotation discipline), §10.12 (verifier exit codes 0-3 plus streaming codes 4-6 per §10.29), §10.30 (trusted-time normative for streaming-mode).
 - **Test-vector references**: vectors 020-023 referenced by the spec sections above.
 - **Stakeholder navigation**: §13 stakeholder for "real-time-decisioning institution" — a new candidate stakeholder for spec §13.
-- **Auditor stories**: this story's spec-section confirmation contrasts with Story 04 Atrio (multi-tenant, daily-cadence, full coverage) and Story 06 Pacific Crescent (utility, post-incident, daily-cadence). Crescent is the canonical streaming-mode reference institution.
+- **Auditor stories**: this story's spec-section confirmation contrasts with Story 04 Atrio (multi-tenant, daily-cadence, full coverage) and Story 06 Pacific Crescent (utility, post-incident, daily-cadence). Wasatch is the canonical streaming-mode reference institution.
 
-The spec-section confirmation memo and engagement debrief are filed under Crescent's compliance-track records, with the §10.27-§10.31 spec-section confirmations cited in the institution's CC8.1 control description.
+The spec-section confirmation memo and engagement debrief are filed under Wasatch's compliance-track records, with the §10.27-§10.31 spec-section confirmations cited in the institution's CC8.1 control description.

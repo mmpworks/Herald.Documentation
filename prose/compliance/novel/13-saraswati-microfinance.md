@@ -15,7 +15,7 @@ The engagement is at Saraswati's headquarters in the Bandra Kurla Complex, Mumba
                           Dawn's first time in India. Mike second. Chen first.
 ```
 
-**Dawn:** "Twelve prior engagements. Crescent was the most recent — real-time payments, streaming cadence under §10.27-§10.31. Today is the opposite end of the spectrum: edge-AI, federated learning, offline-first under §10.32-§10.38."
+**Dawn:** "Twelve prior engagements. Hill Country was the most recent — real-time payments, streaming cadence under §10.27-§10.31. Today is the opposite end of the spectrum: edge-AI, federated learning, offline-first under §10.32-§10.38."
 
 **Mike:** "And the bandwidth picture is — what."
 
@@ -486,6 +486,6 @@ Saraswati's deployment exercises seven spec sections that TesseraSeal's design a
 - **Spec sections exercised**: §10.32 (per-device derivation), §10.33 (model-update events), §10.34 (training-phase integrity), §10.35 (edge-attestation), §10.36 (late-arrival seal), §10.37 (hierarchical Merkle), §10.38 (consent capture for DPDP Act).
 - **Test-vector references**: vectors 024-033 referenced by the spec sections above; training-phase vectors land alongside §10.34.
 - **Stakeholder navigation**: §13 stakeholder for "edge-deployed federated-learning institution" — a new candidate stakeholder.
-- **Auditor stories**: this story's spec-section confirmation contrasts with Story 12 Crescent (real-time central, streaming-mode confirmation) and Story 11 Eberhardt × Lumière (cross-vendor, both fully chained). The geometry of edge-deployed chain capture is structurally different from any of the prior 12 engagements; Saraswati is the canonical reference for edge.
+- **Auditor stories**: this story's spec-section confirmation contrasts with Story 12 Hill Country (real-time central, streaming-mode confirmation) and Story 11 Eberhardt × Lumière (cross-vendor, both fully chained). The geometry of edge-deployed chain capture is structurally different from any of the prior 12 engagements; Saraswati is the canonical reference for edge.
 
 The spec-section confirmation memo and engagement debrief are filed under Saraswati's compliance-track records, with the §10.32-§10.38 spec-section confirmations cited in the institution's CC8.1 control description.

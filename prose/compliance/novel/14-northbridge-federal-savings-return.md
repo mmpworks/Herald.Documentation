@@ -13,7 +13,7 @@ The full eight travel: Dawn, Raj, Elena, Mike, Diana, Luis, Chen, Tom. Northbrid
                           Dawn driving. Raj in the passenger seat with his coffee.
 ```
 
-**Dawn:** "Twelve prior engagements in the rear-view, in order. Northbridge was the high-water mark — eighteen months ago. Then Mercator, Stelvio, Atrio, Helmstad, Pacific Crescent, Olmstead, NetiVa, Sun-Won, Salt Pond, Eberhardt × Lumière, Crescent, Saraswati. Twelve. And now Northbridge again. The bookend."
+**Dawn:** "Twelve prior engagements in the rear-view, in order. Northbridge was the high-water mark — eighteen months ago. Then Mercator, Stelvio, Atrio, Helmstad, Pacific Crescent, Olmstead, NetiVa, Sun-Won, Salt Pond, Eberhardt × Lumière, Hill Country, Saraswati. Twelve. And now Northbridge again. The bookend."
 
 **Raj:** "You're back to find one clean thing."
 
@@ -480,7 +480,7 @@ The close-out closes. The team packs up. The engagement letter ships at 5:42 PM.
                           Going to BWI.
 ```
 
-**Dawn:** "Twelve prior engagements. Crescent was streaming-mode. Saraswati was edge-AI federated. Northbridge — eighteen months ago — was the high-water mark, the bookend. I came back to find the M&A gap closed. I found that. I found four clean things, not one."
+**Dawn:** "Twelve prior engagements. Hill Country was streaming-mode. Saraswati was edge-AI federated. Northbridge — eighteen months ago — was the high-water mark, the bookend. I came back to find the M&A gap closed. I found that. I found four clean things, not one."
 
 **Raj:** "And."
 
