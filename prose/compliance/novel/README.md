@@ -1,6 +1,6 @@
 # Auditor stories
 
-A growing set of day-in-the-life audit narratives. Same team, same playbook, different industries, different chain-of-custody postures, different countries. Read in any order. Read all eleven if you want the contrast.
+A growing set of day-in-the-life audit narratives. Same team, same playbook, different industries, different chain-of-custody postures, different countries. Read in any order. Read all twenty-two if you want the contrast.
 
 ## The team
 
@@ -27,7 +27,7 @@ That week is the floor. Every story in this folder is calibrated against it.
 
 When the stories say **TesseraSeal**, they mean the product brand for a deployed Herald-ecosystem chain — Herald.Py instrumenting the capture surface, Herald Enterprise operating the ledger and seal job, Herald.Compliance presenting the regulator-facing surface where examiners pull verifier output and seal records. The wire form is FFIEC chain-of-custody v1.0a. Seals are Ed25519 over an HSM-held key. Verification is the `herald-verify` CLI documented in the spec §10.12 exit-code contract: 0 PASS, 1 procedure-could-not-begin, 2 procedure-began-and-failed, 3 chain-anomaly.
 
-Eleven distinct deployment contexts show up across these stories.
+Twenty-two distinct deployment contexts show up across these stories.
 
 ## The stories — domestic engagements
 
@@ -93,6 +93,9 @@ A German automotive-electronics Mittelstand company (Eberhardt Werkstoffe, Stutt
 | 09 | Retail / K-beauty | Korea + Taiwan | Full multi-jurisdiction |
 | 10 | Consumer products / toys | US + China + LA | Full multi-location |
 | 11 | Automotive electronics + AI consultancy | Germany + France | Full cross-vendor |
+| 12 | Multi-state federal credit union | US | Marketing-AI vendor swap; NCUA AIRES + CFPB §1033 |
+| 20 | Texas community bank | US | Partial (AI-decisioning); OCC + Texas DoB; recusal close-out |
+| 21 | Texas regional acquirer × community-bank merger | US | Cross-cloud chain consolidation (AWS → Azure); post-merger integration |
 
 ## Reading these
 
@@ -110,7 +113,7 @@ The stories are not training material in the regulator-pack sense. The audit-pro
 
 ## Recurring threads
 
-Across the eleven stories, certain through-lines repeat:
+Across the twenty-two stories, certain through-lines repeat:
 
 - **Dawn's "It never is."** Calibrated to context at every kickoff. By NetiVa it has become "It never is. But under the INCD threat model, even when it is — you stress it harder." By Eberhardt × Lumière it lands as "It never is. Today the question is whether the joint chain holds at the handoff."
 - **The drive-in monologue** (or elevator monologue, or video-bridge monologue, depending on geography). Dawn and Raj — or Dawn and Tom, or Dawn alone — review prior engagements at the start of each new client. The thread accumulates. By Story 11, Dawn names ten prior contexts and slots Eberhardt × Lumière as a more rigorous version of Helmstad's CRO PGP-signed-PDF approach.
@@ -119,3 +122,6 @@ Across the eleven stories, certain through-lines repeat:
 - **The reconciliation test.** Always 5-10 records traced end-to-end, always the load-bearing scene. The trace shape varies by engagement — single-jurisdiction (Northbridge), bifurcated (Mercator), three-tier (Stelvio), multi-tenant batch (Atrio's 1,410-run), cross-jurisdiction (Sun-Won), cross-location with bonded-carrier handoff (Salt Pond), cross-vendor anchor verification (Eberhardt × Lumière), three-day rolling reconciliation (NetiVa).
 - **Cross-vendor anchors.** First introduced as Helmstad's PGP-signed CRO PDF hashed into the chain. Refined into Salt Pond's Bureau Veritas CPSIA-cert anchor. Climaxes at Eberhardt × Lumière as bidirectional hash-equality between two independent chains. The pattern matters more each engagement.
 - **Time-zone management.** Sets in at NetiVa (US ↔ IL 7-8 hours), continues at Sun-Won (KST/CST 1 hour apart from each other, 13-14 hours from US), Salt Pond (US ET ↔ PT ↔ CST 12 hours), and Eberhardt × Lumière (CET, no offset between cities, but the team is up before sunrise for the early-morning kickoff). Tom's moderation skill becomes a load-bearing engagement function across these.
+- **The engagement-file discipline.** First named at Hill Country (Story 12): Dawn files a forward-looking note — *§10.40 anchor reads as routine on AWS-only; what happens when the substrate moves?* — and lets it sit. The note matures through the working-group sub-track across three review cycles; the substrate-agnostic clarifier ships in a Herald release nine months before the engagement that exercises it; Brazos × Mission Plaza (Story 21) answers the note in production three years and three weeks after it was written. The discipline is the long-shape: the question matures, the spec catches up, the engagement exercises the answer. Sonya carries the same discipline forward with her own §10.21 vendor-opaque-render note in her jacket pocket.
+- **The recusal protocol and the seat change.** Across Stories 14–20, the firm's third-party-vendor recusal frame around Dawn and Steve deepens engagement by engagement — logged twenty-minute video appearances, calendared §10.21 composition questions, final-form GC entries. Story 20 (Mission Plaza) is the bookend: the third-party-vendor frame closes at engagement close-out; the spousal-disclosure paragraph activates Sunday at 12:01 AM Eastern after the wedding; Raj takes the Lead seat; Dawn moves to MMPWorks as lead TesseraSeal liaison. Story 21 (Brazos × Mission Plaza) opens under the spousal-disclosure paragraph with Dawn vendor-side and Raj in the Lead seat — same work, different seats, continuous chain.
+- **Cross-cloud as routine.** Story 21's headline operation — Mission Plaza's full AWS-resident pre-close chain consolidated into Brazos's Azure-resident chain at the close boundary — completes byte-equality reconciliation across two clouds, two HSM substrates, two charters, and 4.89 million pre-close entries in five minutes forty-eight seconds. The team treats it as just another anchor type; the verifier dispatches against the §10.40 substrate-agnostic path; the room reads the team's calm familiarity as a form of evidence. The chain doesn't care which cloud the artifacts live on. The substrate-trust boundary is just another anchor.

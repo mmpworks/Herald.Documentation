@@ -363,7 +363,7 @@ The cafeteria at the operations center is one floor below the engagement room. R
 
 **Reyna:** "And the wedding."
 
-**Dawn:** "Small ceremony. Saturday at four o'clock. A garden on the north side of Austin. The team is invited in personal capacities. Tom's giving the toast. Kayla and Hassan are bringing the baby. My sister is coming up from Phoenix. Steve's mother is flying in from Vermont; his brother and his brother's family are coming from Maine. About forty-five people altogether. No vendor-side; no firm-side; just people."
+**Dawn:** "Small ceremony. Saturday at four o'clock at our church on the north side of Austin — Zion Lutheran. Steve's younger brother Jeff is our pastor; he's officiating. The team is invited in personal capacities. Tom's giving the toast. Kayla and Hassan are bringing the baby. My sister is coming up from Phoenix. Steve's father is flying in from Vermont; his older brother and his family are coming from Maine. About forty-five people altogether. No vendor-side; no firm-side; just people."
 
 **Reyna:** "I'd like to send a card."
 
@@ -513,7 +513,7 @@ The team takes a long table at the Westin Riverwalk restaurant. The Riverwalk is
 
 **Sonya:** "And the wedding?"
 
-**Dawn:** "Garden. Forty-five people. Tom is giving the toast. Kayla and Hassan are bringing the baby — she's eight months old now, she can sit up unsupported. Hassan is going to hold her in the back row. Kayla insisted on being the one to walk me out. My sister flies in Friday from Phoenix. Steve's mother flies in from Vermont. His brother and his brother's family from Maine. — It's small. I picked small for a reason."
+**Dawn:** "Zion Lutheran. Forty-five people. Tom is giving the toast. Kayla and Hassan are bringing the baby — she's eight months old now, she can sit up unsupported. Hassan is going to hold her in the back pew. Kayla insisted on being the one to walk me out. My sister flies in Friday from Phoenix. Steve's father flies in from Vermont. His older brother Daniel and Daniel's family from Maine. Steve's younger brother Jeff is officiating; he's our pastor. — It's small. I picked small for a reason."
 
 **Elena:** "Tom's toast?"
 
@@ -1008,7 +1008,7 @@ After half an hour, she calls Steve.
 
 **Dawn:** "I'm doing. — The team's at the hotel. I'm at the Riverwalk. I have the pencil and an envelope from Mission Plaza's GC that I haven't opened yet. — Tomorrow morning flight to Chicago; I'll be in Austin Friday around noon."
 
-**Steve:** "Friday at noon. The rehearsal is at five at the garden, the dinner is at seven at the Italian place on West Sixth. — I love you."
+**Steve:** "Friday at noon. The rehearsal is at five at Zion, the dinner is at seven at the Italian place on West Sixth. — I love you."
 
 **Dawn:** "I love you too. — Friday."
 
@@ -1046,13 +1046,13 @@ The team drinks again.
 
 The team stops drinking and looks at Dawn. Dawn smiles into her wine.
 
-**Tom:** "I'm not toasting Dawn here. — The Dawn toast is Saturday at six-thirty at the garden in Austin. The Dawn toast is three sentences. The Dawn toast is the toast I've been writing for two weeks. — Tonight we toast the engagement."
+**Tom:** "I'm not toasting Dawn here. — The Dawn toast is Saturday at six-thirty at the Zion parish hall in Austin. The Dawn toast is three sentences. The Dawn toast is the toast I've been writing for two weeks. — Tonight we toast the engagement."
 
 **Mike:** "Tonight we toast the engagement."
 
 **Dawn:** "Thank you, Tom. — And Sonya, thank you. — Tonight we toast the engagement."
 
-The team drinks a third time. The food arrives. The conversation moves to the flight schedule, the weather forecast for Saturday (clear, low 70s, light breeze), the rental-car logistics from the Austin airport, who's giving Kayla and Hassan a ride from the hotel to the garden. The conversation does not move to Dawn's seat-change or the recusal protocol or the spec-section discipline. The work is the work; tonight is dinner.
+The team drinks a third time. The food arrives. The conversation moves to the flight schedule, the weather forecast for Saturday (clear, low 70s, light breeze), the rental-car logistics from the Austin airport, who's giving Kayla and Hassan a ride from the hotel to the church. The conversation does not move to Dawn's seat-change or the recusal protocol or the spec-section discipline. The work is the work; tonight is dinner.
 
 At 9:45 PM Dawn excuses herself for the night. The team stays for another drink. Tom orders a Macallan 18 and sips it slowly while the team's conversation moves to the weekend and then trails off.
 
@@ -1060,23 +1060,25 @@ Tom is the last to leave. He pays the bill. He walks to the elevator. He is thin
 
 ## Friday, 5:00 PM CDT — The rehearsal
 
-The garden is on the north side of Austin — a place called Travis Gardens that hosts about thirty weddings a year and has a private grove of post oaks at the back of the property under which most of the ceremonies take place. The grove is bounded by a low stone wall; a flagstone aisle leads from the wall to a small wooden arch at the front; chairs are set in two banks of seven rows each for forty-five people.
+Zion Lutheran Church sits on a quiet street on the north side of Austin — a brick-and-limestone sanctuary with a steep slate roof, a small bell tower, and a parish hall attached at the back. The congregation is LCMS — Lutheran Church—Missouri Synod, confessional, traditional liturgy on Sunday morning, a midweek service in Advent and Lent. Steve and Dawn have been members for the better part of three years. Steve's younger brother **Pastor Jeff Muchow** — four years younger than Steve, mid-50s, the congregation's pastor since the previous rector retired six years ago — will officiate.
 
-Dawn arrives at 4:45 in a sweater and jeans, with Kayla and Hassan and the baby in a carrier on Hassan's chest. Steve is already there with his brother Daniel (mid-50s, builds wooden boats in Maine), Daniel's wife Vivian (a pediatric nurse practitioner), and their two adult children. Steve's mother Ellen (early 80s, sharp, took the flight from Burlington alone) is seated on the front row near the arch with a notebook open.
+Dawn arrives at 4:45 in a sweater and jeans, with Kayla and Hassan and the baby in a carrier on Hassan's chest. Steve is already there with his older brother Daniel (late-50s, builds wooden boats in Maine), Daniel's wife Vivian (a pediatric nurse practitioner), and their two adult children. Steve's father — **Admiral Don Muchow (Ret.)**, mid-80s, a former two-star in the US Navy who served as the Navy's Chief of Chaplains in the LCMS rotation and now sits as president of the LCMS Board of Directors, a man who has commanded ships and counseled sailors in roughly equal measure — is seated alone in the front pew with his hands folded. Sixteen months ago he and his sons buried Monie in Austin; the front pew tonight holds one where two would have held. Nobody at the rehearsal speaks of it. Jeff is at the chancel rail in a black clerical shirt and a Geneva tab collar, with the parish-office binder open to the marriage liturgy on the lectern.
 
-The rehearsal is brief. The officiant — a friend of Dawn's from law school named Helena Brubaker-Castile, who became a judge fifteen years ago — walks them through the ceremony order: processional, welcome, vows, exchange of rings, declaration, recessional. Dawn and Steve walk through their entrances once each; Kayla and Hassan walk through theirs; the music cue (a string trio of Helena's daughter's friends from the Butler School of Music) is set; the readings are confirmed.
+The rehearsal is brief. Jeff walks them through the order — processional, invocation, brief Scripture reading, declaration of intent, vows, exchange of rings, pronouncement, benediction, recessional. Standard LCMS form; nothing decorative. Dawn and Steve walk through their entrances once each; Kayla and Hassan walk through theirs; the music cue (a string trio of musicians from the Butler School of Music — Bach for the processional, a chorale-prelude arrangement for the recessional) is confirmed; the readings are confirmed. Dawn's longtime friend Helena Brubaker-Castile, who became a judge fifteen years ago and flew in from Phoenix with Petra, slips into the back pew halfway through the run-through and waves quietly.
 
-Helena turns to the wedding party at the end of the run-through.
+Jeff turns to the wedding party at the end of the run-through.
 
-**Helena:** "Toast order at the dinner. — Tom Beaumont first; Daniel second; Steve's mother third; the couple closes. — Tom, you have the first slot at the dinner. — Couples, anything to add?"
+**Jeff:** "Toast order at the dinner. — Tom Beaumont first; Daniel second; Dad third; the couple closes. — Tom, you have the first slot at the dinner. — Couples, anything to add?"
 
-**Steve:** "I'd like to thank Helena for officiating."
+**Steve:** "I'd like to thank Jeff for making the trip down from the parsonage to the parish hall to officiate."
+
+Jeff almost smiles. The trip is fifty yards.
 
 **Dawn:** "I'd like to thank everyone for coming."
 
-**Helena:** "Save that for tomorrow. — Rehearsal closes. — Dinner at seven at the Italian place. — Dawn, Steve, you're free until six-thirty."
+**Jeff:** "Save that for tomorrow. — Rehearsal closes. — Dinner at seven at the Italian place. — Dawn, Steve, you're free until six-thirty."
 
-The team filters out. Tom is the last to leave. As he passes Dawn at the back of the grove, she catches his elbow.
+The team filters out. Tom is the last to leave. As he passes Dawn at the back of the sanctuary, she catches his elbow.
 
 **Dawn:** "Tom. — The third sentence."
 
@@ -1088,7 +1090,7 @@ She lets him go.
 
 ## Friday, 7:00 PM CDT — The rehearsal dinner
 
-The Italian place on West Sixth is a small family-run restaurant that has been at the same location for thirty-two years. The owner, a man named Vincenzo Aragona-Belluno, has put a private room at the back at Dawn's request. The team is there — Tom, Mike, Sonya, Elena, Diana, Luis, Chen, Raj — plus Steve's family (Ellen, Daniel, Vivian, their two children), Dawn's sister Petra (in from Phoenix; she runs a private veterinary practice), Kayla and Hassan and the baby (asleep in the carrier), Helena and her husband, and a handful of MMPWorks colleagues Steve has flown in for the weekend (Kevin from the devil's-advocate review-pass; one of MMPWorks's program managers; the firm's GC counterpart on the vendor side; about five others). Reyna from Mission Plaza could not make the rehearsal but will be at the wedding. About twenty-five people at the rehearsal dinner; about forty-five at the wedding.
+The Italian place on West Sixth is a small family-run restaurant that has been at the same location for thirty-two years. The owner, a man named Vincenzo Aragona-Belluno, has put a private room at the back at Dawn's request. The team is there — Tom, Mike, Sonya, Elena, Diana, Luis, Chen, Raj — plus Steve's family (Admiral Muchow at the head of the family side, Daniel, Vivian, their two children, and Jeff — out of his clerical shirt for the evening), Dawn's sister Petra (in from Phoenix; she runs a private veterinary practice), Kayla and Hassan and the baby (asleep in the carrier), Helena and her husband, and a handful of MMPWorks colleagues Steve has flown in for the weekend (Kevin from the devil's-advocate review-pass; one of MMPWorks's program managers; the firm's GC counterpart on the vendor side; about five others). Reyna from Mission Plaza could not make the rehearsal but will be at the wedding. About twenty-five people at the rehearsal dinner; about forty-five at the wedding.
 
 Vincenzo serves family-style: arancini, grilled artichokes, three pastas, a roasted branzino, a porchetta, sides of broccolini and white beans. The wine is from a small Tuscan producer Vincenzo flew over himself last spring.
 
@@ -1100,33 +1102,33 @@ Tom stands. He is wearing a navy suit and has a single index card in his right h
 
 **Tom:** "Dawn, Steve, family, friends, team. — I have been working on these three sentences for fourteen days. I will not improve them now. So I will read them as written.
 
-"*The first time Dawn walked into Northbridge Federal Savings on a Monday morning three years ago, she was looking for one clean thing. She found it; and over the next three years she found nineteen more, in nine countries on three continents, and learned in the process how to hold the work and the people and herself with the same discipline she brought to a chain of custody. And the part neither Steve nor I has said out loud in three years — though both of us have known it from the second engagement onward — is that the cleanest thing Dawn ever found in any of those rooms was the person sitting across from her in the eighteenth-month return, in the same building where she had walked in three years before, who turned out to be the principal designer of the work she had been citing all along, and who turned out to be the person who would walk her into a garden tomorrow and stand under a wooden arch with her and ask her to make a vow that the chain of custody she has been keeping all these years was, in the end, a chain of custody about how to love a serious person seriously.*
+"*The first time Dawn walked into Northbridge Federal Savings on a Monday morning three years ago, she was looking for one clean thing. She found it; and over the next three years she found nineteen more, in nine countries on three continents, and learned in the process how to hold the work and the people and herself with the same discipline she brought to a chain of custody. And the part neither Steve nor I has said out loud in three years — though both of us have known it from the second engagement onward — is that the cleanest thing Dawn ever found in any of those rooms was the person sitting across from her in the eighteenth-month return, in the same building where she had walked in three years before, who turned out to be the principal designer of the work she had been citing all along, and who turned out to be the person who would walk her into the sanctuary at Zion Lutheran tomorrow and stand before the altar with her and his brother Jeff and ask her to make a vow that the chain of custody she has been keeping all these years was, in the end, a chain of custody about how to love a serious person seriously.*
 
 "Tomorrow at four o'clock — Dawn and Steve. Cheers."
 
-The table is quiet for a beat. Then Ellen — Steve's mother — stands and lifts her glass without a word and the rest of the table follows.
+The table is quiet for a beat. Then Admiral Muchow stands and lifts his glass without a word and the rest of the table follows.
 
 The toast lands. Dawn does not cry — she would not have, here — but she looks at Tom for a long moment and does not say anything, and Tom looks back at her, and the silence carries the third sentence forward into the room without anyone having to say it twice.
 
-Daniel goes next. He talks about Steve as a boy on a beach in Maine. Ellen goes after Daniel; she talks about reading the spec working-group page two years ago and noticing for the first time that her son's name was on six normative sections and seven additional sub-sections, and how she had thought *I don't quite know what these mean but I know they're his*, and how she had also noticed Dawn's name in the auditor-stories companion documentation and had thought *that's the person*. Dawn closes the toasts with a single sentence: *I am glad to be here with all of you, and tomorrow at four I will be glad in a different way that I have been waiting most of my life to be glad in*, and that is the whole toast.
+Daniel goes next. He talks about Steve as a boy on a beach in Maine. Don goes after Daniel; he talks about reading the spec working-group page two years ago and noticing for the first time that his son's name was on six normative sections and seven additional sub-sections, and how he had thought *I do not need to follow the technical details to know they are his work*, and how he had also noticed Dawn's name in the auditor-stories companion documentation and had thought *that is the person*. He closes by saying that Monie read the same page beside him the week before she went into the hospital the last time, and that she had said the same thing about Dawn, and that he is glad to be the one to say it out loud tonight. He does not say anything more. Dawn closes the toasts with a single sentence: *I am glad to be here with all of you, and tomorrow at four I will be glad in a different way that I have been waiting most of my life to be glad in*, and that is the whole toast.
 
 The rehearsal dinner ends at 10:30. Dawn walks Steve back to the hotel. The team scatters back to their rooms. Tom returns to his with the index card still in his right hand. He sets it on the nightstand.
 
 ## Saturday, 4:00 PM CDT — The wedding
 
-The day is clear; the November light is angled and warm; the post-oak grove at Travis Gardens has a low wind moving through it and the leaves are still on the trees because Central Texas Novembers are mild. The string trio plays a Bach piece during the gathering; the chairs fill. Reyna and Hollis are in the third row with their spouses. Maya and Easton sit together near the back. Brigitte is on the aisle with her husband. Dolores Aguirre-Marín sits with Petra Calderón (a friend of Petra's; the GC bench overlaps in San Antonio in ways Dawn had not expected). Kayla and Hassan and the baby sit on the aisle in the second row; the baby is awake; Hassan has a small toy that does not make noise. Calliope from Insider sent a card; she could not travel from Toronto on short notice. Stavroula from Argent Vector — whom Dawn had never met in person, but had corresponded with three times since the Argent Vector engagement — sent a hand-written note that Dawn keeps in a folder at home.
+The day is clear; the November light through the Zion Lutheran sanctuary's south windows is angled and warm; the trees outside are still in leaf because Central Texas Novembers are mild. The string trio plays a Bach piece during the gathering; the pews fill. Reyna and Hollis are in the third row with their spouses. Maya and Easton sit together near the back. Brigitte is on the aisle with her husband. Dolores Aguirre-Marín sits with Petra Calderón (a friend of Petra's; the GC bench overlaps in San Antonio in ways Dawn had not expected). Kayla and Hassan and the baby sit on the aisle in the second row; the baby is awake; Hassan has a small toy that does not make noise. Calliope from Insider sent a card; she could not travel from Toronto on short notice. Stavroula from Argent Vector — whom Dawn had never met in person, but had corresponded with three times since the Argent Vector engagement — sent a hand-written note that Dawn keeps in a folder at home.
 
-Steve waits under the arch with Daniel as his witness. He is wearing a dark gray suit and a tie that Dawn picked. Ellen sits in the front row with her notebook closed.
+Steve waits at the chancel rail with Daniel as his witness. He is wearing a dark gray suit and a tie that Dawn picked. Admiral Muchow sits in the front pew alone, in a navy suit with no rank insignia, hands folded in his lap, the bearing of a man who has been at attention in his life enough times to know when not to be. The pew beside him is left open; a single white rose lies across the cushion where Monie would have sat. Nobody in the sanctuary remarks on it. Five minutes before the trio starts the processional, Steve crosses to the front pew and exchanges three quiet sentences with his father; his father's hand rests briefly on his shoulder; Steve returns to the chancel rail. Neither of them speaks of what was said. Jeff is at the altar in a black cassock and white surplice with a green stole, the marriage liturgy open in front of him, his hands resting on the leather binding.
 
-The trio plays the processional. Petra walks Dawn down the flagstone aisle to the arch.
+The trio plays the processional. Petra walks Dawn down the center aisle to the chancel.
 
-Helena conducts the ceremony. The vows are exchanged. Dawn reads from a single index card in her left hand; Steve reads from a folded sheet that he holds against the small wooden table in front of the arch. The exchange of rings happens at 4:22. Helena pronounces them married at 4:24.
+Jeff conducts the ceremony in the LCMS form they walked the night before. He opens with a single sentence before the invocation proper — that they gather today in joy and in the company of those who taught them to love — then continues without pause into the invocation, a short Scripture from Ephesians 5 that he reads in the same register he uses for his Sunday sermon, declaration of intent, vows. Dawn reads from a single index card in her left hand; Steve reads from a folded sheet that he holds open against the altar rail. At the words *until death parts us*, Jeff's voice does not change pitch — he is officiating his older brother's marriage and he has rehearsed the brotherly weight out of his delivery on purpose — but Steve's eyes meet his for one beat, and the two brothers acknowledge each other across the chancel without either of them moving. The exchange of rings happens at 4:22. Jeff pronounces them married at 4:24 and gives the benediction in the same calm baritone.
 
-The recessional is the same Bach piece, slightly faster. The reception is at the garden's covered pavilion — sixty feet from the grove, lit by string lights as the late afternoon turns into evening.
+The recessional is the chorale-prelude arrangement, slightly faster. The reception is in the parish hall attached at the back of the sanctuary — sixty feet through a covered passageway, set up the night before by the altar guild, lit by string lights as the late afternoon turns into evening.
 
-Tom's toast at the reception is the same toast he gave at the rehearsal dinner. Daniel's toast is a brisker version of his rehearsal-dinner toast. Ellen's toast is one sentence: *Welcome to the family, Dawn.* Petra's toast is two sentences. Helena's closing remarks are gracious and brief.
+Tom's toast at the reception is the same toast he gave at the rehearsal dinner. Daniel's toast is a brisker version of his rehearsal-dinner toast. Admiral Muchow's toast is one sentence: *Welcome to the family, Dawn.* Petra's toast is two sentences. Jeff says nothing at the reception — he had his words at the ceremony — and stands at the back of the hall with a plate of cake and a coffee.
 
-Kayla brings the baby up to Dawn at 5:30 and Dawn holds her for ten minutes; the baby falls asleep against her shoulder. Sonya takes a picture from across the pavilion that nobody else sees being taken; she sends it to Dawn the next morning without comment.
+Kayla brings the baby up to Dawn at 5:30 and Dawn holds her for ten minutes; the baby falls asleep against her shoulder. Sonya takes a picture from across the hall that nobody else sees being taken; she sends it to Dawn the next morning without comment.
 
 At 7:00 the team is at the bar and the bride and groom are at the cake table. Reyna catches Dawn between rounds.
 
@@ -1138,13 +1140,13 @@ At 7:00 the team is at the bar and the bride and groom are at the cake table. Re
 
 **Dawn:** "March."
 
-The reception ends at 9:00. The wedding party leaves last; Tom is at the door with Helena, the two of them lingering. Tom hands Dawn the index card from his pocket without saying anything; Dawn takes it; Tom nods; Helena hugs Dawn; Steve shakes Tom's hand for a long moment.
+The reception ends at 9:00. The wedding party leaves last; Tom is at the door with Helena, the two of them lingering. Tom hands Dawn the index card from his pocket without saying anything; Dawn takes it; Tom nods; Helena hugs Dawn; Steve shakes Tom's hand for a long moment. Jeff is at the door of the parish hall to say goodnight to the guests; he embraces Dawn briefly and shakes Steve's hand and tells them he'll see them at the 10:30 service in the morning.
 
-Dawn and Steve walk out of the pavilion into the parking lot under string lights. Steve carries Dawn's bag.
+Dawn and Steve walk out of the parish hall into the parking lot under string lights. Steve carries Dawn's bag.
 
 The third sentence Tom gave at the rehearsal dinner — the chain of custody she had been keeping all these years — sits inside Dawn the way a good piece of work sits, which is to say: she will carry it forward but she will not name it again to anyone. She knows what Tom meant. Steve knows what Tom meant. The team knows. The team will go back to work next week.
 
-Sunday morning at 12:01 AM Eastern, the spousal-disclosure paragraph of the firm's conflict-of-interest protocol activates. Dawn and Steve are at the hotel; the engagement letter for the next Mission Plaza pass is on Raj's desk at the firm's Chicago office, waiting for Monday morning's first edit. The work is the work. The seat has changed.
+Sunday morning at 12:01 AM Eastern, the spousal-disclosure paragraph of the firm's conflict-of-interest protocol activates. Dawn and Steve are at the hotel; the engagement letter for the next Mission Plaza pass is on Raj's desk at the firm's Chicago office, waiting for Monday morning's first edit. At 10:30 they are in the third pew at Zion, where they have sat most Sundays for two and a half years. Jeff preaches the sermon he wrote on Wednesday before the wedding week began; he does not mention the wedding. After the service, Don and Daniel and Vivian and Petra take them to a late lunch and then to the airport for the Maine flight. The work is the work. The seat has changed.
 
 ## TesseraSeal sections exercised — engagement summary
 
@@ -1214,7 +1216,7 @@ Mission Plaza Bank is the canonical institutional stakeholder entry for "Texas c
 >
 > "Sonya is on her fourth engagement with the firm. Her authorship on the scope-expansion memo's Phase A architecture section was clean. Her observation at lunch on Day 2 — the §10.21 vendor-opaque-render sub-case I tore out of my notebook and handed to her — is the next wishlist seed she'll carry to her next engagement where the marketing-AI vendor's render is opaque at the chain boundary. The work compounds.
 >
-> "Twenty engagements at the front of the room. The Saturday wedding at four o'clock in a post-oak grove at Travis Gardens in Austin closes the personal arc that ran in parallel with engagements 14 through 19. Tom's toast at the rehearsal dinner was the toast he had been writing for two weeks; the third sentence is the one that matters; I will not name it again here but Tom and Steve and I will carry it forward. The team will go back to work next week.
+> "Twenty engagements at the front of the room. The Saturday wedding at four o'clock at Zion Lutheran in Austin — Steve's younger brother Jeff officiating, our pastor for two and a half years — closes the personal arc that ran in parallel with engagements 14 through 19. Tom's toast at the rehearsal dinner was the toast he had been writing for two weeks; the third sentence is the one that matters; I will not name it again here but Tom and Steve and I will carry it forward. The team will go back to work next week.
 >
 > "Raj has the firm. Sonya has the next wishlist surface. The team has the bench. The work has the chain. — The seat changes; the chain doesn't."
 
