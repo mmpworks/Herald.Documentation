@@ -163,8 +163,7 @@
       "is_spearhead": true,
       "herald_framing": "Some content categories cannot enter the chain — Suspicious Activity Reports under 31 CFR §1020.320(e), HIPAA psychotherapy notes under 45 CFR §164.524(a)(1)(i), grand-jury material under Fed. R. Crim. P. 6(e), attorney-client communications, regulatory-examination-privilege material under named statutory authority. Herald engineers the exclusion. The categorical fact of exclusion is integrity-bound through `audit.privileged_investigation` tagging with a regime enumeration covering BSA SAR, attorney-client, attorney work-product, regulatory-examination-privilege, HIPAA psychotherapy-notes, HIPAA peer-review, FOIA exemption 5 (deliberative-process), FOIA exemption 7 (law-enforcement), grand-jury-6e, and others. The verifier dispatches on the reader's authorization context: cleared readers receive full content, non-cleared readers receive redacted-with-existence-attestation. `regime_first_used_utc` plus `regime_scope_filter_sha256` close the retroactive-tagging and scope-creep paths. A FinCEN reviewer confirms SAR-tagging discipline operated correctly without seeing the SAR narrative; a class plaintiff cannot quietly fish SAR-tagged content; the institution cannot retroactively shield an inconvenient entry behind a fabricated privilege regime.",
       "spec_references": ["§10.13.3", "§10.69", "§10.70"],
-      "spec_status": "mixed-prd-2-and-prd-3",
-      "candidate_normative_prd3": ["regime_scope_filter_sha256"],
+      "spec_status": "normative-prd-2",
       "why_not_in_external_checklist": "The literature's framing is uniformly accretive — capture more fields, capture better fields. It does not address the regulatory regimes where capturing is itself forbidden."
     },
     {
