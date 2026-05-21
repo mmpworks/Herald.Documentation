@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://herald.dev/schemas/compliance/audit-trail-comparison.schema.json",
+  "title": "AI audit-trail comparison document",
+  "description": "Canonical structured record for a point-by-point comparison between an external AI-audit-trail checklist (e.g. Kognitos's published 12 fields) and the Herald PRD chain-of-custody specification, extended with Herald spearheads the external checklist does not reach. The website, slide decks, investor briefings, and RFP responses all read from this same record. One file per comparison surface (e.g. 17-point.json compares Kognitos's 12 plus Herald's 5 spearheads). Edit once; every render regenerates.",
+  "type": "object",
+  "required": [
+    "surface",
+    "version",
+    "title",
+    "external_checklist_name",
+    "external_checklist_source",
+    "spec_reference",
+    "rows"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "surface": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
+      "minLength": 1,
+      "description": "URL-safe slug for the comparison surface (e.g. '17-point' for the Kognitos-12-plus-Herald-5 comparison). Lowercase alphanumerics and hyphens; may start with a digit when the comparison is naturally identified by a count. Used as the file slug and as a deep-link namespace."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "ISO-8601 date of the document's last substantive update (YYYY-MM-DD). Bumped any time a row's framing or §-references change."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable title for the comparison document, rendered on the page hero."
+    },
+    "external_checklist_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Short name for the external checklist being compared against (e.g. 'Kognitos 12-field audit-trail checklist'). Rendered in the page chrome so the reader knows what they're looking at."
+    },
+    "external_checklist_source": {
+      "type": "object",
+      "required": ["label", "href"],
+      "additionalProperties": false,
+      "description": "Citation for the external checklist. The renderer uses this for the 'source' attribution beneath the comparison heading.",
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "href": { "type": "string", "minLength": 1 },
+        "published_date": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "Optional publication date of the external source."
+        }
+      }
+    },
+    "spec_reference": {
+      "type": "object",
+      "required": ["label", "version"],
+      "additionalProperties": false,
+      "description": "Citation for the Herald spec whose section numbers anchor every row's spec_references.",
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Spec identifier (e.g. 'FFIEC chain-of-custody specification PRD-2')."
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Spec version (e.g. 'DRAFT-0.2.0')."
+        },
+        "href": {
+          "type": "string",
+          "description": "Optional canonical URL for the spec when it is publicly hosted."
+        }
+      }
+    },
+    "rows": {
+      "type": "array",
+      "description": "Ordered list of comparison rows. The first N rows mirror the external checklist in its published order; subsequent rows are Herald spearheads (is_spearhead: true) the external checklist does not reach.",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/row" }
+    }
+  },
+  "definitions": {
+    "row": {
+      "type": "object",
+      "required": [
+        "point_number",
+        "title",
+        "is_spearhead",
+        "herald_framing",
+        "spec_references",
+        "spec_status"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "point_number": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "1-based row number. Rows in the external checklist take 1..N in the checklist's order. Spearheads take N+1, N+2, ..."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Short title for the row (e.g. 'Timestamp, with a documented trust posture'). Renders as the row header in tables and as the card title for spearheads."
+        },
+        "is_spearhead": {
+          "type": "boolean",
+          "description": "False for rows that mirror an external-checklist point. True for Herald spearheads the external checklist does not reach. The renderer dispatches on this — rows with is_spearhead=false render as a comparison-table row; rows with is_spearhead=true render as a full-width card."
+        },
+        "kognitos_framing": {
+          "type": "string",
+          "description": "External checklist's own field label and one-line description, paraphrased from the source. Required for is_spearhead=false rows; omitted for is_spearhead=true rows. The name 'kognitos_framing' is retained for this comparison; future comparison surfaces against a different external checklist may parameterise this field name."
+        },
+        "herald_framing": {
+          "type": "string",
+          "minLength": 1,
+          "contentMediaType": "text/markdown",
+          "description": "Herald's mechanism for this point, in Laura's voice from the PRD-3 companion draft. Markdown allowed — inline code, bold, em — but kept light. The renderer wraps this in the comparison-cell or card body. Honesty floor: no 'English-as-Code' or close paraphrases; no 'Herald invented' framing on open-verification. Capabilities that ship are present-tense; gaps are named honestly via candidate_normative_prd3."
+        },
+        "spec_references": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Spec sections that prove the row's claim, in the order Laura cited them. The renderer typically displays these comma-separated under the herald_framing body."
+        },
+        "spec_status": {
+          "type": "string",
+          "enum": [
+            "normative-prd-2",
+            "candidate-normative-prd-3",
+            "mixed-prd-2-and-prd-3"
+          ],
+          "description": "normative-prd-2 = every cited §-ref ships in PRD-2 today; candidate-normative-prd-3 = at least one cited attribute family is candidate-normative for PRD-3 (i.e. doesn't ship in PRD-2 yet); mixed-prd-2-and-prd-3 = the row composes both (most rows that flag a candidate-normative attribute take this value)."
+        },
+        "candidate_normative_prd3": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Attribute family names that are candidate-normative for PRD-3 and do not ship in PRD-2 (e.g. 'audit.actor.*', 'audit.reasoning.substrate_kind', 'audit.downstream_action.*', 'regime_scope_filter_sha256'). Empty / omitted when the row is fully covered by PRD-2. The renderer surfaces these with a 'candidate-normative for PRD-3' qualifier so the gap is visible to the reader."
+        },
+        "independence_verdict": {
+          "type": "string",
+          "enum": ["clearly-independent", "convergent-on-prior-art"],
+          "description": "IP-defensibility verdict from Richard's comparison. Required for is_spearhead=false rows; omitted for is_spearhead=true rows (spearheads don't compare in the same way because the external checklist does not address them). The renderer may surface this as a small badge."
+        },
+        "prior_art_notes": {
+          "type": "string",
+          "contentMediaType": "text/markdown",
+          "description": "Brief note on the prior art both parties draw from when independence_verdict is 'convergent-on-prior-art'. Honors preventive-note 2 — when prior art exists (Sigstore Cosign, Rekor, IETF Certificate Transparency, RFC 6962, RFC 4122, etc.), the note names it so no 'Herald invented' framing leaks. Omitted when no prior-art context is needed."
+        },
+        "why_not_in_external_checklist": {
+          "type": "string",
+          "minLength": 1,
+          "contentMediaType": "text/markdown",
+          "description": "Required for is_spearhead=true rows; omitted otherwise. Laura's 'Why this isn't in the twelve' framing — one short paragraph explaining what posture or scope the external checklist takes that excludes this territory. The renderer displays this beneath the spearhead's herald_framing."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "is_spearhead": { "const": false } }, "required": ["is_spearhead"] },
+          "then": {
+            "required": ["kognitos_framing", "independence_verdict"],
+            "not": { "required": ["why_not_in_external_checklist"] }
+          }
+        },
+        {
+          "if": { "properties": { "is_spearhead": { "const": true } }, "required": ["is_spearhead"] },
+          "then": {
+            "required": ["why_not_in_external_checklist"],
+            "not": { "anyOf": [{ "required": ["kognitos_framing"] }, { "required": ["independence_verdict"] }] }
+          }
+        }
+      ]
+    }
+  }
+}

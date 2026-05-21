@@ -1,0 +1,189 @@
+{
+  "$schema": "../../../schemas/compliance/audit-trail-comparison.schema.json",
+  "surface": "17-point",
+  "version": "2026-05-21",
+  "title": "Herald's 17 — chain-of-custody, point by point, with the spec section that proves each one",
+  "external_checklist_name": "Kognitos 12-field audit-trail checklist",
+  "external_checklist_source": {
+    "label": "AI Audit Trail Requirements: A 2026 Checklist for Finance, Healthcare, and Banking — Kognitos blog",
+    "href": "https://www.kognitos.com/blog/ai-audit-trail-requirements-2026-checklist/",
+    "published_date": "2026-05-15"
+  },
+  "spec_reference": {
+    "label": "FFIEC chain-of-custody specification",
+    "version": "PRD-2 DRAFT-0.2.0"
+  },
+  "rows": [
+    {
+      "point_number": 1,
+      "title": "Timestamp, with a documented trust posture",
+      "is_spearhead": false,
+      "kognitos_framing": "Timestamp (NTP-synced, in UTC). Establishes when the decision occurred; NTP synchronization is now expected and system clock drift is no longer acceptable.",
+      "herald_framing": "The chain carries three timestamps and tells you which one to trust for what. `ffiec.chain.captured_at` is the SDK's stamp at capture, MAC-bound, at nanosecond precision — that is the integrity-bearing timestamp. `mac_computed_at_utc` is recommended forensic metadata; the verifier must not trust it for security decisions. `received_at` is ledger-stamped at ingest and used as the day-boundary discriminator, never in the SDK canonical bytes. The chain's ordering invariant is `seq` per `run_id`, not wall-clock time, so leap-seconds and NTP step-back surface as PASS-with-anomaly rather than integrity failure. Trusted-time integration via RFC 3161 timestamp tokens is normated; eIDAS Article 41(2) presumptive-legal-effect composition rides alongside.",
+      "spec_references": ["§4.2.2", "§4.4", "§10.4", "§10.14"],
+      "spec_status": "normative-prd-2",
+      "independence_verdict": "clearly-independent"
+    },
+    {
+      "point_number": 2,
+      "title": "Unique decision ID, with parent-linkage discipline",
+      "is_spearhead": false,
+      "kognitos_framing": "Unique decision ID (UUID or equivalent). Allows reconstruction of a specific decision under examination.",
+      "herald_framing": "The decision identifier is the triple `(tenant_id, run_id, seq)`. Parent-child agent flows carry `parent_run_id` and `parent_seq`; DAG-shaped multi-agent flows carry `dag_parents`. Cross-vendor handover and entity succession compose under the same parent-linkage primitive. The chain-tail acquisition rule names three places to look, in order: in-memory, local sidecar, ledger query — with a single-writer-per-run rule and an intra-process mutex contract that closes the silent-restart attack class.",
+      "spec_references": ["§3", "§4.4", "§10.21", "§10.24", "§10.25"],
+      "spec_status": "normative-prd-2",
+      "independence_verdict": "convergent-on-prior-art",
+      "prior_art_notes": "Unique decision identifiers and composite run-IDs are commodity primitives both parties draw from. Prior art predating both: RFC 4122 (UUID URN namespace, 2005); distributed-run-identifier patterns in Apache Spark, Apache Airflow, Temporal, and Kubernetes. Herald's parent-linkage discipline and the single-writer-per-run silent-restart closure are the substantive engineering composition on top of those primitives."
+    },
+    {
+      "point_number": 3,
+      "title": "Authenticated human user identity, on three composable surfaces",
+      "is_spearhead": false,
+      "kognitos_framing": "Authenticated human user identity (not just service account). HIPAA's unique user identification rule, GDPR's accountability principle, and SOX's individual attribution requirement all demand this.",
+      "herald_framing": "Identity composes from three surfaces today. Reviewer identity is captured when a human reviews AI output, cryptographically signed under that reviewer's per-reviewer key. Institutional actors sign operational events under the §10.17 signatory schema. The SDK process authenticates to the IKM custodian via SPIFFE/SPIRE, mTLS, or HSM bearer token — that is workload identity, not human identity. For the SSO-authenticated end-user that HIPAA §164.312(a)(2)(i) anchors, the institution's CC8.1 currently names an enricher attribute under the `audit.*` namespace; coverage is institution-side until a normative `audit.actor.*` family lands. That family is candidate-normative for PRD-3 and closes the dependency with a per-chain-entry actor attribute group.",
+      "spec_references": ["§4.1.1", "§10.2", "§10.17", "§10.50", "CC8.1 actor-enricher convention"],
+      "spec_status": "mixed-prd-2-and-prd-3",
+      "candidate_normative_prd3": ["audit.actor.*"],
+      "independence_verdict": "clearly-independent"
+    },
+    {
+      "point_number": 4,
+      "title": "AI system identity and version, including multi-LLM routing",
+      "is_spearhead": false,
+      "kognitos_framing": "AI system identity and version. Identifies the platform that made the decision; required for change management.",
+      "herald_framing": "The chain captures routing as its own event family. Multi-LLM deployments emit `audit.routing.*` entries with `parent_run_id` / `parent_seq` links back to the downstream LLM call. Every model invocation carries a deployment-intent enum (`production`, `ab_test`, `canary`, `multi_region_drift`, `vendor_reroute_observed`, `regulatory_sandbox`, `disparate_impact_test_run`) and the `vendor_reroute_detection_policy_hash` is chain-bound on every invocation — not only on detected reroutes. The verifier surfaces routing-pairing violations: a success without a paired attempt, a failover without a causal predecessor.",
+      "spec_references": ["§4.4.1", "§4.4.2", "verifier procedure P-33"],
+      "spec_status": "normative-prd-2",
+      "independence_verdict": "clearly-independent"
+    },
+    {
+      "point_number": 5,
+      "title": "Model identity and version, refused at write time when missing",
+      "is_spearhead": false,
+      "kognitos_framing": "Model identity and version. Specific version pinning is required — \"GPT-4\" is not sufficient.",
+      "herald_framing": "Two attributes are both required on any chain entry representing a model call: `gen_ai.request.model` and `gen_ai.response.model`. The SDK refuses to emit a chain entry carrying any `gen_ai.*` attribute that lacks either identifier — refusal at write time, not just defense-in-depth at the verifier. `model_weight_hash` binds reproducibility, institution-supplied for closed-weight vendor models and on-disk for open-weight in-institution models. Model activation requires references to a `model_validation.attestation` event and an `mrm_disposition.recorded` event, under a validation-precedes-activation ordering the verifier enforces.",
+      "spec_references": ["§4.4", "§10.33", "§10.48"],
+      "spec_status": "normative-prd-2",
+      "independence_verdict": "clearly-independent"
+    },
+    {
+      "point_number": 6,
+      "title": "Inputs received, with per-document anchoring",
+      "is_spearhead": false,
+      "kognitos_framing": "Inputs received, with source attribution. Auditors must be able to verify what data the AI acted on and where it came from.",
+      "herald_framing": "Two layers bind under the per-event MAC. The generation event carries a four-tuple — system prompt SHA-256, user prompt SHA-256, retrieval-set Merkle root SHA-256, output SHA-256. Each retrieved document then emits as its own chain entry with `audit.retrieval.document_anchor.*` attributes, and `canonical_identifier_kind` covers PMID, DOI, ISBN, FDA-label, and institutional document IDs. The verifier cross-binds the two layers: every per-document anchor's `document_sha256` must appear in the retrieval-set Merkle root, and the leaf count matches the per-document anchor count. The Merkle ordering is lexicographic by `document_sha256`, not by relevance score, so byte-identicality holds across implementations.",
+      "spec_references": ["§10.47", "§10.49"],
+      "spec_status": "normative-prd-2",
+      "independence_verdict": "clearly-independent"
+    },
+    {
+      "point_number": 7,
+      "title": "Specific policy, rule, or prompt, hash-bound under per-event MAC",
+      "is_spearhead": false,
+      "kognitos_framing": "Specific policy, rule, or prompt invoked. Must be inspectable and version-controlled — for LLM-based decisions, the system prompt and user prompt verbatim; for rule-based decisions, the rule expression.",
+      "herald_framing": "The chain binds the hash of every policy, prompt, and rule under the per-event MAC. Five surfaces compose under the same pattern: the generation event's system prompt hash, the routing event's policy version, the deployment event's policy version, the redaction event's policy_id and version, and the EU AI Act Article 86 `explanation_text_hash`. The institution-side prompt registry resolves the hash and version to plaintext per CC8.1. Cross-vendor handover captures the provider-side policy artifacts. The institution operates the registry; the chain integrity-binds the hash.",
+      "spec_references": ["§4.4.1", "§4.4.2", "§10.22", "§10.47", "§10.74", "institution-side prompt registry per CC8.1"],
+      "spec_status": "normative-prd-2",
+      "independence_verdict": "clearly-independent"
+    },
+    {
+      "point_number": 8,
+      "title": "Reasoning expressed in human-readable language, separated from the chain's integrity layer",
+      "is_spearhead": false,
+      "kognitos_framing": "Reasoning in human-readable language. The EU AI Act's right-to-explanation, GDPR Article 22, and ECOA's specific principal reasons all require human-readable reasoning rather than confidence scores.",
+      "herald_framing": "The chain integrity-binds the hash of the explanation text plus the structured reasons codes. The rendered text lives in the institution's communication record under §10.69 retention discipline; the chain is the integrity foundation, not the content store. Adverse-action reasons schema covers `audit.ecoa.adverse_action.reasons`, `feature_attributions`, and `model_explanation_method`. EU AI Act Article 86 `explanation_text_hash` extends the same pattern for the right-to-explanation surface. The architectural choice is deliberate: keeping plaintext reasoning out of the chain preserves the pre-MAC redaction discipline (§10.22) and keeps PII out of an append-only structure that would otherwise carry it forever.",
+      "spec_references": ["§10.11", "§10.11.1", "§10.22", "§10.69", "§10.74"],
+      "spec_status": "mixed-prd-2-and-prd-3",
+      "candidate_normative_prd3": ["audit.reasoning.substrate_kind"],
+      "independence_verdict": "clearly-independent"
+    },
+    {
+      "point_number": 9,
+      "title": "Output produced, with reviewer-edit, DP-aggregate, and C2PA composition",
+      "is_spearhead": false,
+      "kognitos_framing": "Output produced. What the AI actually returned, verbatim.",
+      "herald_framing": "The generation event binds `audit.generation.output_sha256` over the complete output canonical bytes at stream-finish — one chain entry per stream-finish event, not per chunk. Reviewer-edited outputs bind separately via `audit.review.edited_output_sha256`; the original output hash stays bound on the generation event so the override delta is reconstructable. Differentially-private aggregates bind the noised value byte-for-byte under JCS; the raw aggregate is the institution's separate audit substrate. C2PA Content Credentials composition handles AI-generated user-facing artifacts by binding the C2PA manifest hash on the producing chain entry.",
+      "spec_references": ["§10.47", "§10.50", "§10.51", "§10.52.1"],
+      "spec_status": "normative-prd-2",
+      "independence_verdict": "clearly-independent"
+    },
+    {
+      "point_number": 10,
+      "title": "Action taken in downstream systems, per decision class",
+      "is_spearhead": false,
+      "kognitos_framing": "Action taken in downstream systems. Closes the loop — the AI's decision must be tied to the system-of-record entry it caused, with identifiers tying the change back to the AI decision ID.",
+      "herald_framing": "The chain carries per-decision-class normative coverage where the class is well-defined. Insurance claims walk a five-state machine: FNOL, reserve, adjudication, payment, recovery, close. Insurance rate-filing has its own lifecycle. ECOA adverse-action delivery binds `delivery_method` and `delivery_timestamp`. FCRA reinvestigation outcome enumerates `verified`, `corrected`, `deleted`. GDPR Article 17 / CCPA deletion binds the disposition and the vault tokenization event. Multi-channel handoff binds `audit.channel.*`. The general-case downstream system-of-record linkage lives under the institution's CC8.1; a generalized `audit.downstream_action.*` family is candidate-normative for PRD-3.",
+      "spec_references": ["§4.4 audit.channel.*", "§10.11", "§10.11.2", "§10.43", "§10.74", "§10.75"],
+      "spec_status": "mixed-prd-2-and-prd-3",
+      "candidate_normative_prd3": ["audit.downstream_action.*"],
+      "independence_verdict": "clearly-independent"
+    },
+    {
+      "point_number": 11,
+      "title": "Human review or approval, cryptographically signed with rubber-stamp detection",
+      "is_spearhead": false,
+      "kognitos_framing": "Human review or approval, with reviewer identity, timestamp, and disposition (approved / rejected / modified / escalated), including override-path documentation for clinical-decision-support style systems.",
+      "herald_framing": "The output-grounding event family carries the full HITL schema. `audit.review.signed_review` carries reviewer_id, reviewer_role, signed_at_utc, signature_b64, and the per-reviewer key fingerprint. The reviewer cryptographically signs the review event under their per-reviewer signing key; the institution's CC8.1 names the reviewer-key registry. For GDPR Article 22 surfaces, the schema extends with `reviewer_kind` (distinguishing `natural_person` from `ai_agent_with_human_oversight`), `review_duration_ms` (so the SCHUFA-aligned rubber-stamp signal — sub-second review-duration distribution — surfaces in chain analysis), and `reviewer_competence_attestation_id`. Model-update activation requires references to model-validation attestation and MRM disposition events under the same ordering rule.",
+      "spec_references": ["§10.33", "§10.50", "§10.74"],
+      "spec_status": "normative-prd-2",
+      "independence_verdict": "clearly-independent"
+    },
+    {
+      "point_number": 12,
+      "title": "Tamper-evident integrity proof, three independent layers under separation of duties",
+      "is_spearhead": false,
+      "kognitos_framing": "Tamper-evident integrity proof (cryptographic hash or equivalent). Auditors in 2026 are trained to spot AI-manipulated evidence; logs must be verifiably unaltered.",
+      "herald_framing": "The chain composes three independent integrity layers, operated by three distinct roles under documented separation of duties. Per-event HMAC-SHA-256 at SDK capture is the first layer. Daily Merkle seal over per-event payload hashes via RFC 6962 construction is the second. HSM-rooted Ed25519 signature on the seal record under FIPS 140-2 Level 3+ custody is the third. Defeating the chain to silently insert or alter an entry requires defeating all three layers simultaneously; defeating any one layer surfaces at the §7 verifier as a named anomaly. The compositional security argument is laid out in §1.4. Daubert four-factor grounding is at §1.1. FRE 902(13)/(14) self-authentication is at §5.2.1.",
+      "spec_references": ["§1.1", "§1.4", "§4.1", "§4.2", "§4.3", "§5.2.1", "§7", "§10.5"],
+      "spec_status": "normative-prd-2",
+      "independence_verdict": "convergent-on-prior-art",
+      "prior_art_notes": "Cryptographic integrity primitives are the industry's default toolkit; both parties draw from the same well. Prior art predating both: HMAC (RFC 2104, 1997; FIPS 198-1); SHA-256 (FIPS 180-4); Merkle trees (Ralph Merkle, CRYPTO 1987; RFC 6962 Certificate Transparency, 2013); Ed25519 (RFC 8032); HSM-rooted signing under FIPS 140-2 Level 3 / 140-3. The Herald-specific contribution is the three-layer composition operated under separation of duties, with the §1.4 compositional security argument written explicitly so opposing counsel attacking the chain reads a documented answer."
+    },
+    {
+      "point_number": 13,
+      "title": "Multi-layer cryptographic defense as a compositional argument, not a single primitive",
+      "is_spearhead": true,
+      "herald_framing": "The \"cryptographic hash or equivalent\" language in the literature is satisfied by a single layer — a hash chain alone, a Merkle tree alone, or a signed append-only log alone all clear that bar. Herald composes three layers deliberately and operates them under separation of duties: SDK capture holds the per-event HMAC; ledger custody holds the daily Merkle seal; an HSM custodian holds the Ed25519 signing key. Three distinct role-bearers, three independent failure modes. Defeating the integrity claim is not a single compromise — it is a coordinated three-way compromise against three institutions of trust operated by three different teams. §1.4 lays out the compositional security argument explicitly so opposing counsel attacking the chain as a whole reads a documented answer rather than an architecture diagram. Single-layer answers do not survive the same cross-examination.",
+      "spec_references": ["§1.4", "§4.1", "§4.2", "§4.3", "§10.5"],
+      "spec_status": "normative-prd-2",
+      "why_not_in_external_checklist": "The twelve specify the *requirement* (tamper-evidence) and accept any single-layer cryptographic primitive as sufficient. The compositional security argument is a different posture from the requirement-shaped framing of a checklist."
+    },
+    {
+      "point_number": 14,
+      "title": "Daubert-grade testability — the integrity claim is falsifiable",
+      "is_spearhead": true,
+      "herald_framing": "The integrity claim is falsifiable in the formal sense FRE 702 requires under the Daubert four-factor test. The §7 verification procedure produces deterministic, byte-identical output across implementations given the same inputs: spec version, verifier version, trust-anchor manifest, chain bytes. The test-vector corpus under `spec/test-vectors/` pins byte-exact expected outputs. The exit-code contract is precise — `0` PASS, `1` FAIL, `2` warning, `3` malformed input, vendor-specific values at `4` and above. A clean-room implementer can write a second verifier against the spec, pass the test-vector corpus, and produce byte-identical output against any institution's production chain. The reproducibility test is independent of who built the verifier. Daubert's four factors map directly: testability (§7 plus the test-vector corpus), peer review (the CFRG / NIST / Real World Crypto publications cited in §1.1), known error rate (per-primitive theoretical bounds documented in §1.3 — HMAC-SHA-256 EUF-CMA security, RFC 6962 Merkle second-preimage resistance, Ed25519 strong unforgeability under chosen-message attack), and general acceptance (NIST-standardized primitives, Certificate Transparency, Trillian).",
+      "spec_references": ["§1.1", "§1.3", "§7", "§10.12", "§10.26", "spec/test-vectors/ corpus"],
+      "spec_status": "normative-prd-2",
+      "why_not_in_external_checklist": "The literature asserts that auditors are trained to spot AI-manipulated evidence; it does not propose a mechanism by which a regulator or opposing counsel can independently reproduce the integrity verdict. The verification stays inside the vendor's tooling. Herald's framing puts it outside."
+    },
+    {
+      "point_number": 15,
+      "title": "Categorical exclusions by design, integrity-bound",
+      "is_spearhead": true,
+      "herald_framing": "Some content categories cannot enter the chain — Suspicious Activity Reports under 31 CFR §1020.320(e), HIPAA psychotherapy notes under 45 CFR §164.524(a)(1)(i), grand-jury material under Fed. R. Crim. P. 6(e), attorney-client communications, regulatory-examination-privilege material under named statutory authority. Herald engineers the exclusion. The categorical fact of exclusion is integrity-bound through `audit.privileged_investigation` tagging with a regime enumeration covering BSA SAR, attorney-client, attorney work-product, regulatory-examination-privilege, HIPAA psychotherapy-notes, HIPAA peer-review, FOIA exemption 5 (deliberative-process), FOIA exemption 7 (law-enforcement), grand-jury-6e, and others. The verifier dispatches on the reader's authorization context: cleared readers receive full content, non-cleared readers receive redacted-with-existence-attestation. `regime_first_used_utc` plus `regime_scope_filter_sha256` close the retroactive-tagging and scope-creep paths. A FinCEN reviewer confirms SAR-tagging discipline operated correctly without seeing the SAR narrative; a class plaintiff cannot quietly fish SAR-tagged content; the institution cannot retroactively shield an inconvenient entry behind a fabricated privilege regime.",
+      "spec_references": ["§10.13.3", "§10.69", "§10.70"],
+      "spec_status": "mixed-prd-2-and-prd-3",
+      "candidate_normative_prd3": ["regime_scope_filter_sha256"],
+      "why_not_in_external_checklist": "The literature's framing is uniformly accretive — capture more fields, capture better fields. It does not address the regulatory regimes where capturing is itself forbidden."
+    },
+    {
+      "point_number": 16,
+      "title": "Post-quantum cryptographic agility — the chain is designed to outlive the algorithm",
+      "is_spearhead": true,
+      "herald_framing": "The chain's signing layer is replaceable without changing the wire format. Four mechanisms compose. Per-event MAC algorithm agility introduces an optional `payload_hash_alt` field for HMAC-SHA-3 or HMAC-BLAKE3 dual-MAC. Dual-algorithm post-quantum coexistence puts a `signatures` list on the seal record under AND-security — a seal is integrity-bearing only if both signatures verify. The hybrid post-quantum seal mandate is normative-when-applicable for institutions with retention horizons beyond the projected NIST PQC migration deadline. The decadal re-sealing discipline re-asserts prior-generation integrity under the then-current cryptographic suite at institution-named cadence, typically ten years. The `v1` wire-format identifier is unchanged across all of these. A regulator asking what happens if SHA-256 breaks in 2034 gets a documented procedural answer, not a marketing answer.",
+      "spec_references": ["§4.1.3", "§4.3.2", "§10.53", "§10.54"],
+      "spec_status": "normative-prd-2",
+      "why_not_in_external_checklist": "The literature's framing is present-tense (\"logs must be verifiably unaltered\") with no temporal scope. Herald's framing is temporal — the chain is designed to be re-sealable across the cryptographic generations a 60-year archive will cross."
+    },
+    {
+      "point_number": 17,
+      "title": "The examiner runs the verifier locally — open verification posture",
+      "is_spearhead": true,
+      "herald_framing": "The reference verifier ships in a repository separate from the spec, under an OSI-approved license. Each release is built reproducibly — two independent builders starting from the same source commit and the same toolchain produce byte-identical binaries. Cosign signatures cover every published binary, archive, and manifest. Per-platform binaries cover Linux x86_64 and Linux ARM64 at minimum, with Windows and macOS recommended for examiner laptops. SHA-256 and SHA-512 manifests accompany every release; the manifest is itself signed. A CycloneDX or SPDX SBOM publishes per release. The institution exports the chain artifacts under the §10.13.1 discovery-production form; the examiner — or opposing counsel — runs the verifier locally and reaches byte-identical output. The institution does not gate the regulator's verification through the institution's own tooling. Other implementations are conformant if they pass the test-vector corpus per the vendor-conformance attestation procedure; \"the verifier\" is a contract, not a product. The SDK distribution carries the same five-element discipline. Herald applies this established open-verification pattern — long-precedented by Sigstore Cosign, the Linux Foundation Rekor transparency log, and IETF Certificate Transparency — to AI audit trails.",
+      "spec_references": ["§5.2.1", "§10.12", "§10.13.1", "§10.26", "docs/vendor-conformance-attestation.md"],
+      "spec_status": "normative-prd-2",
+      "why_not_in_external_checklist": "The literature treats the audit trail as living inside the vendor's platform. Open verification — verifier as contract, examiner runs locally — is a structural choice the closed-platform business model does not support."
+    }
+  ]
+}
