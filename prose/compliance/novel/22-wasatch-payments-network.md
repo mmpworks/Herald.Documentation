@@ -158,7 +158,7 @@ The whiteboard fills more.
 
 ## 12:30 PM — Lunch in the cafeteria
 
-The Wasatch cafeteria has a curved skylight and Wasatch Range views. The team takes a corner booth. John joins.
+The cafeteria has a curved skylight and Wasatch Range views. The team takes a corner booth. John joins.
 
 **Tom:** "The two confirmations so far — §10.27 configurable cadence, §10.28 streaming rotation discipline. What else does the day surface?"
 

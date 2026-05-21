@@ -1,9 +1,11 @@
-🧾 A Day in the Life: 8 Auditors Verifying Customer Interaction Integrity at Northbridge Federal Savings
+# 01 — Northbridge Federal Savings
+
+*A Day in the Life: 8 Auditors Verifying Customer Interaction Integrity at Northbridge Federal Savings*
 
 **Context:**
 Northbridge Federal Savings — a regional US bank, ~$45B consolidated assets, OCC-supervised national bank, FDIC-insured. Engagement type: FFIEC IT Handbook supplementary review. The bank closed an MRA on customer-data integrity two quarters ago. This is the verification revisit.
 
-**Posture going in:** the audit team has not seen this engagement before. Northbridge has been running something called "TesseraSeal" across customer-data capture for 18 months — independent of any prior conversation with this audit team. The team will encounter the product for the first time at the kickoff meeting. The bank's claim, going into the room, is that every customer-facing surface (CRM mirror, voice/recordings, branch tablets, API edges, IAM events, the AI advisor) is captured by a Python SDK called Vidimus, that the captures land in a sealed chain-of-custody ledger called Herald Core, that the regulator-facing product wrapping the whole stack is called TesseraSeal, that daily seals run via a CloudHSM-managed signing key, that the verifier CLI is `herald-verify`, and that the whole stack conforms to a public spec called FFIEC chain-of-custody v1.0a. The team has heard pitches before that promised this much. Skeptical-but-listening is the working posture.
+**Posture going in:** the audit team has not seen this engagement before. Northbridge has been running something called "TesseraSeal" across customer-data capture for 18 months — independent of any prior conversation with this audit team. The team will encounter the product for the first time at the kickoff meeting. The bank's claim, going into the room, is that every customer-facing surface (CRM mirror, voice/recordings, branch tablets, API edges, IAM events, the AI advisor) is captured by a Python SDK called Vidimus, that the captures land in a sealed chain-of-custody ledger called Herald Enterprise, that the regulator-facing product wrapping the whole stack is called TesseraSeal, that daily seals run via a CloudHSM-managed signing key, that the verifier CLI is `herald-verify`, and that the whole stack conforms to a public spec called FFIEC chain-of-custody v1.0a. The team has heard pitches before that promised this much. Skeptical-but-listening is the working posture.
 
 ---
 
@@ -26,7 +28,7 @@ Northbridge Federal Savings — a regional US bank, ~$45B consolidated assets, O
 
 The team rolled in to the Northbridge engagement room with the look of people who had spent last week somewhere unpleasant.
 
-Dawn poured coffee. She stared at the slide on the projector — a clean architecture diagram, every box labeled, every arrow ending at something called "Herald Core ledger." Above the diagram, in modest type: **TesseraSeal — chain-of-custody for customer-data capture.**
+Dawn poured coffee. She stared at the slide on the projector — a clean architecture diagram, every box labeled, every arrow ending at something called "Herald Enterprise ledger." Above the diagram, in modest type: **TesseraSeal — chain-of-custody for customer-data capture.**
 
 She had not heard the name before.
 
@@ -66,13 +68,13 @@ Tom shook his hand. "Marcus."
 
 Marcus stayed standing. He didn't sit. He didn't pull out a deck-of-decks.
 
-"At the bottom is Herald Core. That's the append-only ledger — the underlying logging substrate. Above it is Vidimus — that's the Python capture SDK we instrumented every customer-facing surface with: CRM mirror, voice transcription, branch tablets, the core-banking API edges, IAM, the AI wealth advisor. Every event lands in the ledger as a sealed entry. Daily, the system computes a Merkle root over the day's entries and signs it with a CloudHSM-resident Ed25519 key. The signed seal is published on a regulator-facing surface. The whole product wrapping the SDK, the ledger, and the regulator-facing surface is TesseraSeal. The marketing line on the deck is 'TesseraSeal — Powered By Vidimus.' The verifier CLI is `herald-verify`. The whole stack conforms to a public spec — FFIEC chain-of-custody v1.0a — and the verifier is open-source, so you can run it on your own laptops without any of our credentials at any layer."
+"At the bottom is Herald Enterprise. That's the append-only ledger — the underlying logging substrate. Above it is Vidimus — that's the Python capture SDK we instrumented every customer-facing surface with: CRM mirror, voice transcription, branch tablets, the core-banking API edges, IAM, the AI wealth advisor. Every event lands in the ledger as a sealed entry. Daily, the system computes a Merkle root over the day's entries and signs it with a CloudHSM-resident Ed25519 key. The signed seal is published on a regulator-facing surface. The whole product wrapping the SDK, the ledger, and the regulator-facing surface is TesseraSeal. The marketing line on the deck is 'TesseraSeal — Powered By Vidimus.' The verifier CLI is `herald-verify`. The whole stack conforms to a public spec — FFIEC chain-of-custody v1.0a — and the verifier is open-source, so you can run it on your own laptops without any of our credentials at any layer."
 
 He paused.
 
 "That's the elevator. I know it's a lot to take in cold."
 
-Tom was writing the names down in his notebook, slowly, in block letters. *TesseraSeal. Vidimus. Herald Core.*
+Tom was writing the names down in his notebook, slowly, in block letters. *TesseraSeal. Vidimus. Herald Enterprise.*
 
 Dawn wrote on her notepad: **TesseraSeal — verify claims.**
 
@@ -128,7 +130,7 @@ Marcus didn't bristle. He clicked to the next slide.
 
 ## 🧩 9:15 AM — First Crack in the Story
 
-Marcus walked through the diagram. CRM mirror on the left, core-banking-API edges in the middle, the AI advisor box (a Llama-based wealth-recommendation model) tucked into a corner, the contact-center voice transcription path, the loan-decisioning workflow, IAM events, all draining into Herald Core.
+Marcus walked through the diagram. CRM mirror on the left, core-banking-API edges in the middle, the AI advisor box (a Llama-based wealth-recommendation model) tucked into a corner, the contact-center voice transcription path, the loan-decisioning workflow, IAM events, all draining into Herald Enterprise.
 
 Mike raised a hand at the AI advisor box.
 
@@ -324,7 +326,7 @@ Raj wrote that down. Then he wrote a follow-up underneath, with a star next to i
 
 "Why?"
 
-"Because the bank has subsidiary entities. Each subsidiary is a separate `tenant_id` under the same Herald Core deployment. The prod tenant is `northbridge-bank-prod`. The wealth-management subsidiary is `northbridge-wealth-prod`. The merchant-services subsidiary is `northbridge-merchant-prod`. Three tenants, three HKDF derivations, three independent chains."
+"Because the bank has subsidiary entities. Each subsidiary is a separate `tenant_id` under the same Herald Enterprise deployment. The prod tenant is `northbridge-bank-prod`. The wealth-management subsidiary is `northbridge-wealth-prod`. The merchant-services subsidiary is `northbridge-merchant-prod`. Three tenants, three HKDF derivations, three independent chains."
 
 Raj nodded.
 
@@ -456,7 +458,7 @@ Marcus smiled. "Fair. Let me re-answer. Emergency access to the chain table is n
 
 > ### ✓ Confirmation #3 — IAM events are themselves chain-of-custody captured
 >
-> Every IAM grant, revocation, and elevation request lands as a sealed chain entry in the same Herald Core ledger as customer-data events. The auto-revocation worker is chain-driven, not cron-driven. Diana sampled three temporary-admin grants from the past 90 days. Each had a matching revocation entry, each landed within 30 seconds of the 24-hour mark, each was sealed in the daily Merkle root.
+> Every IAM grant, revocation, and elevation request lands as a sealed chain entry in the same Herald Enterprise ledger as customer-data events. The auto-revocation worker is chain-driven, not cron-driven. Diana sampled three temporary-admin grants from the past 90 days. Each had a matching revocation entry, each landed within 30 seconds of the 24-hour mark, each was sealed in the daily Merkle root.
 
 Dawn's pen paused over the notepad.
 
@@ -649,7 +651,7 @@ Mike wrote that down. He underlined it.
 
 Chen and Luis tag-teamed the next hour.
 
-Luis went first. He wanted to know what the Herald Core retention story looked like, and specifically whether anyone could delete log groups.
+Luis went first. He wanted to know what the Herald Enterprise retention story looked like, and specifically whether anyone could delete log groups.
 
 "Append-only," Marcus said. "The chain table itself is append-only by role. The seal records are append-only by role. The retention policy is enforced by the storage tier — object lock, immutability window matching the §10.13 evidentiary-artifacts retention guidance, no role with delete permission inside the window."
 
@@ -1001,7 +1003,7 @@ Two fingers.
 
 Three fingers.
 
-"Three. Ledger query — the rejoin path. When local persistence is missing or corrupted — fresh container, lost disk, full DR scenario — the SDK calls Herald Core's ingestion API. `GET /chains/{tenant_id}/{run_id}/tail` returns the latest seq, payload_hash, key_version. Network access is required for this path; it's the fallback. The SDK doesn't hard-code a ledger URL — operators wire in their own implementation through a `LedgerTailProvider` protocol. Here's what ours looks like."
+"Three. Ledger query — the rejoin path. When local persistence is missing or corrupted — fresh container, lost disk, full DR scenario — the SDK calls Herald Enterprise's ingestion API. `GET /chains/{tenant_id}/{run_id}/tail` returns the latest seq, payload_hash, key_version. Network access is required for this path; it's the fallback. The SDK doesn't hard-code a ledger URL — operators wire in their own implementation through a `LedgerTailProvider` protocol. Here's what ours looks like."
 
 A snippet appeared on the second screen.
 
@@ -1089,7 +1091,7 @@ Chen took over.
 
 "Multi-region setup?"
 
-"Pattern A from spec §10.15 — multi-region active-active. Both regions write to local Herald Core. ETL reconciliation runs on a schedule, publishes a sealed `master.cross_region_replication_completed` event each batch per §10.15 invariant 5 freshness requirement. The reconciliation entry itself is in the chain. The HSM partition that signs each region's seals went through the §10.17 partition-ceremony attestation when it was provisioned — the ceremony itself produces a chained `chain.partition_ceremony_attended` event with the attestation hash and the attendee list, so the chain proves which HSM partition signs which region's seals."
+"Pattern A from spec §10.15 — multi-region active-active. Both regions write to local Herald Enterprise. ETL reconciliation runs on a schedule, publishes a sealed `master.cross_region_replication_completed` event each batch per §10.15 invariant 5 freshness requirement. The reconciliation entry itself is in the chain. The HSM partition that signs each region's seals went through the §10.17 partition-ceremony attestation when it was provisioned — the ceremony itself produces a chained `chain.partition_ceremony_attended` event with the attestation hash and the attendee list, so the chain proves which HSM partition signs which region's seals."
 
 "So the cross-region reconciliation is auditable as a chain entry."
 
@@ -1108,6 +1110,8 @@ The February delta showed up: 3 events, all from a region failover during a main
 > ### ✓ Confirmation #8 — Cross-region reconciliation is itself a sealed event
 >
 > The bank runs Pattern A multi-region active-active. ETL reconciliation events are sealed. Historical reconciliation deltas (including non-zero deltas) are themselves chained and reviewable. Chen verified the February event end-to-end.
+
+Dawn wrote in the margin of her notepad: *both regions AWS. The chain is invariant across regions on one substrate. Note for some future engagement: what shape does the same invariant take across substrates?* She did not underline it. She did not show it to anyone. It was the kind of margin question a careful auditor wrote down and let sit.
 
 Chen paused.
 
@@ -1178,7 +1182,7 @@ Dawn wrote: *FDIC saw the lag window during MRA close. Closed anyway. The non-co
 
 > ### ✓ Confirmation #9 — Operational and chain views reconcile to zero
 >
-> Three independent samples (1,000 events, 5,000 events, and a known-noisy-day sample) reconciled byte-for-byte between the operational system view and the Herald Core chain. Latency offsets were within the documented capture window. Dedup events were visible and traceable.
+> Three independent samples (1,000 events, 5,000 events, and a known-noisy-day sample) reconciled byte-for-byte between the operational system view and the Herald Enterprise chain. Latency offsets were within the documented capture window. Dedup events were visible and traceable.
 
 Dawn put her pen down.
 
@@ -1402,7 +1406,7 @@ Greg hit two keys. A job kicked off. The team watched the log stream.
 [15:46:04] computing Merkle tree: depth 22
 [15:46:05] requesting Ed25519 signature from CloudHSM
 [15:46:05] signature received, fingerprint=7f3a9...
-[15:46:05] writing seal record to Herald Core
+[15:46:05] writing seal record to Herald Enterprise
 [15:46:05] seal record written, entry_id=ce_8b1c...
 [15:46:05] seal job complete: duration=3.1s
 ```
@@ -1783,7 +1787,7 @@ Her morning note read: **TesseraSeal — verify claims.** Underneath, the spec/v
 
 She tapped the page.
 
-"This morning Marcus walked us through the names. TesseraSeal. Vidimus. Herald Core. I wrote down 'verify claims' and didn't say anything else about them. Tom wrote them down in block letters. Nobody asked what they meant. We had eight hours of work to do." She looked at Tom. "Did you ever go back and check?"
+"This morning Marcus walked us through the names. TesseraSeal. Vidimus. Herald Enterprise. I wrote down 'verify claims' and didn't say anything else about them. Tom wrote them down in block letters. Nobody asked what they meant. We had eight hours of work to do." She looked at Tom. "Did you ever go back and check?"
 
 Tom flipped through his notebook. He stopped on a page he'd written at lunch.
 
@@ -1797,7 +1801,7 @@ Dawn looked over.
 
 Marcus had stepped back into the room a few minutes earlier with coffee for the team. He hadn't said anything. He stood by the door now, listening.
 
-He said, calmly, "Marketing chose them. They fit what the product does. Vidimus captures — *we have seen*. TesseraSeal binds the captures into a token-and-seal evidence system. Herald Core is the underlying logging engine — that name is engineering, not marketing. The marketing line is 'TesseraSeal — Powered By Vidimus.' I'm not going to make you repeat it."
+He said, calmly, "Marketing chose them. They fit what the product does. Vidimus captures — *we have seen*. TesseraSeal binds the captures into a token-and-seal evidence system. Herald Enterprise is the underlying logging engine — that name is engineering, not marketing. The marketing line is 'TesseraSeal — Powered By Vidimus.' I'm not going to make you repeat it."
 
 Dawn looked at the whiteboard. Zero Gaps. Zero Partials. One non-conformance, classified per §10.16. The verifier output Marcus had pulled at 11 AM — exit code 0, 1.2 seconds, 47-line trace. The seal she'd verified on her personal laptop at 4:30 PM — `Status: PASS`, 2.4 seconds, no Northbridge credentials at any layer.
 

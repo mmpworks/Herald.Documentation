@@ -1,4 +1,6 @@
-# 🧾 Diary of an Audit Day — Helmstad BioSciences
+# 05 — Helmstad BioSciences
+
+*Diary of an Audit Day*
 
 **Engagement:** FDA BIMO Pre-Inspection Readiness — Phase II NSCLC Program
 **Client:** Helmstad BioSciences — mid-size oncology biopharma, Cambridge, MA, ~$1.2B revenue, ~380 employees, two Phase III trials in progress, four Phase II, plus a discovery pipeline

@@ -1,4 +1,4 @@
-# 🧾 Auditor Story 09 — Sun-Won Cosmetics Group (Korea + Taiwan)
+# 09 — Sun-Won Cosmetics Group (Korea + Taiwan)
 
 > **Engagement.** Sun-Won Holdings (KOSPI: 003410) and Sun-Won Taiwan Co. Ltd. (Taipei Exchange: 5891) — a coordinated annual review covering PIPA Section 28 cross-border transfers, FSS supervisory review of the BNPL consumer-finance arm, Taiwan FSC review of the listed subsidiary, PDPA Article 8 explicit-consent oversight, and a CPRA / GDPR sweep against the e-commerce platform.
 >

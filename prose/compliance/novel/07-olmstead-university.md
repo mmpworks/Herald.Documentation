@@ -1,4 +1,6 @@
-# 🧾 Diary of an Audit Day — Olmstead University
+# 07 — Olmstead University
+
+*Diary of an Audit Day*
 
 **Engagement:** Multi-framework audit-readiness assessment (FERPA review, NIH research-integrity audit, biennial GLBA audit, upcoming HHS OCR audit at the affiliated medical center)
 **Client:** Olmstead University — private R1 research university, upper Midwest. ~28,000 students. ~$1.4B endowment. ~$680M annual research expenditure. Affiliated teaching hospital (Olmstead Medical Center) under shared board, separate compliance office.

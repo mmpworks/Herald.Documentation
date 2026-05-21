@@ -1,4 +1,6 @@
-# 🧾 Diary of an Audit Day — Eberhardt Werkstoffe × Lumière AI
+# 11 — Eberhardt Werkstoffe × Lumière AI
+
+*Diary of an Audit Day*
 
 **Engagement:** Joint pre-audit ahead of EU AI Act enforcement and the BMW joint-supplier audit
 **Clients (joint):**

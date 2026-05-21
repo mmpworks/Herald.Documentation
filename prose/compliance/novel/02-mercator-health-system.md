@@ -1,4 +1,6 @@
-## 🧾 Diary of an Audit — Mercator Health System
+# 02 — Mercator Health System
+
+*Diary of an Audit*
 
 **Engagement:** HITRUST CSF v11 + HIPAA Security Rule + FDA SaMD Post-Market Combined Assessment
 **Client:** Mercator Health System (top-20 US integrated health system — academic medical center, regional health-insurance carrier, multi-state physician group)
@@ -6,7 +8,7 @@
 **Audit team lead:** Dawn
 **Client liaison:** Dr. Patricia Okonkwo, system-wide CISO
 
-**Posture going in:** same product the team saw at Northbridge Bank two weeks ago, but applied to a healthcare setting. The crypto substrate is familiar; the question now is whether the operational controls translate to HIPAA + FDA-regulated workflows. Mercator turned on TesseraSeal 90 days ago, independent of any prior conversation with this audit team. The institution's claim, going into the room, is that every prediction the FDA-cleared sepsis CDS model makes lands in a sealed chain-of-custody ledger built on Herald Core, that the daily seals are rooted in AWS CloudHSM, that the verifier CLI is `herald-verify`, and that the whole stack conforms to a public spec called FFIEC chain-of-custody v1.0b. The team is confident in the product; the open question is whether Mercator's deployment lives up to it.
+**Posture going in:** same product the team saw at Northbridge Bank two weeks ago, but applied to a healthcare setting. The crypto substrate is familiar; the question now is whether the operational controls translate to HIPAA + FDA-regulated workflows. Mercator turned on TesseraSeal 90 days ago, independent of any prior conversation with this audit team. The institution's claim, going into the room, is that every prediction the FDA-cleared sepsis CDS model makes lands in a sealed chain-of-custody ledger built on Herald Enterprise, that the daily seals are rooted in AWS CloudHSM, that the verifier CLI is `herald-verify`, and that the whole stack conforms to a public spec called FFIEC chain-of-custody v1.0b. The team is confident in the product; the open question is whether Mercator's deployment lives up to it.
 
 ---
 
@@ -422,7 +424,7 @@ Tom, off the phone again: "The CAE asked me to put a question to the team. He wa
 
 Dawn thought about that for a moment. "Frame it as boundary-marking. The AI side is sealed because Mercator chose to seal it; the legacy side is not because Mercator hasn't gotten there yet. The report is not endorsing TesseraSeal. The report is documenting that on the surface area where Mercator has applied chain-grade controls, the controls hold; on the surface area where they haven't, they don't. The vendor is incidental to the finding. Spec §10.19 is the framework — a chain-coverage map, with categories, and an evidentiary substitute named for each unchained system."
 
-Mike: "I'd add — the AI side is sealed *to the controls Mercator built*. The vendor product is the substrate. The sealing posture is Mercator's. The same product deployed without two-of-three approval, without append-only warehouse semantics, without the reconciliation events Chen showed us, would not have produced this audit posture. The product is a tool. The posture is the team. Same Vidimus SDK, same Herald Core ledger, same `herald-verify` CLI — the difference between Mercator's posture and a hypothetical sloppy deployment is the institutional discipline at the SDK and operational layer."
+Mike: "I'd add — the AI side is sealed *to the controls Mercator built*. The vendor product is the substrate. The sealing posture is Mercator's. The same product deployed without two-of-three approval, without append-only warehouse semantics, without the reconciliation events Chen showed us, would not have produced this audit posture. The product is a tool. The posture is the team. Same Vidimus SDK, same Herald Enterprise ledger, same `herald-verify` CLI — the difference between Mercator's posture and a hypothetical sloppy deployment is the institutional discipline at the SDK and operational layer."
 
 "That's the framing," Dawn said. "Tom, tell the CAE we'll make sure the report reads that way."
 

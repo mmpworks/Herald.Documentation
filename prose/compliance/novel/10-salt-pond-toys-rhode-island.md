@@ -1,4 +1,6 @@
-# 🧾 Diary of an Audit Day — Salt Pond Toys
+# 10 — Salt Pond Toys
+
+*Diary of an Audit Day*
 
 **Engagement:** AI-quality and supply-chain integrity assessment ahead of (a) the annual CPSC cooperative-agreement audit, (b) the CBP CTPAT four-year revalidation due in nine months, (c) a Rhode Island AG consumer-protection lookback, and (d) a Target supplier-recall-readiness audit
 **Client:** Salt Pond Toys — third-generation family-owned mid-size toy manufacturer, Newport, Rhode Island. ~$320M revenue. ~180 employees in Newport HQ + design + corporate. ~40 employees in the wholly-owned Salt Pond Shenzhen QC + procurement office. ~25 employees at Salt Pond Trans-Pacific Logistics, the wholly-owned LA West Coast distribution LLC. Three contract manufacturing partners in Guangdong (Shenzhen, Dongguan, Foshan).

@@ -1,4 +1,6 @@
-# 🧾 Diary of an Audit Day — Pacific Crescent Power & Gas
+# 06 — Pacific Crescent Power & Gas
+
+*Diary of an Audit Day*
 
 **Engagement:** NERC CIP audit readiness assessment with PHMSA pipeline integrity-management overlay
 **Client:** Pacific Crescent Power & Gas — investor-owned utility, Pacific Northwest, ~3.1M customer accounts (electric + gas), multi-state (WA, OR, parts of northern CA and ID), HQ in Portland

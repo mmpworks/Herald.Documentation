@@ -25,7 +25,7 @@ That week is the floor. Every story in this folder is calibrated against it.
 
 ## TesseraSeal
 
-When the stories say **TesseraSeal**, they mean the product brand for a deployed Herald-ecosystem chain — Herald.Py instrumenting the capture surface, Herald Core operating the ledger and seal job, Herald.Compliance presenting the regulator-facing surface where examiners pull verifier output and seal records. The wire form is FFIEC chain-of-custody v1.0a. Seals are Ed25519 over an HSM-held key. Verification is the `herald-verify` CLI documented in the spec §10.12 exit-code contract: 0 PASS, 1 procedure-could-not-begin, 2 procedure-began-and-failed, 3 chain-anomaly.
+When the stories say **TesseraSeal**, they mean the product brand for a deployed Herald-ecosystem chain — Herald.Py instrumenting the capture surface, Herald Enterprise operating the ledger and seal job, Herald.Compliance presenting the regulator-facing surface where examiners pull verifier output and seal records. The wire form is FFIEC chain-of-custody v1.0a. Seals are Ed25519 over an HSM-held key. Verification is the `herald-verify` CLI documented in the spec §10.12 exit-code contract: 0 PASS, 1 procedure-could-not-begin, 2 procedure-began-and-failed, 3 chain-anomaly.
 
 Eleven distinct deployment contexts show up across these stories.
 

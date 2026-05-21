@@ -1,4 +1,6 @@
-# 🧾 Diary of an Audit Day — Atrio Banking Platform
+# 04 — Atrio Banking Platform
+
+*Diary of an Audit Day*
 
 **Engagement:** Vendor-side platform audit, read concurrently by three state banking departments, the OCC, and CFPB during a coordinated examination cycle
 **Client:** Atrio Banking Platform — Banking-as-a-Service infrastructure, Charlotte HQ, ~580 employees, tier-1 VC funded

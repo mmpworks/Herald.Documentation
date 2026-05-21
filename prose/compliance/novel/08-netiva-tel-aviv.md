@@ -1,4 +1,6 @@
-# 🧾 Diary of an Audit Day — NetiVa Intelligence Ltd. (Tel Aviv, Day 1 of 3)
+# 08 — NetiVa Intelligence Ltd.
+
+*Diary of an Audit Day — Tel Aviv, Day 1 of 3*
 
 **Engagement:** Independent vendor-management evaluation commissioned by Heritage Pacific Bank ($180B regional, US OCC-regulated), cost-shared with NetiVa, deliverable consented by NetiVa for read by Bank of Israel (Pikuach HaBankim — banking supervision under Directives 357 / 359 / 361 / 365 / 367 / 411 / 414) and Israeli Securities Authority during their next supervisory review
 **Client:** NetiVa Intelligence Ltd. — Israeli AI company, Sarona Tower HQ (Tel Aviv), R&D campus in Herzliya, ~340 employees, Unit 8200 alumni founders. Financial-market intelligence and AI-driven AML tooling for 23 Tier-1 banks across US, UK, Singapore, Israel, Australia. Multi-tenant SaaS vendor under spec §10.1 IKM-registry uniqueness discipline.

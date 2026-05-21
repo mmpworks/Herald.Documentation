@@ -1,4 +1,6 @@
-# 🧾 Diary of an Audit Day — Stelvio Industrial
+# 03 — Stelvio Industrial
+
+*Diary of an Audit Day*
 
 **Engagement:** CMMC 2.0 Level 2 readiness re-assessment with AS 9100D quality-systems overlay
 **Client:** Stelvio Industrial — specialty steel, northwest Indiana, ~$2.1B revenue, ~3,400 employees, third-generation family-owned
