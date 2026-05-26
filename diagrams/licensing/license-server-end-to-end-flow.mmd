@@ -1,0 +1,34 @@
+%% Herald license-server end-to-end flow
+%% Source-of-truth Mermaid for the diagram embedded in
+%%   prose/licensing/explanation/where-the-license-server-runs.md
+%%
+%% Original ASCII sketch by Steve, 2026-05-20, after the
+%% Container Apps + Managed Identity → Azure SQL bootstrap.
+%% See diagrams/licensing/license-server-end-to-end-flow.ascii.txt
+%% for the preserved original ASCII version.
+flowchart TD
+    Customer(["Customer"])
+    Stripe["Stripe Checkout<br/>(hosted)<br/><i>$0 fixed + per-txn fee</i>"]
+    Server["License server (.NET)<br/>wraps MMP.Licensing engine<br/><i>Container Apps consumption (~$0 idle)<br/>Managed Identity for SQL + Storage<br/>Public HTTPS endpoint</i>"]
+    DB[("mmpworks-db1<br/>license issuance ledger")]
+    Blob[("Azure Blob<br/>legal PDFs<br/><i>~$0.02/GB/mo</i>")]
+    Email["ACS Email<br/><i>~$0.0005/email<br/>≈ $5 buys 10,000 sends</i>"]
+    Inbox(["Customer email<br/>license key + attached PDFs"])
+    Paste(["Customer pastes key into<br/>Pro / Enterprise / TesseraSeal"])
+    Local["Local validation<br/>via MMP.Licensing engine<br/><i>cloud re-check for TesseraSeal</i>"]
+
+    Customer -->|"checkout"| Stripe
+    Stripe -->|"signed webhook over HTTPS"| Server
+    Server --> DB
+    Server --> Blob
+    Server --> Email
+    Email --> Inbox
+    Inbox --> Paste
+    Paste --> Local
+
+    classDef customer fill:#fef3c7,stroke:#b45309,stroke-width:2px
+    classDef cloud fill:#93c5fd,stroke:#1e3a5f,stroke-width:2px
+    classDef store fill:#a7f3d0,stroke:#047857,stroke-width:2px
+    class Customer,Inbox,Paste customer
+    class Stripe,Server,Email cloud
+    class DB,Blob,Local store

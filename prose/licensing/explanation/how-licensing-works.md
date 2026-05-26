@@ -7,6 +7,7 @@ since: 2.0
 last-reviewed: 2026-05-17
 related:
   - explanation/how-licensing-defends
+  - explanation/where-the-license-server-runs
 related-records: []
 related-external:
   - repo: mmpworks/MMP.Licensing
@@ -140,7 +141,9 @@ A few things worth pointing out:
   remembers every token we've ever issued. A customer might end
   up with 25 licenses, maybe one per service, or one per
   developer, or one per region. The DB tracks them so neither
-  side has to remember.
+  side has to remember. For the deployment shape (which database,
+  which cloud region, what it costs us per month), see
+  [where the license server runs](./where-the-license-server-runs.md).
 - **The HSM** is **Azure Key Vault Premium**, FIPS 140-2 Level 2
   certified hardware whose only job is to hold the private key
   and produce signatures on request. We send it the payload

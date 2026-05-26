@@ -1,0 +1,113 @@
+{
+  "$schema": "../../schemas/herald-oss/sink-kind-vocabulary.schema.json",
+  "surface": "sink-kind-vocabulary",
+  "version": "2026-05-25",
+  "last_reviewed": "2026-05-25",
+  "title": "Sink-kind vocabulary — one name on the wire, one at the call site, one inside",
+  "ratified_by": "Richard, architecture-designer",
+  "source_files": [
+    {
+      "repo": "Herald.RestApi.FakeServer",
+      "path": "src/Herald.RestApi.FakeServer/Demo/PipelineBootstrapToBuilder.cs",
+      "role": "Build() dispatch — ApplyOneSink switches on the catalog kind"
+    },
+    {
+      "repo": "Herald.RestApi.FakeServer",
+      "path": "src/Herald.RestApi.FakeServer/Seeds/DemoSeeder.cs",
+      "role": "Seed sink instances + catalog entries — SinkKind and KindKey both store the catalog kind"
+    },
+    {
+      "repo": "Herald.OSS",
+      "path": "src/Quick/QuickLogBuilder.cs",
+      "role": "WithFileSink(path, kind) — the OSS-kind call site"
+    },
+    {
+      "repo": "Herald.OSS",
+      "path": "src/Services/KnownSinkKinds.cs",
+      "role": "Defines the OSS kinds (json_file, text_file, otlp_json, http_json, ...)"
+    }
+  ],
+  "vocabularies": [
+    {
+      "id": "catalog-kind",
+      "name": "catalog kind",
+      "definition": "The wire and storage name for a sink. It is the canonical identity everywhere a sink crosses a boundary — catalog, instance store, bootstrap JSON, and Build() dispatch.",
+      "examples": [
+        "herald.console",
+        "herald.json-file",
+        "herald.text-file",
+        "herald.otlp",
+        "herald.datadog",
+        "http_json"
+      ],
+      "may_appear_on_wire": true
+    },
+    {
+      "id": "oss-kind",
+      "name": "OSS kind",
+      "definition": "The short kind the Herald.OSS QuickLogBuilder takes at its call site. It lives only at that call site and never gets stored or transmitted.",
+      "examples": ["json_file", "text_file", "otlp_json"],
+      "may_appear_on_wire": false
+    },
+    {
+      "id": "provider-class",
+      "name": "provider class",
+      "definition": "The name of the .NET class that implements the sink. It is implementation-internal and must never appear in any stored or transmitted field.",
+      "examples": ["RenderedOutputLogger", "WriterLogger", "Datadog"],
+      "may_appear_on_wire": false
+    }
+  ],
+  "layers": [
+    {
+      "layer": "Catalog endpoint",
+      "symbol": "SinkCatalogEntry.KindKey",
+      "speaks": "catalog-kind",
+      "example": "herald.json-file"
+    },
+    {
+      "layer": "Instance store",
+      "symbol": "SinkInstance.SinkKind",
+      "speaks": "catalog-kind",
+      "example": "herald.json-file"
+    },
+    {
+      "layer": "Bootstrap JSON",
+      "symbol": "sinks[].kind",
+      "speaks": "catalog-kind",
+      "example": "herald.json-file"
+    },
+    {
+      "layer": "Build() dispatch",
+      "symbol": "ApplyOneSink switch",
+      "speaks": "catalog-kind",
+      "example": "case \"herald.json-file\""
+    },
+    {
+      "layer": "Provider resolution",
+      "symbol": "WithFileSink(path, kind)",
+      "speaks": "oss-kind",
+      "example": "json_file"
+    },
+    {
+      "layer": "Sink implementation",
+      "symbol": "the sink class itself",
+      "speaks": "provider-class",
+      "example": "WriterLogger (never surfaced)"
+    }
+  ],
+  "rule": {
+    "statement": "A sink's kind has three names. Pick the right one for the boundary. The catalog kind is the name on the wire and in storage — it is canonical everywhere a sink identity crosses a boundary. The OSS kind is a call-site detail. The provider class is private.",
+    "canonical": "The catalog kind (herald.console, herald.json-file, herald.text-file, herald.otlp, herald.datadog, http_json) is canonical everywhere a sink identity crosses a boundary: the catalog endpoint, the instance store, the bootstrap JSON, and the Build() dispatch switch.",
+    "scoped": "The OSS kind (json_file, text_file, otlp_json) lives only at the QuickLogBuilder call site. ApplyOneSink translates the catalog kind to the OSS kind right before it calls WithFileSink. The OSS kind never gets stored and never goes on the wire.",
+    "forbidden": "The provider class (RenderedOutputLogger, WriterLogger, Datadog) is implementation-internal. It must never appear in any stored or transmitted field. Storing it is the bug this record exists to prevent."
+  },
+  "consequence": {
+    "summary": "Store the provider class instead of the catalog kind, and the sink silently disappears from the live pipeline after a publish.",
+    "detail": "When the instance store held the provider class, a published sink's kind became WriterLogger instead of herald.json-file. On the next pipeline build, the ApplyOneSink dispatch switch matches catalog kinds — it has no case for WriterLogger — so the sink fell through to the default arm and got skipped. File and Datadog sinks vanished from the live pipeline after a publish. Console and the live feed survived only because the code has name-based fallbacks; the file sink had none."
+  },
+  "do_dont": {
+    "do": "Store the catalog kind in every field a sink identity touches — KindKey, SinkKind, sinks[].kind. Translate to the OSS kind only inside the WithFileSink call.",
+    "dont": "Never store or transmit the provider class. If you see WriterLogger or RenderedOutputLogger in a kind field, that field is wrong and the next build will drop the sink."
+  },
+  "analogy": "The catalog kind is the public name on the package label. The provider class is the part number stamped inside the box. Customers read the label; the factory reads the part number. If you print the part number on the label, the customer can't find the product — and Build()'s dispatch is the customer here. It reads the label, finds no match, and the sink falls off the shelf."
+}

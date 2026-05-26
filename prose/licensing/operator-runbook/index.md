@@ -81,6 +81,13 @@ in under two minutes and know exactly what buttons to click.
     — three patterns, three different fixes. Mostly mundane.
     (Phase A.)
 
+### Deployment + infrastructure
+
+14. [Bootstrapping the license server on Azure](./14-bootstrapping-the-license-server-on-azure.md)
+    — the order to stand things up in, the four gotchas that
+    will bite you the first time, and the production-gap list
+    that must close before the first paying customer. (Phase D.)
+
 ## When something here is wrong
 
 If a step in any article doesn't match what you see in the portal,

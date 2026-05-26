@@ -1,0 +1,36 @@
+Herald license-server end-to-end flow — original ASCII sketch.
+
+Author: Steve Muchow, 2026-05-20
+Captured during the Container Apps + Managed Identity → Azure SQL
+bootstrap. The Mermaid rendering lives in
+license-server-end-to-end-flow.mmd alongside this file. The ASCII
+version is preserved here as the source-of-truth artifact for any
+low-bandwidth reader (terminal, plain-text mail thread, kept-in-a-
+gist context).
+
+The bootstrap notes that produced this sketch live at
+E:\dev\MMP.Azure.Env\docs\container-apps-bootstrap-2026-05-20.md.
+
+----------------------------------------------------------------
+
+Customer ─► Stripe Checkout (hosted, $0 fixed + per-txn fee)
+              │
+              ▼ (signed webhook over HTTPS)
+        ┌─────────────────────────┐
+        │  License server         │  Container Apps consumption (~$0 idle)
+        │  (.NET, wraps           │  Managed Identity for SQL + Storage
+        │   MMP.Licensing engine) │  Public HTTPS endpoint
+        └─────────────────────────┘
+              │           │            │
+              ▼           ▼            ▼
+        mmpworks-db1   Azure Blob   ACS Email
+        (license      (legal PDFs)  (~$0.0005/email
+         issuance      ~$0.02/GB/mo  ≈ $5 = 10,000 sends)
+         ledger)
+              │
+              ▼
+        Customer email — license key + attached PDFs
+              │
+              ▼
+        Customer pastes key into Pro / Enterprise / TesseraSeal
+        (local validation via MMP.Licensing engine; cloud re-check for TesseraSeal)
