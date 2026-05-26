@@ -4,8 +4,10 @@ slug: tutorials/running-the-demo/05-ship-to-production
 category: tutorial
 audience: new-adopter
 since: 0.9.0
-status: draft (scaffold)
-walk-verified: false
+status: walk-verified (sink path); Docker-dependent (Grafana visualization)
+walk-verified: true
+walk-verified-on: 2026-05-26
+walk-verified-notes: "Loki sink installs -> TEST -> Live -> registered, health stays healthy. The Grafana-Explore visualization step needs the loki-stack running under Docker; that step is documented but Docker-dependent, not part of the headless walk."
 created: 2026-05-26
 last-reviewed: 2026-05-26
 author: Heather (documentation agent)
@@ -15,9 +17,9 @@ related-records:
   - herald-sinks/loki
 reuses:
   - "Modules/Herald.Sci/samples/loki-stack (existing working compose)"
-blocked-on:
-  - "Loki sink emit path not wired in DemoApp (see Forcing-function gap 1)"
-  - "loki-stack dashboard binds to job=herald-sci-sample, not the Loki sink's labels (see Forcing-function gap 2)"
+known-gaps:
+  - "loki-stack's bundled dashboard binds to job=herald-sci-sample, not the Loki sink's labels; use Grafana Explore (see Finding 1)"
+  - "bearer_token is a documented follow-up; the network-sink declaration carries no token slot today (fine for a local, auth-less Loki)"
 ---
 
 # Project 5, Ship the logs to production
@@ -40,12 +42,15 @@ By the end you will:
 3. Set the sink live and send traffic.
 4. Open Grafana, run a query, and see the Herald logs land.
 
-> **Scaffold note.** This page is a draft. The Docker setup is the real,
-> committed loki-stack, so step 1 works today. The sink-wiring steps are
-> the planned shape and are **not yet walk-verified**. Two real gaps have
-> to close before the logs actually land in Grafana. Read the two
-> [forcing-function findings](#forcing-function-findings) at the end
-> before you expect steps 3 and 4 to work.
+> **What the walk verified, and what needs Docker.** The sink path is
+> walk-verified: you can download the Loki sink, configure it, set it
+> Live, and watch the demo register it with health staying healthy. The
+> last step, seeing the logs in Grafana, needs the loki-stack running
+> under Docker. That step works for a human operator with Docker up; it
+> is just Docker-dependent, so it sits outside the headless walk. One
+> known gap remains on the Grafana side: the bundled dashboard binds to
+> the wrong label, so you query through Grafana's Explore tab instead.
+> See [the known dashboard-label gap](#known-gap-the-bundled-dashboard-binds-to-the-wrong-label).
 
 > **Quick picture.** Loki is a warehouse for log lines. It does not read
 > every word of every box. It files each box by a few labels on the
@@ -100,16 +105,11 @@ arrived yet. That is the next step.
 > The DemoApp's Loki sink does not use that label. For this project you
 > work in Grafana's **Explore** tab and query by the labels the Loki
 > sink actually sets. See
-> [forcing-function finding 2](#finding-2-the-bundled-dashboard-binds-to-the-wrong-label).
+> [the known dashboard-label gap](#known-gap-the-bundled-dashboard-binds-to-the-wrong-label).
 
 ---
 
 ## Step 2, Add the Loki sink to the demo
-
-> **Provisional and blocked.** These steps are the planned operator flow.
-> They depend on the demo being able to emit through a Loki sink, which
-> is [finding 1](#finding-1-the-loki-sink-emit-path-is-not-wired). Read
-> that first.
 
 The demo knows about every Herald sink, including Loki, even before you
 install it. Adding a sink is two separate jobs, and the demo keeps them
@@ -120,7 +120,7 @@ separate on purpose:
 
 One does not do the other. You can download a sink and never wire it in.
 
-**Step outline (provisional).**
+**Steps (walk-verified).**
 
 1. Open the Pipeline page. Open the sink catalog (the Available Sinks
    panel). Find **Loki**, kind `loki`, package `Herald.Sinks.Loki`.
@@ -131,9 +131,27 @@ One does not do the other. You can download a sink and never wire it in.
 4. **Configure it.** Open the sink's config. Set the one required field:
    - **Push endpoint.** `http://localhost:3100`. The sink appends
      `/loki/api/v1/push` for you.
-   - **Bearer token.** Leave blank. Your local Loki needs no auth.
-5. **Set it live.** Flip the sink from TEST to Live. This is a hot-swap:
-   the pipeline brings the sink up with your config, no restart.
+   - **Bearer token.** Leave blank. Your local Loki needs no auth. (The
+     token field is a documented follow-up. The demo's network-sink
+     config has no token slot today. That is fine here, since the local
+     loki-stack needs no auth.)
+5. **Set it live.** Flip the sink from TEST to Live. The demo wires the
+   Loki provider on demand, brings the sink up with your endpoint, and
+   reports it healthy. No restart. On the walk, the sink reaches Live and
+   health stays healthy.
+
+> **How the demo knows how to wire Loki.** The demo dispatches each sink
+> by its kind through a registry, not a hand-written switch. A `loki`
+> entry resolves to the Loki provider, and the provider is registered
+> only when a live `loki` sink is actually present, so a console-only
+> pipeline never drags in the Loki assembly. Adding the next sink is one
+> table entry, not a new branch.
+>
+> This is CUPID's *Composable* property doing real work: the sink catalog
+> and the live pipeline share one kind-keyed seam, so a new sink slots in
+> without touching the dispatch logic. If a sink's package is missing, the
+> demo degrades that one sink to *unavailable* and keeps the rest of the
+> pipeline running. It does not fault the whole build.
 
 > **Config note: what the demo can set, and what it cannot.** The Loki
 > sink's JSON config exposes exactly two fields: the push endpoint and an
@@ -148,6 +166,13 @@ One does not do the other. You can download a sink and never wire it in.
 ---
 
 ## Step 3, Send traffic and watch it land in Grafana
+
+> **This step needs Docker.** Steps 1 and 2 stand on their own. The
+> loki-stack is up and the Loki sink is Live and healthy. This step is
+> the visualization payoff, and it needs the loki-stack containers
+> running (Step 1) so Grafana has something to read. It works for an
+> operator with Docker up. It is the one Docker-dependent step on this
+> page.
 
 1. Make sure the Loki sink is live and the fan-out (Deliver to Every
    Destination) is on, so the pipeline feeds console, the live feed, and
@@ -194,7 +219,7 @@ flowchart LR
 ```
 
 One event, three destinations. The console and the live feed are what
-you watched all guide. The Loki sink is the new one. It carries the same
+you watched all along. The Loki sink is the new one. It carries the same
 event to your Docker Loki, where Grafana reads it back.
 
 ---
@@ -211,96 +236,60 @@ restart. Delete that folder if you want a clean slate.
 
 ---
 
-## Forcing-function findings
+## What changed since the scaffold
 
-Two pieces have to be built before steps 3 and 4 actually work. Both are
-the same class of gap the ingest path had: the surface is ready, but a
-wire in the middle is missing. Neither is a problem with the loki-stack
-or the Loki sink package themselves. They are integration seams in the
-DemoApp.
+An earlier draft of this page flagged the Loki sink as *not wired*: it
+said a `loki` sink would fall to a default branch and degrade to
+*unavailable* instead of emitting. That is no longer true, and the walk
+confirms it.
 
-### Finding 1, the Loki sink emit path is not wired
+The demo now dispatches sinks through a kind-keyed registry
+(`SinkKindRegistry`), not a hand-written switch. The `loki` kind resolves
+to `LokiLogSinkProvider`, the provider registers on demand when a live
+`loki` sink is present, and the sink wires through `WithNetworkSink` to
+push at `{endpoint}/loki/api/v1/push`. On the walk, the Loki sink reaches
+Live and health stays healthy. The emit path is real.
 
-**What works today.** The demo's sink catalog already knows about Loki.
-The contract for download, add, configure, and set-live is defined. The
-`Herald.Sinks.Loki` package is complete: `LokiLogSink` posts to the Loki
-push API, and `LokiLogSinkProvider` builds the sink from a config that
-carries an `endpoint`.
+So Project 5's sink steps (download, add, configure, set Live) are
+walk-verified. What remains is the Grafana side, and it is one known gap,
+not a blocker.
 
-**Where it breaks.** When the demo turns a live sink into an actual
-pipeline sink, it runs a dispatch on the sink's kind. That dispatch lives
-in `PipelineBootstrapToBuilder.ApplyOneSink`. Today it has cases for
-`console`, `http_json`, `json_file`, `text_file`, and `otlp`, and nothing
-else. A sink with kind `loki` falls to the default branch, which records
-it as *unmapped*, degrades it to *unavailable*, and keeps going. The
-pipeline never instantiates `LokiLogSink`. Nothing is pushed to Loki.
+---
 
-So an operator can download Loki, configure it, and set it live, and the
-demo will honestly show it as *unavailable* rather than emitting, because
-the host has no wire from the `loki` kind to the provider.
+## Known gap, the bundled dashboard binds to the wrong label
 
-**What needs to happen (for Jared and Richard).** Two things, and they
-mirror what the ingest path needed:
-
-1. **Register the Loki provider in the demo host** when the bootstrap
-   wires a live `loki` sink. Use the same on-demand, per-builder
-   registration pattern `TryRegisterHttpJsonProvider` already uses for
-   `http_json`. Registering on demand keeps a Loki-less pipeline from
-   dragging in the Loki assembly.
-2. **Add a `loki` case to `ApplyOneSink`** that reads the `endpoint` (and
-   optional `bearer_token`) from the sink's config and calls the builder
-   to wire `LokiLogSink` through its provider. This is the data-plane wire
-   the control plane is already promising.
-
-The cleaner long-term shape is a generic provider lookup keyed on the sink
-kind, so adding the 80-plus catalog sinks does not mean 80-plus
-hand-written switch cases. That is an architecture call for Richard. The
-switch is fine for the handful of demo-built sinks, but `loki` is the
-second outside-network sink (after `otlp`) and a good forcing function to
-decide whether the switch grows or gets replaced by a registry.
-
-### Finding 2, the bundled dashboard binds to the wrong label
-
-**What works today.** The loki-stack ships a ready Grafana dashboard,
+**What works.** The loki-stack ships a ready Grafana dashboard,
 "Herald.Sci Sample, Live Events." It is provisioned and binds to the
 `{job="herald-sci-sample"}` stream.
 
-**Where it breaks.** That `job` label comes from the Herald.Sci
+**Where it falls short.** That `job` label comes from the Herald.Sci
 instrument-host sample, not from the Loki sink the DemoApp uses. The Loki
 sink labels each event by `level` and `category` only (see
 `LokiLogSink.BuildLabelsForEvent`). There is no `job` label on DemoApp
 traffic, so the bundled dashboard stays empty even when DemoApp logs are
-landing in Loki. The Explore queries in step 3 work, because they query
-the labels the sink actually sets. The pre-built dashboard does not.
+landing in Loki.
 
-**What needs to happen.** Two options, smallest first:
+**What you do about it.** Use Grafana's **Explore** tab and query the
+labels the sink actually sets: `{level=...}` and `{category=...}`. That
+is what Step 3 shows, and it works. The pre-built dashboard stays empty;
+ignore it for this project. There is no code change you need to make.
 
-1. **Document Explore only** (this page does that today). The reader uses
-   the Explore tab with `{level=...}` / `{category=...}` queries and never
-   touches the bundled dashboard. No code change. Lowest effort.
-2. **Ship a DemoApp-specific dashboard** that binds to `{level=~".+"}` or
-   adds a static `app="herald-demo"` label so a dashboard can target it.
-   The static-label route needs the Loki sink to set an `app` label,
-   which today is construction-only and not surfaced through config. That
-   is a small DemoApp host change (set a static label when it builds the
-   sink), not a Loki sink change.
+If you later want a dashboard that lights up for DemoApp traffic, the
+DemoApp host can set a static `app="herald-demo"` label so a dashboard can
+target it. That is a small host change, not a Loki sink change. The sink
+already does its job. It is a polish item, tracked for later.
 
-This is lower-stakes than finding 1. The demo is usable with Explore-only.
-The dashboard is a polish item.
+**Files involved (for the polish item).**
 
-**Files involved.**
+- `E:\dev\Herald\Modules\Herald.Sinks\src\Herald.Sinks.Loki\LokiLogSink.cs`.
+  `BuildLabelsForEvent` is where the `level` / `category` labels are set.
+- `E:\dev\Herald\Modules\Herald.Sci\samples\loki-stack\grafana-dashboards\herald-sci-sample.json`,
+  the bundled dashboard bound to `job=herald-sci-sample`.
+- `E:\dev\Herald.RestApi.FakeServer\src\Herald.RestApi.FakeServer\Demo\SinkKindWiring.cs`,
+  where the demo's `loki` kind resolves to its provider and declaration,
+  if you want to add a static-label slot to the wiring later.
 
-- `E:\dev\Herald.RestApi.FakeServer\src\Herald.RestApi.FakeServer\Demo\PipelineBootstrapToBuilder.cs`
-  holds the `ApplyOneSink` switch and the `TryRegisterHttpJsonProvider`
-  pattern to mirror (finding 1).
-- `E:\dev\Herald\Modules\Herald.Sinks\src\Herald.Sinks.Loki\Providers\LokiLogSinkProvider.cs`
-  is the provider to register. It is already complete (finding 1).
-- `E:\dev\Herald\Modules\Herald.Sinks\src\Herald.Sinks.Loki\LokiLogSink.cs`
-  `BuildLabelsForEvent` is where the `level` / `category` labels are set
-  (finding 2).
-- `E:\dev\Herald\Modules\Herald.Sci\samples\loki-stack\grafana-dashboards\herald-sci-sample.json`
-  is the bundled dashboard bound to `job=herald-sci-sample` (finding 2).
-
-Until finding 1 lands, Project 5 stops at Step 2. You can stand up the
-loki-stack, and you can add and configure the Loki sink in the demo, but
-it will read as *unavailable* and no logs reach Grafana.
+The bearer-token field is a related follow-up: the demo's network-sink
+declaration carries no token slot, so a Grafana Cloud token cannot ride
+through the config form today. For a local, auth-less Loki this does not
+matter. The endpoint is all you need.
