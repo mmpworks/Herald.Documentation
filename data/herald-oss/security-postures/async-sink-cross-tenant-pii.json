@@ -1,0 +1,231 @@
+{
+  "$schema": "../../../schemas/herald-oss/security-posture.schema.json",
+  "id": "async-sink-cross-tenant-pii",
+  "title": "Async-sink cross-tenant PII",
+  "status": "posture-published-fix-pending-greenlight",
+  "first-affected-version": "0.4.0",
+  "fix-target-version": "0.10.2",
+  "mirrors": [
+    "Herald.OSS (FastPathAsyncSink, shipped)",
+    "Modules/Core (byte-identical mirror)"
+  ],
+  "threat": {
+    "summary": "`FastPathAsyncSink` defers a log event from the producer thread to a background consumer task. Any property captured as a lazy closure resolves on the consumer thread, where the producer's tenant scope is no longer in effect. The closure can read a different tenant's value than the producer intended.",
+    "mechanism": "Producer thread enqueues a `LogEvent` carrying `LogProperty.Lazy(() => readsAmbientScope())`. The consumer task drains the channel on a different thread without inheriting the producer's `AsyncLocal<T>`, `HttpContext`, `[ThreadStatic]`, or scope-provider state. The lazy delegate runs at serialization time, reads whatever ambient state the consumer thread holds, and emits that value as the property's value. The same shape repeats for any closure that observes mutable state between enqueue and drain."
+  },
+  "layers": [
+    {
+      "id": "L1",
+      "name": "Default-eager capture",
+      "closes": "Every property emitted through `LogProperty(...)` default path. The value reads on the producer thread, before enqueue, while ambient context is valid.",
+      "does-not-close": "Explicit `LogProperty.Lazy(...)` calls; closures embedded in scope values; direct `LogEvent` construction that defers some field's resolution."
+    },
+    {
+      "id": "L2",
+      "name": "Factory finalization scan",
+      "closes": "Events that pass through `LogEventFactory.Create` or `DeferredLogEventFactory.Create`. The factory walks the property list, resolves remaining lazy closures on the producer thread, stamps the frozen `LogEvent.TenantId`, and refuses to emit an event carrying a live closure.",
+      "does-not-close": "Direct construction of a `LogEvent` that skips both factories. That path is the documented residual."
+    },
+    {
+      "id": "L3",
+      "name": "Drain-entry assertion",
+      "closes": "Detectable shapes of cross-thread ambient access at drain entry — drain task inheriting an `AsyncLocal<T>`, drain task running inside an `HttpContext`, drain task observing a `[ThreadStatic]` field set by the producer's request.",
+      "does-not-close": "Object liveness. A closure that captured a reference to a mutable object, where the object's fields mutate after enqueue, presents no detectable shape at drain entry. Indirect ambient access through a helper method is also invisible.",
+      "honest-limit": "L3 is defense-in-depth, not the floor. L1 and L4 are the guarantee. The strongest position is the honest one — we engineered prevention around the limit rather than relying on detection of it. The assertion catches the *shapes* of the mistake, not the *liveness* of any captured object. An overclaim collapses the moment opposing counsel produces the recycled-object case."
+    },
+    {
+      "id": "L4",
+      "name": "PiiSensitive force-eager-to-string",
+      "closes": "Cross-tenant leak for any field marked `PiiSensitive`. The value is resolved and serialized to a `string` on the producer thread before enqueue. The consumer drains bytes, not a closure or a reference. Closes the transitive case where a deferred `ToString()` on the drain would have re-entered tenant scope.",
+      "does-not-close": "Data the producer did not mark sensitive. That is the design intent — `PiiSensitive` is the explicit signal that this field deserves stricter handling."
+    },
+    {
+      "id": "L5",
+      "name": "Fail-loud diagnostic instead of silent swallow",
+      "closes": "Replaces the pre-fix `try { _inner.Log(evt); } catch { }` swallow in `ConsumeAsync` with a routed-to-failure-sink path plus synchronous fallback. The async sink never silently drops an event whose drain threw, and never hides an exception whose payload encoded a cross-tenant slip.",
+      "does-not-close": "The rare case where the failure sink itself is misconfigured. Operational guidance covers that path."
+    }
+  ],
+  "analyzer-rules": [
+    {
+      "id": "HERALD008",
+      "severity": "Warning",
+      "detects": "`LogProperty.Lazy(...)` closure that captures an `AsyncLocal<T>` value.",
+      "cannot-detect": "AsyncLocal read through a helper method whose body the analyzer cannot see."
+    },
+    {
+      "id": "HERALD009",
+      "severity": "Warning",
+      "detects": "`LogProperty.Lazy(...)` closure that captures `HttpContext.Current` or a request-scoped API.",
+      "cannot-detect": "Request-scoped state accessed through reflection or runtime-generated helpers."
+    },
+    {
+      "id": "HERALD010",
+      "severity": "Warning",
+      "detects": "`LogProperty.Lazy(...)` closure that reads a `[ThreadStatic]` field.",
+      "cannot-detect": "ThreadStatic reads behind an interface where the implementation isn't visible at the analyzer's compilation unit."
+    },
+    {
+      "id": "HERALD011",
+      "severity": "Warning",
+      "detects": "`LogProperty.Lazy(...)` closure that captures a mutable reference (non-`readonly` field).",
+      "cannot-detect": "Mutation through a method call on an immutable-looking wrapper whose contents are mutable."
+    },
+    {
+      "id": "HERALD012",
+      "severity": "Warning",
+      "detects": "`LogProperty.Lazy(...)` closure that resolves through `ILogScopeProvider`.",
+      "cannot-detect": "Scope resolution that crosses an assembly boundary without the marker attribute."
+    },
+    {
+      "id": "HERALD013",
+      "severity": "Info",
+      "detects": "`LogProperty.Lazy(...)` closure that could be rewritten as eager capture of a local variable.",
+      "cannot-detect": "Cases where the eager rewrite changes semantics (rare; the rule is suggestive)."
+    }
+  ],
+  "auditable-suppression": {
+    "attribute": "HeraldDrainSafe",
+    "required-fields": ["Reason"],
+    "build-output-shape": "[Herald] HeraldDrainSafe: N reviewed exceptions with recorded reasons."
+  },
+  "trust-boundary": {
+    "closed-by-construction": [
+      "Properties emitted via `LogProperty(...)` default path",
+      "Properties marked `PiiSensitive`",
+      "Events emitted through `LogEventFactory.Create` or `DeferredLogEventFactory.Create`",
+      "`LogEvent.TenantId` stamped at factory finalization, orthogonal to GenSource"
+    ],
+    "closed-by-analyzer": [
+      "HERALD008: AsyncLocal capture in lazy closure",
+      "HERALD009: HttpContext capture in lazy closure",
+      "HERALD010: ThreadStatic read in lazy closure",
+      "HERALD011: Mutable-reference capture in lazy closure",
+      "HERALD012: ILogScopeProvider resolution in lazy closure",
+      "HERALD013: Local-eager capture suggestion",
+      "`<HeraldStrictMode>true</>` escalates all of the above to errors (existing HRLD0002 mechanism, no new code)"
+    ],
+    "documented-residual": [
+      "Direct `LogEvent` construction bypassing the factories, passed to chain-path `Log(LogEvent)`",
+      "Reflection-assembled closures (`DynamicMethod`, `Expression.Compile()`)",
+      "Arbitrary mutable objects attached to logging scopes"
+    ],
+    "out-of-scope": [
+      "Modification of Herald.OSS source itself; consumer's build provenance and package signing carry that risk"
+    ]
+  },
+  "threat-coverage": [
+    {
+      "claim": "A",
+      "summary": "Direct AsyncLocal capture in LogProperty.Lazy(...)",
+      "status": "closed",
+      "mechanism": "L1 default-eager + HERALD008 analyzer warning",
+      "test-ids": ["RT-01", "ANA-001"]
+    },
+    {
+      "claim": "B",
+      "summary": "HttpContext capture in lazy closure",
+      "status": "closed",
+      "mechanism": "L1 + HERALD009",
+      "test-ids": ["RT-02", "ANA-002"]
+    },
+    {
+      "claim": "C",
+      "summary": "ThreadStatic field read in lazy closure",
+      "status": "closed",
+      "mechanism": "L1 + HERALD010",
+      "test-ids": ["RT-03", "ANA-003"]
+    },
+    {
+      "claim": "D",
+      "summary": "Mutable-reference capture observing post-enqueue mutation",
+      "status": "closed",
+      "mechanism": "L1 + HERALD011 + L4 force-eager-to-string for PII fields",
+      "test-ids": ["RT-04", "ANA-004"]
+    },
+    {
+      "claim": "E",
+      "summary": "ILogScopeProvider resolution in lazy closure",
+      "status": "closed",
+      "mechanism": "L1 + HERALD012",
+      "test-ids": ["RT-05", "ANA-005"]
+    },
+    {
+      "claim": "F",
+      "summary": "Local variable that could have been captured eagerly",
+      "status": "closed",
+      "mechanism": "HERALD013 (Info, suggestion)",
+      "test-ids": ["RT-06", "ANA-006"]
+    },
+    {
+      "claim": "G",
+      "summary": "Transitive ToString() on the drain re-entering tenant scope",
+      "status": "closed",
+      "mechanism": "L4 force-eager-to-string at producer thread (red-team find)",
+      "test-ids": ["RT-08"]
+    },
+    {
+      "claim": "H",
+      "summary": "Silent exception swallow in ConsumeAsync hiding the slip",
+      "status": "closed",
+      "mechanism": "L5 fail-loud diagnostic via routed failure sink + synchronous fallback",
+      "test-ids": ["RT-09"]
+    },
+    {
+      "claim": "I",
+      "summary": "Drain task inheriting AsyncLocal from the construction site",
+      "status": "closed-defense-in-depth",
+      "mechanism": "L3 assertion at drain entry (caught when the shape is present; does not detect liveness or indirect access)",
+      "test-ids": ["RT-07"]
+    },
+    {
+      "claim": "J",
+      "summary": "Direct LogEvent construction bypassing factories",
+      "status": "closed-documented-residual",
+      "mechanism": "Chain-path contract documented in posture section 7; callers take responsibility for producer-thread resolution",
+      "test-ids": ["RT-10"]
+    },
+    {
+      "claim": "K",
+      "summary": "Reflection-assembled closures invisible to the analyzer",
+      "status": "closed-documented-residual",
+      "mechanism": "Caught by L3 when the shape resolves to detectable ambient access; otherwise documented as residual",
+      "test-ids": []
+    },
+    {
+      "claim": "L",
+      "summary": "Source modification of Herald.OSS itself",
+      "status": "out-of-scope",
+      "mechanism": "No library defense applies; closed by consumer's build provenance and package signing",
+      "test-ids": []
+    }
+  ],
+  "tests": {
+    "regression": {
+      "id-range": "RT-01..RT-10",
+      "count": 10,
+      "summary": "RT-01 through RT-07 reproduce the cross-tenant slip across each detectable unsafe shape — they fail on shipped code and pass once the fix lands. RT-08, RT-09, RT-10 are new tests added during the security pass: RT-08 covers the transitive `ToString()` vector that L4 closes; RT-09 covers the fail-loud diagnostic path that L5 establishes; RT-10 covers the factory finalization scan in the deferred-factory case."
+    },
+    "analyzer": {
+      "id-range": "ANA-001..ANA-010",
+      "count": 10,
+      "summary": "ANA-001 through ANA-006 cover HERALD008 through HERALD013 — one test per rule, asserting both positive (unsafe shape flagged) and negative (safe shape clean) cases. ANA-007 asserts a `HeraldDrainSafe` suppression without a reason fails the build. ANA-008 asserts a suppression with a reason silences the warning. ANA-009 asserts the build output reports the suppression count. ANA-010 asserts `<HeraldStrictMode>true</>` escalates HERALD008–HERALD013 to errors."
+    }
+  },
+  "residual": [
+    {
+      "path": "direct-logevent-construction",
+      "summary": "The chain-path `Log(LogEvent)` entry accepts a pre-built `LogEvent`. A caller who builds the event manually, embeds a closure in a property without running it through `LogProperty(...)`, and passes the result to the chain-path entry has bypassed the factory finalization scan. The contract: callers who construct directly take responsibility for producer-thread resolution. The path exists because advanced consumers build events in batch and need the chain-path entry to stay open."
+    },
+    {
+      "path": "reflection-assembled-closures",
+      "summary": "A consumer who builds a closure through `Expression.Compile()` or `DynamicMethod` and passes it into `LogProperty.Lazy(...)` does not present a syntactic shape the analyzer can read. The L3 assertion catches the shapes that resolve to detectable ambient access. Closures that read through a runtime-generated helper are outside the assertion's reach."
+    },
+    {
+      "path": "mutable-scope-values",
+      "summary": "A consumer who attaches a mutable object to a logging scope and mutates the object between enqueue and drain has constructed the same liveness problem the lazy closure does, by a different mechanism. The fix marks the `ILogScope` contract as snapshot-on-attach, but the contract is contract — not enforcement."
+    }
+  ],
+  "prose-slug": "explanation/security/async-sink-cross-tenant-pii-posture",
+  "last-reviewed": "2026-05-27"
+}

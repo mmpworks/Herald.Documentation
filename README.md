@@ -73,6 +73,54 @@ not need to re-render.
 Repo scaffold landed 2026-05-16. First documentation plan is for
 Herald.OSS — see `documentation-guidance/herald-oss/herald-oss-documentation-plan.md`.
 
+### What has landed so far
+
+The first authored material targets Herald.OSS 0.10.2. Three
+design-decision artifacts and one security posture ship as the
+dual-register pattern: a structured record in `data/` and a
+prose page in `prose/` for each one. The prose carries the
+analogy and the community-publication voice; the record carries
+the queryable facts.
+
+- **The async-sink cross-tenant PII posture** — five-layer defense
+  for `FastPathAsyncSink`, six new HERALD008–013 analyzer rules,
+  the `[HeraldDrainSafe]` reviewed-suppression attribute. Prose:
+  `prose/herald-oss/explanation/security/async-sink-cross-tenant-pii-posture.md`.
+  Record: `data/herald-oss/security-postures/async-sink-cross-tenant-pii.json`.
+- **The compact-path default-axes-only contract** — the 16-byte
+  `LogPropertyCompact` carries default axes by construction; the
+  full `LogProperty` path carries non-default axes; HERALD014
+  analyzer rule enforces the line. Prose:
+  `prose/herald-oss/explanation/design-decisions/compact-path-default-axes-only.md`.
+  Record: `data/herald-oss/design-decisions/compact-path-default-axes-only.json`.
+- **The Lever A async-default contract** — the new default
+  `FastPathAsyncSink` async handoff uses a value-typed
+  `AsyncEnvelope` on a per-connection channel; the engineering
+  catalog of thirteen approaches is published as the
+  due-diligence record. Prose:
+  `prose/herald-oss/explanation/design-decisions/lever-a-async-default.md`.
+  Record: `data/herald-oss/design-decisions/lever-a-async-default.json`.
+
+The schema both design-decision records validate against is
+`schemas/herald-oss/design-decision.schema.json`. The security
+posture record validates against
+`schemas/herald-oss/security-posture.schema.json`. Both schemas
+were authored alongside their first records, on the rule that a
+schema lands when the second instance of a fact shape arrives.
+
+### The dual-register pattern
+
+Each design-decision artifact ships in two registers. The
+structured record under `data/` carries the queryable facts (the
+decision, the contract, every alternative considered with its
+verdict and evidence grade, the trust boundary, the honest
+residual, the extension path, the cross-references). The prose
+page under `prose/` carries the same content for a human reader
+at roughly grade-10 reading level, anchored by an analogy and
+written to invite the OSS community to push back or PR alternatives.
+The pattern keeps the technical record auditable and the public
+narrative readable without forcing either to compromise.
+
 ## License
 
 Apache 2.0. See `LICENSE` and `NOTICE`.

@@ -35,10 +35,36 @@ payoff.
 
 ## What lives here
 
-This directory is empty until the first structured-record category
-lands. The Herald.OSS plan in `prose/herald-oss/_planning/` enumerates
-the categories the schemas will need to cover — sinks, methods, config
-keys, capability matrix, glossary, performance claims.
+The first two Herald.OSS schemas have landed alongside their
+first records. Both were authored on the "second appearance is
+the signal" rule above.
+
+- **`herald-oss/design-decision.schema.json`** — validates the
+  records under `data/herald-oss/design-decisions/`. A
+  design-decision record captures the decision, the contract it
+  establishes, every alternative considered (with verdict and
+  evidence grade), the trust boundary, the honest residual, the
+  extension path, the cross-references, and the PR-back
+  invitation to the OSS community. Two records validate against
+  it today: `compact-path-default-axes-only.json` and
+  `lever-a-async-default.json`.
+- **`herald-oss/security-posture.schema.json`** — validates the
+  records under `data/herald-oss/security-postures/`. A
+  security-posture record captures the threat, the layered
+  defense, the analyzer enforcement, the trust boundary, the
+  twelve-claim threats-considered table, the test plan, and the
+  honest residual. One record validates against it today:
+  `async-sink-cross-tenant-pii.json`.
+
+Two more schemas live elsewhere in this tree on the same rule:
+`schemas/compliance/audit-trail-comparison.schema.json` and
+`schemas/licensing/` (capability, preset, nag-template).
+
+The renderers are still placeholders in `scripts/`. The Herald.OSS
+plan in `prose/herald-oss/_planning/` enumerates the categories
+that come next — sinks, methods, config keys, capability matrix,
+glossary, performance claims — and each will land as a new schema
+the same way these two did.
 
 When you add a schema, name the corresponding renderer in this
 README's tree so future readers can trace which renderer reads which

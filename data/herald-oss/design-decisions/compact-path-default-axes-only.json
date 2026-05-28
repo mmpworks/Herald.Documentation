@@ -1,0 +1,100 @@
+{
+  "$schema": "../../../schemas/herald-oss/design-decision.schema.json",
+  "id": "compact-path-default-axes-only",
+  "title": "The compact log-property path is default-axes-only by construction",
+  "status": "decided-doc-pending-greenlight",
+  "decided": "2026-05-27",
+  "ships-in-version": "0.10.2",
+  "decision": {
+    "summary": "The compact path — `LogPropertyCompact` and the compact branch of `LogEventBuffer.ToLogEvent` — accepts only properties whose three optional axes (`CaptureMode`, `Format`, `Visibility`) carry their default values. Properties with non-default axes take the full `LogProperty` path. This is a contract, not a limitation.",
+    "rationale": "The compact path is the hot path. It is narrow because narrow is fast. Widening the compact struct to carry the three optional axes costs roughly 4% on the synchronous accept path at the 8-property EPICS arity; on Jared's bench rig the noise band on those measurements is ~8 ns on 45 ns numbers, wider than the 3 ns delta the widening would introduce. Paying real structural complexity for a perf cost that disappears into noise is the wrong trade. The full `LogProperty` path is the right home for non-default-axis properties, and the API surface today already routes them there."
+  },
+  "contract": {
+    "statement": "Any property reachable by the compact path carries default `CaptureMode`, default `Format`, and default `Visibility`. Properties that need non-default axes flow through the full `LogProperty` path. `LogPropertyCompact.ToLogProperty()` is lossy-in-shape but not lossy-in-data — the call signature drops three nullable parameters, and the inputs that reach the compact path are guaranteed to have those parameters at their default.",
+    "in-scope": [
+      "`LogPropertyCompact(string name, object? value)` — the only public constructor today",
+      "`LogPropertyCompact.From<T>(string name, T value)` — the factory today",
+      "`LogEventBuffer.ToLogEvent()` compact branch — emits the buffered compacts as `LogProperty` instances with default axes"
+    ],
+    "out-of-scope": [
+      "Properties marked `PiiSensitive` — force-eager to the full path before they reach a compact slot",
+      "Properties with non-default `CaptureMode` (e.g. forensic-`Silent`)",
+      "Properties with a custom `Format`",
+      "Properties with non-default `Visibility`"
+    ]
+  },
+  "alternatives-considered": [
+    {
+      "id": "Option-1",
+      "name": "Widen `LogPropertyCompact` to carry the three axes",
+      "summary": "Add `CaptureMode?`, `Format?`, `Visibility?` fields to the compact struct so it carries the full `LogProperty` semantics losslessly.",
+      "verdict": "rejected-perf-cost",
+      "measured-cost": "~4% on the synchronous accept path at 8-property EPICS arity. Jared's bench rig shows ~8 ns noise band on 45 ns measurements; the 3 ns delta the widening would add sits inside that band. The cost is real on the structure side and unmeasurable on the perf side — paying complexity for noise is the wrong trade."
+    },
+    {
+      "id": "Option-7a",
+      "name": "Per-event sparse-optional axes-override `[InlineArray]` sidecar on `LogEventBuffer`",
+      "summary": "Mirror the existing `EventId` and `GenSource` sparse-optional precedent — keep the compact struct narrow, attach the axes only on events that need them, via an `[InlineArray]` sidecar slot on `LogEventBuffer`. Most events allocate nothing in the sidecar; the rare event that needs non-default axes pays the small per-event sparse cost.",
+      "verdict": "deferred-future-extension",
+      "measured-cost": "Not measured. Mirrors a shape already shipping (`EventId`, `GenSource`) so the perf envelope is bounded by that precedent. Not implemented today because the API surface does not yet expose the need."
+    },
+    {
+      "id": "Option-2",
+      "name": "Two parallel public APIs — a compact and a full constructor on `LogPropertyCompact`",
+      "summary": "Expose `LogPropertyCompact(string, object?, CaptureMode?, Format?, Visibility?)` alongside the narrow form, and silently widen the struct when the richer constructor is called.",
+      "verdict": "rejected-complexity-cost",
+      "measured-cost": "Not measured. Rejected on shape grounds: the narrow struct's `Size = 16` invariant is the whole point of the compact path; a constructor that violates the invariant is a footgun. A future need is better served by Option-7a, which keeps the invariant."
+    }
+  ],
+  "enforcement": {
+    "xml-doc": "`LogPropertyCompact` and `LogEventBuffer.ToLogEvent` carry XML-doc remarks naming the contract: compact path is default-axes-only by construction; non-default-axis properties take the full `LogProperty` path.",
+    "analyzer-rules": [
+      {
+        "id": "HERALD014",
+        "severity": "Warning",
+        "detects": "A `LogProperty` instance whose `CaptureMode`, `Format`, or `Visibility` is non-default is passed to a compact-path API (`LogPropertyCompact` factory or a `LogEventBuffer` compact-slot write).",
+        "cannot-detect": "Non-default axes assigned through reflection or through a runtime-generated `LogProperty` factory whose body the analyzer cannot read."
+      }
+    ],
+    "strict-mode": "`<HeraldStrictMode>true</HeraldStrictMode>` escalates HERALD014 to an error via the existing HRLD0002 mechanism. No new code on the escalation side."
+  },
+  "trust-boundary": {
+    "true-by-construction": [
+      "Every property reachable through `LogPropertyCompact(string, object?)` carries default axes — the constructor accepts no axis parameters",
+      "Every property reachable through `LogPropertyCompact.From<T>(string, T)` carries default axes — the factory accepts no axis parameters",
+      "`LogPropertyCompact.ToLogProperty()` produces a `LogProperty` whose three optional fields are at their defaults, because the source struct has nowhere to carry non-default values"
+    ],
+    "enforced-by-analyzer": [
+      "HERALD014: non-default-axis `LogProperty` passed to a compact-path API",
+      "`<HeraldStrictMode>true</>` escalates HERALD014 to an error"
+    ],
+    "documented-contract": [
+      "A consumer who builds a `LogProperty` with non-default axes uses the full `LogProperty` path. The compact-path APIs do not accept it, and the analyzer flags the attempt at build time."
+    ],
+    "out-of-scope": [
+      "Modification of Herald.OSS source to widen the compact struct or relax the analyzer — closed by consumer build provenance, not by library defense."
+    ]
+  },
+  "honest-residual": {
+    "summary": "The contract is total today because the API surface makes it total. The compact-path APIs accept no axis parameters; there is no public path that delivers a non-default-axis property into a compact slot. A future API change that exposed axes on the compact path would break the contract — the analyzer rule lives to catch that change at build time and force the conversation.",
+    "future-shape": "If a real consumer need arrives for non-default axes on compact (the canonical case Richard named: a downstream processor wanting forensic-Silent on a compact buffer), the extension is Option-7a — the per-event sparse-optional axes-override sidecar on `LogEventBuffer`. The compact struct itself stays narrow."
+  },
+  "extension-path": {
+    "summary": "When non-default axes on compact become a real shipping need, Option-7a attaches the axes to `LogEventBuffer` as a sparse-optional `[InlineArray]` sidecar, mirroring the existing `EventId` and `GenSource` precedent. Most events allocate nothing in the sidecar; the rare event that needs non-default axes pays a small per-event sparse cost. The compact struct's `Size = 16` invariant holds. The hot path stays the hot path.",
+    "alternative-id": "Option-7a",
+    "does-not-widen": "`LogPropertyCompact` itself remains a 16-byte struct. The sidecar lives on `LogEventBuffer`, attached only when an event needs it."
+  },
+  "interactions": [
+    {
+      "with": "async-sink-cross-tenant-pii (security posture)",
+      "interaction": "`PiiSensitive` force-eager resolves a marked property to a full `LogProperty` (string-ified) on the producer thread before the property reaches a compact slot. PII never rides the compact path. The trust boundary in the PII posture and the contract here close in the same direction — both by construction."
+    },
+    {
+      "with": "kernel-vs-chain (explanation)",
+      "interaction": "The compact path is the data shape that makes the kernel path fast. Keeping the compact struct narrow is what keeps the kernel-path number (0.3 ns, zero allocations) achievable. The chain path takes the full `LogProperty` and pays the cost of the axes its decorators read."
+    }
+  ],
+  "pr-back-welcomed": "If a contributor finds an elegant way to make the compact path carry non-default axes losslessly without the ~4% accept-path cost — or finds that the cost is genuinely zero on real hardware and the bench noise hid a real signal — they are welcome to open a PR. Show the measurement, show the shape, and we evaluate. The contract is what we ship today; the door is not closed.",
+  "prose-slug": "explanation/design-decisions/compact-path-default-axes-only",
+  "last-reviewed": "2026-05-27"
+}

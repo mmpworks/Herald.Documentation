@@ -1,0 +1,178 @@
+{
+  "$schema": "../../../schemas/herald-oss/design-decision.schema.json",
+  "id": "lever-a-async-default",
+  "title": "Lever A — value-typed AsyncEnvelope — is the default async handoff for FastPathAsyncSink",
+  "status": "decided-doc-pending-greenlight",
+  "decided": "2026-05-27",
+  "ships-in-version": "0.10.2",
+  "decision": {
+    "summary": "Herald.OSS 0.10.2 ships Lever A as the default async handoff in `FastPathAsyncSink`. The producer constructs an `AsyncEnvelope` value type on its stack — header scalars plus an `[InlineArray(8)]` slot buffer plus an optional overflow array — copies it into a `Channel<AsyncEnvelope>` slot, and returns without allocating on the heap. The drain reads the envelope and either reconstitutes a small buffer on its own stack (when the inner sink is kernel-eligible, the zero-allocation full path) or builds a heap `LogEvent` at the boundary (when the inner sink is legacy). The prior default — a heap `LogEvent` materialized on the producer thread and carried on `Channel<LogEvent>` — remains in the code as the legacy fallback.",
+    "rationale": "At the cloud-native multi-tenant regime where cores are oversubscribed 4-10× by container packing, Lever A is strictly better on every measured axis: throughput doubles from 39.3M to 78.7M events/s, bytes per event drops from 296 to 0.3, maximum pause drops by 24.58 ms. The paced regime (24 conn × 100 KHz × N=3) shows throughput pacing-locked at both paths, B/event 6.7× lower for inline, gen-0 collections 5.7× lower, gen-1 collections 19× lower, and a mean maximum-pause delta of −12.22 ms in inline's favor. The original '+1.71ms paced regression' that drove the prior shelve reproduced on quiet reps but did not survive a single rep where the heap path took a 61 ms tail pause from a gen-2 collection — the inline path's maximum-pause distribution is meaningfully narrower than the heap path's. Twelve other shapes were considered as due diligence (the design-space catalog); each was rejected or deferred for reasons captured in the alternatives-considered list. The contingency for workloads that don't fit Lever A is the M-5 `IAsyncHandoff` seam (deferred-future-extension)."
+  },
+  "contract": {
+    "statement": "`FastPathAsyncSink` accepts a log event on the producer thread, places it on a per-connection channel without allocating on the heap, and returns. A per-connection drain reads events off the channel and forwards them to the inner sink. Each connection owns its channel and its drain — no shared work, no cross-tenant interference. When the inner sink is kernel-eligible (`IKernelSink`), the whole pipeline runs at zero allocations per event in steady state; when the inner sink is legacy, the cold-side consumer thread pays one allocation per drained event at the sink boundary.",
+    "in-scope": [
+      "`FastPathAsyncSink.Log(LogEventBuffer)` — the public entry point on the producer thread",
+      "`Channel<AsyncEnvelope>` — the per-connection channel, value-type payload, no heap object per event",
+      "`ConsumeAsync` — the per-connection drain that reads envelopes and routes them to the inner sink",
+      "Kernel-eligible inner-sink path (`IKernelSink` claimant) — zero allocation in steady state",
+      "Legacy inner-sink path — one allocation on the consumer thread per drained event, on the cold side of the channel",
+      "The `AsyncEnvelope` value type: header scalars + `[InlineArray(8)]` slot buffer + optional overflow array"
+    ],
+    "out-of-scope": [
+      "Workloads whose SLO requires a maximum pause tighter than 2-3 ms in the paced regime — the inline path carries a ~1.5 ms per-event-stable cost on quiet reps; opt out via the future M-5 seam when it ships",
+      "Events whose property count routinely exceeds the 8-slot inline buffer — overflow events fall back to an array allocation and lose part of the inline win",
+      "The 100 KHz/connection design ceiling is a target for the scientific/manufacturing producer profile, not a representative current-customer rate; the optimization is forward-looking"
+    ]
+  },
+  "alternatives-considered": [
+    {
+      "id": "Option-1",
+      "name": "SPSC Disruptor-proper ring per connection",
+      "summary": "Cache-line-padded slots, sequence cursors, in-place slot mutation under a single-producer-single-consumer claim. The original LMAX pattern, per connection.",
+      "verdict": "rejected-complexity-cost",
+      "measured-cost": "Projected from analogous measurement (JCTools-style benchmarks in JVM/.NET ports). Plausible 1.5-3× over `Channel<T>` for SPSC in .NET, not the 10× cited from Java/C++ Disruptor literature; .NET's stronger memory model and conservative JIT fences cap the win. Substantial code surface (per-connection ring + cursor + claim + barrier discipline) for a small win on a primitive `Channel<T>` already handles competently."
+    },
+    {
+      "id": "Option-2",
+      "name": "Off-heap unmanaged byte ring",
+      "summary": "Encode events as bytes in a pre-allocated unmanaged buffer; consumer decodes at the drain boundary. GC sees zero managed object traffic.",
+      "verdict": "rejected-perf-cost",
+      "measured-cost": "Designed-only. Producer pays per-event byte encoding (200-500 ns on a 4-property event) instead of O(1) reference-copy (30-50 ns on Lever A). Loses throughput to save allocation rate — wrong trade in-process."
+    },
+    {
+      "id": "Option-3",
+      "name": "Per-thread batched handoff",
+      "summary": "Producer accumulates N events in a thread-local buffer; hands off the whole batch (one alloc per N events) when the batch fills or a flush deadline hits.",
+      "verdict": "rejected-complexity-cost",
+      "measured-cost": "Designed-only. Reintroduces cross-tenant fairness inversion inside each per-connection lane: a slow tenant's batch fills slowly, the drain stalls on it, the fast tenant's already-full batch waits behind. The per-connection-drain topology exists precisely to prevent this."
+    },
+    {
+      "id": "Option-4",
+      "name": "Pre-render to bytes on the producer",
+      "summary": "The producer thread does the sink's serialization; the channel carries `ReadOnlyMemory<byte>` instead of `LogEvent`.",
+      "verdict": "rejected-complexity-cost",
+      "measured-cost": "Designed-only. Same shape as #2 from a different angle. Requires the sink interface to commit to a byte-oriented shape as a first-class contract — a re-architecture of every sink in the ecosystem for a tail-case win that Lever A's inline envelope achieves with the structured shape preserved."
+    },
+    {
+      "id": "Option-5",
+      "name": "Kernel-inner-direct-to-sink bypass (runtime variant) / M-2 (compile-time source-generator variant)",
+      "summary": "When the inner sink claims `IKernelSink` AND drain isn't required for backpressure, skip the async handoff entirely — sync direct call from kernel to sink. Runtime check or compile-time elimination via the `[HeraldLog]` source generator.",
+      "verdict": "rejected-complexity-cost",
+      "measured-cost": "Designed-only for the source-generator variant; partially measured (the runtime check exists in today's kernel-inner path). The async handoff is the latency firewall — it decouples producer latency from sink latency so a sink with a 50ms pause-on-first-call (file open, TLS handshake) does not block every producer thread. The compile-time variant proves the sink TYPE is kernel-eligible; it cannot prove the sink's `Log()` body is fast. Operator footgun, not a sensible default."
+    },
+    {
+      "id": "Option-6",
+      "name": "Producer-side fixed-arena allocator with epoch reset",
+      "summary": "Per-producer arena that resets when the consumer signals 'I'm done with batch N.' Bounded amortized cost, no GC interaction during the arena's working set.",
+      "verdict": "rejected-complexity-cost",
+      "measured-cost": "Designed-only. The cross-thread free coordination costs more than the alloc you save. Arena allocators work for request-scoped allocation (allocate in handler, free at end of request); they work poorly when the consumer is async and the producer doesn't know when reset is safe. Lever A achieves the same producer-side-zero-alloc goal without the reclamation problem."
+    },
+    {
+      "id": "Option-7",
+      "name": "Native AOT-specific path",
+      "summary": "A different async-handoff implementation when the deployment is Native AOT (no JIT, fully ahead-of-time compiled).",
+      "verdict": "rejected-perf-cost",
+      "measured-cost": "First-principles estimate. The JIT optimizations relevant to the async-handoff hot path — devirtualization of `IKernelSink`, inlining of `FastPathAsyncSink.Log`, escape analysis on `LogEventBuffer` — are present in both JIT and AOT modes today. No measurable AOT-specific win to bet on."
+    },
+    {
+      "id": "Option-8",
+      "name": "Ref-struct channel hybrids (O-1)",
+      "summary": "A channel whose payload type is a `ref struct` (like `LogEventBuffer`), avoiding the heap-storable constraint entirely.",
+      "verdict": "rejected-complexity-cost",
+      "measured-cost": "First-principles estimate. Possible only if you redefine 'channel' to break the async-decoupling property. Generic `Channel<T>` cannot carry `ref struct` because `T : allows ref struct` is a research feature in .NET 10. A non-generic channel that borrows a producer's `ref struct` via `ProcessNext(in LogEventBuffer)` is structurally a sync call wrapped in a thread context switch — defeats the async-decoupling property the channel exists to provide."
+    },
+    {
+      "id": "M-1",
+      "name": "Vyukov MPSC linked-list queue (intrusive node)",
+      "summary": "Single CAS on enqueue, no per-event channel-internal slot copy. The `LogEvent` carries a `next` pointer field directly (intrusive node); enqueue is `Interlocked.Exchange` on the tail pointer.",
+      "verdict": "deferred-future-extension",
+      "measured-cost": "Projected from analogous measurement (Vyukov queue widely benchmarked in Go runtime and C++ implementations; .NET-specific characterization sparse). Trades per-enqueue sequence-write (~free on x86) for per-enqueue CAS (50-200 ns under contention). Net win workload-dependent. Orthogonal to Lever A — a future revision could combine Vyukov queue carrying inline envelopes, not a competing approach."
+    },
+    {
+      "id": "M-3-A",
+      "name": "Pooled mutable `LogEvent` (SemVer-major break)",
+      "summary": "Convert `LogEvent` from `sealed record` to a pooled mutable class with `Reset()` / `Return()` semantics. Producer rents from a per-connection pool; drain returns after the sink completes.",
+      "verdict": "rejected-complexity-cost",
+      "measured-cost": "Designed-only. Breaks the public-API value-equality contract — a 1.0/2.0 major-version break for every consumer. The pool itself must be lock-free MPSC (`ConcurrentBag<LogEvent>` at 100KHz × N connections has the exact contention problem we are trying to remove). Pooled instances tenure into gen-2 quickly and hold refs to short-lived strings — the unfavourable side of the same generational-distribution shift that Lever A's inline path lands on the favourable side of."
+    },
+    {
+      "id": "M-3-B",
+      "name": "Pooled mutable carrier; public `LogEvent` materialized at sink boundary",
+      "summary": "Internal pooled mutable carrier rides the channel; the drain materializes the public immutable `LogEvent record` at the sink boundary. Producer pays zero allocation; consumer pays one `record` allocation per drained event on the cold path.",
+      "verdict": "deferred-future-extension",
+      "measured-cost": "Designed-only. Preserves the public-API contract — sinks continue to see `LogEvent` or `LogEventBuffer`; the carrier is internal. Producer-side wins comparable to Lever A. Same gen-2 caveat as M-3-A: the carrier must genuinely null reference fields on `Return()` or tenure into gen-2 holding refs to gone strings. Lever A's inline `AsyncEnvelope` is a value type with no heap presence — the whole class of pool-discipline-failure-modes M-3-B requires the maintainer to guard against, Lever A sidesteps. Credible alternative; higher long-term maintenance cost."
+    },
+    {
+      "id": "M-4",
+      "name": "SPSC fan-in via single drainer thread",
+      "summary": "Each producer ↔ its own SPSC ring (no MPSC contention). A single drainer thread fans-in N rings round-robin (or by priority) into the sink.",
+      "verdict": "rejected-perf-cost",
+      "measured-cost": "Designed-only. Concentrates throughput at a single drainer thread. Ceiling is ~one core's event-processing capacity (~417 ns/event at 2.4M events/s = one core saturated); cannot reach the 78M/s Lever A inline+kernel-inner reached at 96-conn flat-out with N drainers. Inverts the per-connection-drain topology's load distribution. Also reintroduces fan-in fairness inversion akin to the batched-handoff case."
+    },
+    {
+      "id": "M-5",
+      "name": "`IAsyncHandoff` interface seam (operator-pluggable)",
+      "summary": "Extract async-handoff into a public interface; ship the default `ChannelBasedAsyncHandoff` (Lever A's shape); allow operators to plug in alternatives (`SpscDisruptorAsyncHandoff`, `BatchedAsyncHandoff`, etc.). The catalog's CUPID-Composable answer.",
+      "verdict": "deferred-future-extension",
+      "measured-cost": "Designed-only. Real architectural option, real cost. The interface introduces ~3-5 ns/op of devirtualization overhead (JIT cannot inline across the seam unless guarded-devirt fires). At 2.4M ops/s that's 7-12 ms/sec of pure interface-call overhead — about 2% of one core. Deferred because the seam costs every operator the interface tax in exchange for a flexibility most operators will never use. Right time to add the seam is when an operator demonstrates a workload where opting out matters."
+    },
+    {
+      "id": "A",
+      "name": "Lever A — inline `AsyncEnvelope` + kernel-inner sink (THE DEFAULT)",
+      "summary": "Producer constructs `AsyncEnvelope` value type on its stack (header scalars + `[InlineArray(8)]` slot buffer + optional overflow array), copies it into `Channel<AsyncEnvelope>`. Drain reads it and reconstitutes a `LogEventBuffer` on its stack (kernel-eligible inner — zero-alloc full path) or builds a heap `LogEvent` at the boundary (legacy inner).",
+      "verdict": "accepted",
+      "measured-cost": "Measured. 24-conn × 100KHz × 15s paced (mean of 3 reps): throughput 2.40M/s both paths, B/event 343→51 (inline 6.7× lower), gen-0 1194→210 (5.7× lower), gen-1 114→6 (19× lower), max-pause mean 21.81→9.59 ms (−12.22 ms in inline's favor). 96-conn × flat-out (single rep): throughput 39.3M→78.7M events/s (+100.6%), B/event 296→0.3, max-pause 30.4→5.8 ms (−24.58 ms). Honest cost on quiet paced reps: ~1.5 ms per-event-stable max-pause penalty when no tail event hits."
+    }
+  ],
+  "enforcement": {
+    "xml-doc": "`FastPathAsyncSink` and the new `AsyncEnvelope` value type carry XML-doc remarks naming the contract: per-connection-drain topology, value-type channel payload, kernel-eligible inner-sink zero-allocation path, legacy inner-sink one-allocation cold-side fallback. The XML doc mirrors the contract statement language from this record so the API reference and the prose page stay in sync."
+  },
+  "trust-boundary": {
+    "true-by-construction": [
+      "`AsyncEnvelope` is a value type — no heap presence, no `Return()` discipline to enforce, no pool to manage, no tenuring story to monitor",
+      "Each connection owns its channel and its drain — no shared mutable state between connections; cross-tenant interference at the channel layer is structurally impossible",
+      "The kernel-eligible inner-sink path runs the drain entirely on the consumer thread without allocating on the producer thread — producer-side allocation count is zero by construction, not by enforcement",
+      "The per-connection-drain topology preserves the L3 drain-entry assertion in the async-sink PII posture — each drain runs the assertion at its own start; multi-tenant isolation the posture relies on is structurally intact"
+    ],
+    "documented-contract": [
+      "Operators whose SLO is tighter than the inline path's quiet-rep per-event-stable cost (~1.5 ms on the harness; production number TBD post-soak) opt out through the M-5 seam when it ships",
+      "Events whose property count exceeds the 8-slot inline buffer overflow to a heap-allocated array and pay a partial inline win; raising the slot count is a contained tune if the soak shows it's needed",
+      "Statistical confidence on the tail distribution requires a 30-rep run; the N=3 result is directional. The 24-hour soak is the surface where production-shaped tails land"
+    ],
+    "out-of-scope": [
+      "Workloads at the 100 KHz/connection design ceiling are a target, not a representative current-customer rate — the optimization is forward-looking",
+      "Bad-actor source modification of Herald.OSS itself (e.g. removing the per-connection-drain topology) — no library defense applies; closed by consumer build provenance and package signing"
+    ]
+  },
+  "honest-residual": {
+    "summary": "Three residuals are documented openly. (1) The paced-regime per-event-stable cost — ~1.5 ms additional max-pause on quiet reps relative to the heap path. Real, reproducible, the cost of the optimization in the paced regime. Operators with tight pause SLOs need the M-5 opt-out. (2) Overflow events — the 8-slot inline buffer is sized for the common case; events with more properties overflow to a heap array. The exact overflow rate on production workloads has not been measured; the 24-hour soak is the surface where that number lands. (3) Statistical confidence on the tail — N=3 at 15s shows the directional shape (inline narrower than heap) but is not a parametric tail claim. A 30-rep run and the 24-hour soak are the right surfaces for that.",
+    "future-shape": "If the soak surfaces a workload where Lever A's paced-regime cost is intolerable AND the affected customer cannot be served by tuning channel capacity / per-connection-drain shape, the team commits to landing the M-5 `IAsyncHandoff` seam as a follow-on without forcing the operator to wait for a major-version cycle. Raising the inline slot count is a contained tune if overflow rates demand it. The 30-rep characterization runs as queued statistical-rigor follow-up."
+  },
+  "extension-path": {
+    "summary": "The contingency is M-5 — the `IAsyncHandoff` interface seam. Extract async-handoff into a public interface; ship the default `ChannelBasedAsyncHandoff` (Lever A's shape); allow operators to register alternative implementations for workloads where Lever A doesn't fit. The cost is ~3-5 ns/op of devirtualization overhead (~2% of one core at 2.4M ops/s). Deferred today because the seam costs every operator the interface tax in exchange for a flexibility most operators will never use. Right time to add the seam is when an operator demonstrates a workload where opting out matters — the 24-hour soak and early-adopter feedback are exactly where that demonstration will happen. M-3-B (pooled mutable carrier) is also documented as a credible alternative if a future revision finds the maintenance cost of pool discipline acceptable.",
+    "alternative-id": "M-5",
+    "does-not-widen": "The `AsyncEnvelope` value type and the per-connection-drain topology stay as the default registered implementation. The seam adds operator pluggability; it does not change the shipped default."
+  },
+  "interactions": [
+    {
+      "with": "compact-path-default-axes-only (design decision)",
+      "interaction": "The compact path's 16-byte `LogPropertyCompact` struct and its default-axes invariant are exactly what makes the inline envelope's `[InlineArray(8)]` slot buffer fit in a value type without overflow on common-case events. The compact path is the data shape that rides inside `AsyncEnvelope`'s slot buffer; the two designs were authored as one. The canonical-equivalence contract the compact-path doc establishes (compact and full paths produce equivalent `LogEvent` outputs by construction) continues to hold across the new default async path — the envelope's lossless compact slot is the construction that makes ingress-equals-output continue to hold when the event takes the inline route."
+    },
+    {
+      "with": "async-sink-cross-tenant-pii (security posture)",
+      "interaction": "The L3 drain-entry assertion in the PII posture sits at `ConsumeAsync` entry — a stable entry point regardless of which channel-payload shape rides above it. Lever A's per-connection-drain topology preserves the assertion's contract: each drain is its own thread, each drain runs the assertion at its own start, the multi-tenant isolation the posture relies on is structurally intact. The `PiiSensitive` force-eager mechanism in L4 also composes cleanly — PII is resolved on the producer thread before the envelope is filled, so what rides the channel is a string, not a closure, regardless of whether the channel payload is `LogEvent` or `AsyncEnvelope`."
+    },
+    {
+      "with": "kernel-vs-chain (explanation)",
+      "interaction": "Lever A's kernel-eligible inner-sink path is the async expression of the same hot-path-narrow design that the kernel-vs-chain explainer documents. The inline envelope plus the `IKernelSink` claim plus the per-connection drain together produce the zero-allocation steady-state path; the chain path continues to take the heap-`LogEvent` route with its decorator semantics intact."
+    },
+    {
+      "with": "lever-a-reopened-as-default (decision-trail memory)",
+      "interaction": "This design decision is the artifact of the reversal documented in the [[lever-a-reopened-as-default]] memory note. The prior shelve verdict rested on framing 4-10× core oversubscription as 'misconfiguration, not a target'; the honest reframe (cloud-native multi-tenant containers default to that oversubscription) made the shelve internally inconsistent. Steve resolved the contradiction by reopening Lever A; Jared's re-measure (paced regime mean −12.22 ms BETTER for inline; the original '+1.71 ms regression' was a tail-effect of the heap path's wider distribution, not an inline cost) confirmed the decision. This page is the formal design-decision record of that reopening."
+    }
+  ],
+  "pr-back-welcomed": "Herald.OSS is open source and this catalog is published as the team's reasoning today, not the team's verdict for all time. Four invitations to the community: (1) **Pushback on the constraints.** We held four constraints fixed (multi-connection mandatory, 100 KHz/connection design ceiling, per-connection-drain topology, public-API discipline). If you have a reason to relax any of them, open an issue. (2) **Measurements of the designed-only entries.** Twelve of the thirteen catalog entries are designed-only or projected. Anyone who can stand up a credible .NET SPSC Disruptor, a Vyukov MPSC queue, or a pooled-carrier prototype against the corrected harness and produce numbers — we will incorporate the result and credit the contributor. (3) **New shapes we missed.** If you see an approach the team did not enumerate, submit it with the same shape (evidence grade + one-line verdict + tradeoff section) and we land it. (4) **Customer workload data.** The 100 KHz/connection design ceiling is honest about being a target. If your deployment is at or above that rate today, we want the data — both for catalog validation and for the M-5 contingency-trigger discussion. If the catalog itself is wrong somewhere — a verdict overstated, an evidence grade misclassified, an alternative mislabeled — same invitation. Open the PR. Show the work. We evaluate.",
+  "prose-slug": "explanation/design-decisions/lever-a-async-default",
+  "last-reviewed": "2026-05-27"
+}

@@ -1,0 +1,243 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://herald.dev/schemas/herald-oss/design-decision.schema.json",
+  "title": "Herald.OSS design-decision record",
+  "description": "Canonical record for a Herald.OSS design-decision document. Captures the decision, the contract it establishes, the alternatives considered, the analyzer that enforces the contract (when applicable), the honest residual, and the extension path for the case the contract excludes. Prose lives in prose/herald-oss/explanation/design-decisions/; the record carries the structured facts that any render (design-decisions index page, analyzer-rule reference, release notes) reads from.",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "status",
+    "decided",
+    "decision",
+    "contract",
+    "alternatives-considered",
+    "trust-boundary",
+    "honest-residual",
+    "extension-path",
+    "prose-slug",
+    "last-reviewed"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Stable identifier for the decision, used as the record file's base name."
+    },
+    "title": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": [
+        "decided-doc-pending-greenlight",
+        "decided-shipped",
+        "superseded",
+        "withdrawn"
+      ]
+    },
+    "decided": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the decision was made."
+    },
+    "supersedes": {
+      "type": "string",
+      "description": "Id of a prior design-decision this one replaces, if any."
+    },
+    "first-affected-version": {
+      "type": "string",
+      "description": "Earliest shipped Herald.OSS version that carries the decision."
+    },
+    "ships-in-version": {
+      "type": "string",
+      "description": "Herald.OSS version that ships the doc and any enforcement (analyzer rule, XML doc)."
+    },
+    "decision": {
+      "type": "object",
+      "required": ["summary", "rationale"],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "contentMediaType": "text/markdown",
+          "description": "One paragraph stating the decision plainly."
+        },
+        "rationale": {
+          "type": "string",
+          "contentMediaType": "text/markdown",
+          "description": "Why this shape is the right shape, including the cost of the rejected alternative when measurable."
+        }
+      }
+    },
+    "contract": {
+      "type": "object",
+      "required": ["statement", "in-scope", "out-of-scope"],
+      "properties": {
+        "statement": {
+          "type": "string",
+          "contentMediaType": "text/markdown",
+          "description": "The contract in plain words — what the consumer can rely on."
+        },
+        "in-scope": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Inputs the contract covers."
+        },
+        "out-of-scope": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Inputs the contract explicitly does not cover; these take the alternative path."
+        }
+      }
+    },
+    "alternatives-considered": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "verdict"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stable identifier (e.g. Option-1, Option-7a) used in prose cross-reference."
+          },
+          "name": { "type": "string" },
+          "summary": {
+            "type": "string",
+            "contentMediaType": "text/markdown"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "rejected",
+              "rejected-perf-cost",
+              "rejected-complexity-cost",
+              "deferred-future-extension",
+              "accepted"
+            ]
+          },
+          "measured-cost": {
+            "type": "string",
+            "description": "Measurement that drove the verdict, when available; includes the bench noise band when known so the reader can judge whether the cost is signal or noise."
+          }
+        }
+      }
+    },
+    "enforcement": {
+      "type": "object",
+      "description": "How the contract is enforced. The strongest form is compile-time; doc-only is acceptable when no compile-time check is available.",
+      "properties": {
+        "xml-doc": {
+          "type": "string",
+          "description": "Public API types/members that carry the contract in XML doc."
+        },
+        "analyzer-rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "severity", "detects"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^HERALD[0-9]{3,4}$" },
+              "severity": {
+                "type": "string",
+                "enum": ["Error", "Warning", "Info"]
+              },
+              "detects": { "type": "string" },
+              "cannot-detect": { "type": "string" }
+            }
+          }
+        },
+        "strict-mode": {
+          "type": "string",
+          "description": "How strict-mode (e.g. HeraldStrictMode) escalates the analyzer rule, if applicable."
+        }
+      }
+    },
+    "trust-boundary": {
+      "type": "object",
+      "required": [
+        "true-by-construction",
+        "documented-contract"
+      ],
+      "properties": {
+        "true-by-construction": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Claims that hold because the API surface makes the unsafe shape unreachable."
+        },
+        "enforced-by-analyzer": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "documented-contract": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Claims that hold because the consumer agreed to the contract; called out explicitly in the prose."
+        },
+        "out-of-scope": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "honest-residual": {
+      "type": "object",
+      "required": ["summary"],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "contentMediaType": "text/markdown",
+          "description": "What the decision does NOT solve, named plainly. If the answer is 'nothing today; the contract is total,' say that."
+        },
+        "future-shape": {
+          "type": "string",
+          "contentMediaType": "text/markdown",
+          "description": "When the residual becomes a real need, what shape the extension takes."
+        }
+      }
+    },
+    "extension-path": {
+      "type": "object",
+      "required": ["summary"],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "contentMediaType": "text/markdown",
+          "description": "The path forward if the contract's out-of-scope case becomes a real need. Documented now so future readers see we considered it."
+        },
+        "alternative-id": {
+          "type": "string",
+          "description": "Id from alternatives-considered that this extension references, if any."
+        },
+        "does-not-widen": {
+          "type": "string",
+          "description": "What the extension preserves — typically the hot-path shape that motivated the original decision."
+        }
+      }
+    },
+    "interactions": {
+      "type": "array",
+      "description": "Other Herald.OSS contracts this decision interacts with. Each entry names the other contract and the clean interaction.",
+      "items": {
+        "type": "object",
+        "required": ["with", "interaction"],
+        "properties": {
+          "with": { "type": "string" },
+          "interaction": {
+            "type": "string",
+            "contentMediaType": "text/markdown"
+          }
+        }
+      }
+    },
+    "pr-back-welcomed": {
+      "type": "string",
+      "contentMediaType": "text/markdown",
+      "description": "The invitation to the community. If a contributor finds an elegant alternative the team missed, this is where the prose tells them they're welcome to PR it back."
+    },
+    "prose-slug": {
+      "type": "string",
+      "description": "Slug of the prose page that is the human-readable form of this record."
+    },
+    "last-reviewed": {
+      "type": "string",
+      "format": "date"
+    }
+  }
+}
