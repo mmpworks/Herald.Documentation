@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://herald.dev/schemas/herald-oss/demo-seed.schema.json",
+  "title": "Herald DemoApp seed record",
+  "description": "Canonical record of what the DemoApp seeds at startup — the tenant, pipeline, levels, categories, enrichers, sinks, and the synthetic-feed architecture. The same facts feed the DemoApp README, the getting-started tutorial, the FakeServer DemoSeeder's own doc comments, and any 'what does the demo show' surface. The seed values are the source of truth for what Herald.OSS ships out of the box, so they live in a structured record. Prose lives in prose/<repo>/tutorials/running-the-demo/.",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "status",
+    "last-reviewed",
+    "package",
+    "seeder",
+    "tenant",
+    "pipeline",
+    "levels",
+    "categories",
+    "enrichers",
+    "sinks",
+    "feed-architecture",
+    "prose-slug"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "title": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": ["current", "superseded"]
+    },
+    "package": {
+      "type": "object",
+      "required": ["packageId", "command", "source"],
+      "properties": {
+        "packageId": { "type": "string" },
+        "version": { "type": "string" },
+        "command": { "type": "string", "description": "The command the user runs." },
+        "source": { "type": "string", "description": "Repo path of the sample that becomes the package." },
+        "default-port": { "type": "string" }
+      }
+    },
+    "seeder": {
+      "type": "object",
+      "required": ["type", "idempotent"],
+      "properties": {
+        "type": { "type": "string", "description": "The seeder class and its source file." },
+        "idempotent": { "type": "boolean", "description": "Whether re-running the seed produces the same state." },
+        "notes": { "type": "string", "contentMediaType": "text/markdown" }
+      }
+    },
+    "tenant": {
+      "type": "object",
+      "required": ["seed-tenant-id", "seed-tenant-display"],
+      "properties": {
+        "seed-tenant-id": { "type": "string" },
+        "seed-tenant-display": { "type": "string" },
+        "also-seeds": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Additional tenants the seeder creates and why."
+        },
+        "notes": { "type": "string", "contentMediaType": "text/markdown" }
+      }
+    },
+    "pipeline": {
+      "type": "object",
+      "required": ["id", "display", "status"],
+      "properties": {
+        "id": { "type": "string" },
+        "display": { "type": "string" },
+        "status": { "type": "string" },
+        "buffer": { "type": "string" },
+        "minimum-level": { "type": "string" },
+        "notes": { "type": "string", "contentMediaType": "text/markdown" }
+      }
+    },
+    "levels": {
+      "type": "object",
+      "required": ["count", "source", "items"],
+      "properties": {
+        "count": { "type": "integer" },
+        "source": { "type": "string", "description": "Where the level set comes from (e.g. Serilog's level set)." },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "priority"],
+            "properties": {
+              "name": { "type": "string" },
+              "priority": { "type": "integer" },
+              "color": { "type": "string" },
+              "decoration": { "type": "string" }
+            }
+          }
+        },
+        "notes": { "type": "string", "contentMediaType": "text/markdown" }
+      }
+    },
+    "categories": {
+      "type": "object",
+      "required": ["count", "notes"],
+      "properties": {
+        "count": { "type": "integer" },
+        "notes": { "type": "string", "contentMediaType": "text/markdown" }
+      }
+    },
+    "enrichers": {
+      "type": "object",
+      "required": ["class-count", "classes", "panel-keying"],
+      "properties": {
+        "class-count": { "type": "integer", "description": "Number of Core enricher CLASSES the bootstrap enrichers[] lists." },
+        "classes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "panel-keying": {
+          "type": "string",
+          "contentMediaType": "text/markdown",
+          "description": "How the live-viewer enricher panel keys (emitted field name, not class name) and why classes expand to fields."
+        },
+        "active-by-default": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "The emitted field names that default Active=true on the synthetic feed."
+        },
+        "inactive-by-default": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notes": { "type": "string", "contentMediaType": "text/markdown" }
+      }
+    },
+    "sinks": {
+      "type": "object",
+      "required": ["seed-instances", "loaded-catalog", "advertised-count"],
+      "properties": {
+        "seed-instances": {
+          "type": "array",
+          "description": "The sink INSTANCES wired into the seed pipeline's bootstrap.",
+          "items": {
+            "type": "object",
+            "required": ["kind", "name"],
+            "properties": {
+              "kind": { "type": "string" },
+              "name": { "type": "string" },
+              "run-state": { "type": "string" },
+              "enabled": { "type": "boolean" },
+              "purpose": { "type": "string" }
+            }
+          }
+        },
+        "loaded-catalog": {
+          "type": "array",
+          "description": "The sink KINDS the host ships a provider for and can build.",
+          "items": {
+            "type": "object",
+            "required": ["kind", "package"],
+            "properties": {
+              "kind": { "type": "string" },
+              "display": { "type": "string" },
+              "package": { "type": "string" }
+            }
+          }
+        },
+        "advertised-count": {
+          "type": "integer",
+          "description": "Count of sink kinds advertised from the manifest but not loaded (no shipped provider)."
+        },
+        "notes": { "type": "string", "contentMediaType": "text/markdown" }
+      }
+    },
+    "feed-architecture": {
+      "type": "object",
+      "required": ["summary"],
+      "properties": {
+        "summary": { "type": "string", "contentMediaType": "text/markdown" },
+        "synthetic-feed": { "type": "string", "contentMediaType": "text/markdown" },
+        "external-producer": { "type": "string", "contentMediaType": "text/markdown" },
+        "loopback": { "type": "string", "contentMediaType": "text/markdown" }
+      }
+    },
+    "related-records": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "prose-slug": { "type": "string" },
+    "last-reviewed": { "type": "string", "format": "date" }
+  }
+}

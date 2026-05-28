@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://herald.dev/schemas/herald-oss/planning-decision.schema.json",
+  "title": "Herald planning-decision record",
+  "description": "Canonical record for a planning or sequencing decision — a point where the team resolved which of several paths to take, and what stays open. Distinct from a design-decision (which fixes a code-level contract): a planning-decision fixes a project-state fact, like 'this package is the demo, not that one', and tracks the open work that follows. Prose lives in prose/<repo>/explanation/planning/; this record carries the queryable facts (the decision, the option matrix, the open issues).",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "status",
+    "decided",
+    "decision",
+    "open-work",
+    "prose-slug",
+    "last-reviewed"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "title": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": [
+        "decided-open-followups",
+        "decided-complete",
+        "superseded",
+        "withdrawn"
+      ]
+    },
+    "decided": { "type": "string", "format": "date" },
+    "decision": {
+      "type": "object",
+      "required": ["summary"],
+      "properties": {
+        "summary": { "type": "string", "contentMediaType": "text/markdown" },
+        "rationale": { "type": "string", "contentMediaType": "text/markdown" }
+      }
+    },
+    "context-matrix": {
+      "type": "array",
+      "description": "When the decision turned on comparing several stacks/packages/paths, the matrix that made the choice legible. Each row is one option with the facts that distinguished it.",
+      "items": {
+        "type": "object",
+        "required": ["option", "facts"],
+        "properties": {
+          "option": { "type": "string" },
+          "facts": {
+            "type": "object",
+            "additionalProperties": { "type": ["string", "boolean", "number", "null"] }
+          },
+          "verdict": { "type": "string" }
+        }
+      }
+    },
+    "traps-avoided": {
+      "type": "array",
+      "description": "Specific failure modes this decision steers around — the next person reading this should not re-walk them.",
+      "items": {
+        "type": "object",
+        "required": ["trap", "why"],
+        "properties": {
+          "trap": { "type": "string" },
+          "why": { "type": "string", "contentMediaType": "text/markdown" }
+        }
+      }
+    },
+    "open-work": {
+      "type": "array",
+      "description": "What is planned-not-done after this decision. Each entry names the work, its tracking issue if any, and its honest state.",
+      "items": {
+        "type": "object",
+        "required": ["item", "state"],
+        "properties": {
+          "item": { "type": "string" },
+          "issue": { "type": "string" },
+          "state": {
+            "type": "string",
+            "enum": ["planned", "in-progress", "blocked", "done"]
+          },
+          "owner": { "type": "string" },
+          "notes": { "type": "string", "contentMediaType": "text/markdown" }
+        }
+      }
+    },
+    "changes-already-made": {
+      "type": "array",
+      "description": "Edits already landed under this decision that are safe and necessary under any resolution of the open work.",
+      "items": { "type": "string" }
+    },
+    "related-records": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "source-doc": {
+      "type": "string",
+      "description": "The working doc whose substance this record lifts, when applicable."
+    },
+    "prose-slug": { "type": "string" },
+    "last-reviewed": { "type": "string", "format": "date" }
+  }
+}

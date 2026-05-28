@@ -108,6 +108,40 @@ posture record validates against
 were authored alongside their first records, on the rule that a
 schema lands when the second instance of a fact shape arrives.
 
+### The Live Viewer / DemoApp records (2026-05-28)
+
+Three artifacts capture the Live Viewer and DemoApp work, so the
+obstacles overcome there are not lost. Each is schema-backed plus
+a prose companion in the dual-register pattern.
+
+- **The Live Viewer admin REST contract** — the tenant-scoped API
+  the Dashboard SPA depends on: `GET .../live-viewer` (the
+  `LiveViewerState` snapshot) plus the level / category / enricher
+  PATCH/POST/DELETE family, the configured-sink list, and the SSE
+  config-change channel. Schema-driven because the SPA, the
+  FakeServer, and the future production server all consume the same
+  wire shape. Record:
+  `data/herald-oss/rest-contracts/live-viewer-admin.json`. Prose:
+  `prose/herald-oss/reference/live-viewer-admin-api.md`. Schema:
+  `schemas/herald-oss/rest-contract.schema.json`.
+- **The DemoApp server-stack planning decision** — the two-server
+  reality (Herald.Server's legacy flat API vs the tenant-scoped
+  Live Viewer API), the two-Herald.DemoApp-packages trap, the
+  2026-05-28 decision that the FakeServer sample IS the public
+  demo, and the open issue #38 (bind `ILiveViewerAdminApi` to a
+  real pipeline) as planned-not-done. Record:
+  `data/herald-oss/planning/demoapp-jsx-server-api-gap.json`. Prose:
+  `prose/herald-oss/explanation/planning/demoapp-jsx-server-api-gap.md`.
+  Schema: `schemas/herald-oss/planning-decision.schema.json`.
+- **The DemoApp / DemoSeeder seed facts** — the seed tenant
+  (`acme` plus `default`), the default pipeline, the six Serilog
+  levels, zero categories, the seven Core enricher classes shown as
+  their emitted fields, the two seed sinks, and the
+  real-pipeline-with-synthetic-events architecture. Record:
+  `data/herald-oss/demo/demoapp-fakeserver-seed.json`. Prose:
+  `prose/herald-oss/tutorials/running-the-demo/what-the-demo-seeds.md`.
+  Schema: `schemas/herald-oss/demo-seed.schema.json`.
+
 ### The dual-register pattern
 
 Each design-decision artifact ships in two registers. The

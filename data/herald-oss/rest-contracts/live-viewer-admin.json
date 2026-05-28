@@ -1,0 +1,411 @@
+{
+  "$schema": "../../../schemas/herald-oss/rest-contract.schema.json",
+  "id": "live-viewer-admin",
+  "title": "Live Viewer admin REST contract — the tenant-scoped API the Dashboard SPA depends on",
+  "status": "implemented-fakeserver",
+  "first-defined": "2026-05-21",
+  "contract-package": "Herald.RestApi.Contracts (LiveViewer/*.cs) — ILiveViewerAdminApi + the Level/Category/Enricher DTOs. The wire shape is what the SPA depends on; the package is where the shape is defined.",
+  "scope": {
+    "statement": "The Live Viewer admin family is the tenant-scoped REST surface the Dashboard SPA reads to hydrate its panels and writes to program the pipeline live. Every route is scoped to one tenant and one pipeline: `/api/tenants/{tenantId}/pipelines/{pipelineId}/...`. The family covers a read snapshot (`GET .../live-viewer`), the level / category / enricher mutation panels, the configured-sink instance list, and the SSE config-change channel that tells other tabs to re-hydrate after a peer made a change.",
+    "in-scope": [
+      "The read snapshot: GET /live-viewer returns a LiveViewerState the SPA hydrates its Pinia stores from on boot",
+      "Per-level admin: style, minimum-level floor, flight-recorder threshold, reorder, create, delete",
+      "Per-category admin: style, active toggle, create, delete",
+      "Per-enricher admin: style, active toggle, create, delete, opaque kind-config",
+      "The configured-sink instance list: GET /sinks (projected from the bootstrap), plus the sink mutation family",
+      "The SSE config-change channel: a cross-tab awareness hint, not a state-delivery channel"
+    ],
+    "out-of-scope": [
+      "Focus-lane assignment (FOCUS 1 / FOCUS 2 triangles) and banding bucket size — operator-local, persisted in browser localStorage only; no server route exists in this Contracts version (see live-viewer-port-plan §§3.7, 3.9, wave-1 ratification D2/D3)",
+      "The live log feed itself — that arrives on the per-tenant event stream (GET /api/tenants/{tenantId}/events/stream), a separate channel from config-change",
+      "Pipeline identity CRUD (create/delete whole pipelines) — that is the IPipelineAdminApi family, not this one",
+      "Sink download/install (NuGet pull) — a separate concern from configuring an already-loaded sink (project_sink_catalog_model)"
+    ]
+  },
+  "auth": {
+    "read-capability": "ReadTenant — a read-only principal that can list pipelines can also hydrate their Live Viewer state",
+    "write-capability": "WriteTenant — the same capability IPipelineAdminApi.UpdateAsync uses; no new capability bit was introduced",
+    "scoping": "Every capability check is scoped to the route's tenant. A principal scoped to a different tenant is rejected with HTTP 403.",
+    "demo-note": "The DemoApp no-auth path injects a static principal granted system-administer plus every Pro/Enterprise capability, so the demo exercises the full write surface against the FakeServer. Production hosts never run in this mode; the startup banner says so."
+  },
+  "timing-contract": "PATCH-200 means accepted-and-queryable: by the time a 2xx response reaches the caller, a follow-up GET against the same pipeline reflects the new state. There is no convergence-polling requirement and no 'wait for the SSE event' requirement for the originating caller. Every PATCH is idempotent at the field level — sending the same payload twice produces the same result.",
+  "shared-shapes": [
+    {
+      "name": "LiveViewerState",
+      "kind": "response",
+      "summary": "The per-pipeline snapshot GET /live-viewer returns. The read-side companion to the mutation surface. Carries each resource family with its current contents AND the list ETag at the moment of the read, so a caller that then issues a reorder/create/delete can pass the ETag to participate in the optimistic-concurrency check.",
+      "fields": [
+        { "name": "levels", "type": "LevelDto[]", "notes": "Current level list, priority-ordered 1..N." },
+        { "name": "levelsETag", "type": "ETag", "notes": "List-version token for the levels list." },
+        { "name": "categories", "type": "CategoryDto[]", "notes": "Current category list. Herald.OSS ships none; the panel fills from the live feed." },
+        { "name": "categoriesETag", "type": "ETag" },
+        { "name": "enrichers", "type": "EnricherDto[]", "notes": "Current enricher panel, keyed by emitted FIELD name (snake_case), not class name." },
+        { "name": "enrichersETag", "type": "ETag" },
+        { "name": "minLevelPriority", "type": "int?", "nullable": true, "notes": "Minimum-visible-level floor as a 1-based priority. Null = no floor; accept every level emitted." },
+        { "name": "flightRecorderPriority", "type": "int", "notes": "Flight-recorder threshold priority." },
+        { "name": "flightRecorderEnabled", "type": "bool", "notes": "Whether FR is armed." },
+        { "name": "flightRecorderPresent", "type": "bool", "notes": "True iff a flightRecorder logger entry exists in the bootstrap loggers[]. Distinct from Enabled: 'FR removed' (Present=false) and 'FR present but disarmed' (Present=true, Enabled=false) are distinguishable on the wire. Trailing + defaulted false for back-compat." }
+      ]
+    },
+    {
+      "name": "LevelDto",
+      "kind": "value",
+      "summary": "One per-pipeline level.",
+      "fields": [
+        { "name": "id", "type": "LevelId", "notes": "Stable per-pipeline level id. For seeded levels the id IS the name (NAME-bound identity)." },
+        { "name": "name", "type": "string", "notes": "Display name (e.g. Error, Warning)." },
+        { "name": "priority", "type": "int", "notes": "Position in the level list, 1..N, contiguous and unique." },
+        { "name": "style", "type": "LevelStyle" }
+      ]
+    },
+    {
+      "name": "LevelStyle / CategoryStyle / EnricherStyle",
+      "kind": "value",
+      "summary": "Rendering style for a token in the feed. Three distinct types with the identical shape, kept separate so per-level / per-category / per-enricher styles cannot be mixed at the call boundary.",
+      "fields": [
+        { "name": "color", "type": "string", "notes": "Foreground hex (e.g. #FF6B6B)." },
+        { "name": "bg", "type": "string?", "nullable": true, "notes": "Optional background hex; null leaves the row/token background unchanged." },
+        { "name": "bold", "type": "bool" },
+        { "name": "italic", "type": "bool" },
+        { "name": "underline", "type": "bool" },
+        { "name": "strike", "type": "bool" }
+      ]
+    },
+    {
+      "name": "CategoryDto",
+      "kind": "value",
+      "summary": "One per-pipeline category.",
+      "fields": [
+        { "name": "id", "type": "CategoryId" },
+        { "name": "name", "type": "string" },
+        { "name": "style", "type": "CategoryStyle" },
+        { "name": "active", "type": "bool", "notes": "Whether the category contributes to the live feed." }
+      ]
+    },
+    {
+      "name": "EnricherDto",
+      "kind": "value",
+      "summary": "One per-pipeline enricher panel row, keyed by emitted FIELD name (snake_case), not by the Core class name. One class can emit several fields, so the panel is per-field.",
+      "fields": [
+        { "name": "id", "type": "EnricherId", "notes": "The snake field-name; equals the SSE enrichers{} key and the SPA tint-match id — one id end to end." },
+        { "name": "name", "type": "string" },
+        { "name": "style", "type": "EnricherStyle" },
+        { "name": "active", "type": "bool", "notes": "Whether the enricher contributes to pipeline events." }
+      ]
+    },
+    {
+      "name": "Pipeline",
+      "kind": "response",
+      "summary": "Every mutating call returns the post-mutation Pipeline envelope (the same shape IPipelineAdminApi uses) so the caller can update its modified-at timestamp without a follow-up GET.",
+      "fields": [
+        { "name": "(IPipelineAdminApi.Pipeline)", "type": "record", "notes": "Canonical pipeline envelope; the mutation routes return this rather than the LiveViewerState. Re-hydrate via GET /live-viewer when the full snapshot is needed." }
+      ]
+    },
+    {
+      "name": "ETag",
+      "kind": "value",
+      "summary": "List-version token for optimistic concurrency. ETag.Unconditional means 'no If-Match precondition'.",
+      "fields": [
+        { "name": "value", "type": "string", "notes": "Opaque token. Pass the value observed on the hydrating GET into a reorder/delete request to participate in the concurrency check." }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/api/tenants/{tenantId}/pipelines/{pipelineId}/live-viewer",
+      "summary": "Returns the per-pipeline LiveViewerState snapshot — levels, categories, enrichers, list ETags, minimum-level floor, and flight-recorder config. The SPA's boot-time hydration call, and the call it repeats after the SSE config-change channel signals a peer mutated state.",
+      "response-shape": "LiveViewerState",
+      "status-codes": [
+        { "code": "200", "meaning": "Snapshot returned." },
+        { "code": "404", "meaning": "Pipeline does not exist (NotFoundException)." },
+        { "code": "403", "meaning": "Principal scoped to a different tenant." }
+      ],
+      "idempotent": true,
+      "etag": "none",
+      "notes": "Read-only — gates on ReadTenant. Repeated calls between mutations return byte-identical state. This is the route whose absence caused the DemoApp `HTTP 404` banner before the FakeServer became the demo (see planning record demoapp-jsx-server-api-gap)."
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tenants/{tenantId}/pipelines/{pipelineId}/levels/{levelId}/style",
+      "section": "live-viewer-port-plan §3.1",
+      "summary": "Replaces the entire rendering style for one level. Fired by StyleDialog Save in the Levels drawer.",
+      "request-shape": "UpdateLevelStyleRequest { Style: LevelStyle }",
+      "response-shape": "Pipeline",
+      "status-codes": [
+        { "code": "200", "meaning": "Style applied." },
+        { "code": "404", "meaning": "Pipeline or level does not exist." }
+      ],
+      "idempotent": true,
+      "etag": "none"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tenants/{tenantId}/pipelines/{pipelineId}/levels/min",
+      "section": "live-viewer-port-plan §3.2",
+      "summary": "Sets the minimum-visible-level floor. Fired by clicking the level number in the Levels drawer set-mode.",
+      "request-shape": "SetMinLevelRequest { Priority: int? }",
+      "response-shape": "Pipeline",
+      "status-codes": [
+        { "code": "200", "meaning": "Floor set." },
+        { "code": "400", "meaning": "Priority outside the pipeline's level-priority range (ValidationException)." },
+        { "code": "404", "meaning": "Pipeline does not exist." }
+      ],
+      "idempotent": true,
+      "etag": "none",
+      "notes": "Priority = null clears the floor so the pipeline accepts every level it emits."
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tenants/{tenantId}/pipelines/{pipelineId}/levels/flight-recorder",
+      "section": "live-viewer-port-plan §3.3",
+      "summary": "Sets the flight-recorder threshold priority and armed/disarmed state. Fired by the FR half of the split level-number button.",
+      "request-shape": "SetFlightRecorderRequest { Priority: int, Enabled: bool }",
+      "response-shape": "Pipeline",
+      "status-codes": [
+        { "code": "200", "meaning": "FR config applied." },
+        { "code": "400", "meaning": "Priority below the current minimum-visible-level — FR cannot be more permissive than MIN (§3.3)." },
+        { "code": "404", "meaning": "Pipeline does not exist." }
+      ],
+      "idempotent": true,
+      "etag": "none",
+      "notes": "FR presence is governed by loggers[], not by this PATCH — a disarm (Enabled=false) keeps the entry so the operator's level pick survives the toggle."
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tenants/{tenantId}/pipelines/{pipelineId}/levels/order",
+      "section": "live-viewer-port-plan §3.4",
+      "summary": "Replaces the level priority ordering. Server renumbers 1..N from the supplied id sequence. Fired by drag-handle drop.",
+      "request-shape": "ReorderLevelsRequest { OrderedLevelIds: LevelId[], ExpectedETag: ETag }",
+      "response-shape": "Pipeline",
+      "status-codes": [
+        { "code": "200", "meaning": "Reordered." },
+        { "code": "400", "meaning": "Supplied id set does not match the pipeline's level set (missing or unknown ids)." },
+        { "code": "404", "meaning": "Pipeline does not exist." },
+        { "code": "409", "meaning": "ExpectedETag does not match the current level-list ETag (another writer moved the list)." }
+      ],
+      "idempotent": true,
+      "etag": "required"
+    },
+    {
+      "method": "POST",
+      "path": "/api/tenants/{tenantId}/pipelines/{pipelineId}/levels",
+      "section": "live-viewer-port-plan §3.5",
+      "summary": "Creates a new custom level. Fired by ListEditorDialog Add.",
+      "request-shape": "CreateLevelRequest { Name: string, Style: LevelStyle, InsertAtPriority: int? }",
+      "response-shape": "Pipeline",
+      "status-codes": [
+        { "code": "200", "meaning": "Level created." },
+        { "code": "400", "meaning": "InsertAtPriority targets an occupied slot — caller shifts via reorder or omits the slot to append (ValidationException)." },
+        { "code": "404", "meaning": "Pipeline does not exist." },
+        { "code": "409", "meaning": "Duplicate name — body { \"code\": \"level-name-exists\" }." }
+      ],
+      "idempotent": false,
+      "etag": "none",
+      "notes": "InsertAtPriority = null appends."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/tenants/{tenantId}/pipelines/{pipelineId}/levels/{levelId}",
+      "section": "live-viewer-port-plan §3.6",
+      "summary": "Removes a custom level. Fired by ListEditorDialog Remove.",
+      "request-shape": "DeleteLevelRequest { ExpectedETag: ETag } — OPTIONAL body; a bodyless DELETE is unconditional",
+      "response-shape": "Pipeline",
+      "status-codes": [
+        { "code": "200", "meaning": "Deleted (or already absent — idempotent on the resource)." },
+        { "code": "409", "meaning": "ExpectedETag supplied and does not match the current level-list ETag." }
+      ],
+      "idempotent": true,
+      "etag": "opt-in",
+      "notes": "The If-Match precondition is opt-in (RFC 9110 §13.1.1): send an ETag for optimistic-concurrency 409s; omit the body for an unconditional delete. Deleting an unknown id is a success, not a 404."
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tenants/{tenantId}/pipelines/{pipelineId}/categories/{categoryId}/style",
+      "section": "live-viewer-port-plan §3.7",
+      "summary": "Replaces the rendering style for one category.",
+      "request-shape": "UpdateCategoryStyleRequest { Style: CategoryStyle }",
+      "response-shape": "Pipeline",
+      "status-codes": [
+        { "code": "200", "meaning": "Style applied." },
+        { "code": "404", "meaning": "Pipeline or category does not exist." }
+      ],
+      "idempotent": true,
+      "etag": "none"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tenants/{tenantId}/pipelines/{pipelineId}/categories/{categoryId}/active",
+      "section": "live-viewer-port-plan §3.7",
+      "summary": "Toggles whether a category contributes to the live feed.",
+      "request-shape": "SetCategoryActiveRequest { Active: bool }",
+      "response-shape": "Pipeline",
+      "status-codes": [
+        { "code": "200", "meaning": "Toggle applied." },
+        { "code": "404", "meaning": "Pipeline or category does not exist." }
+      ],
+      "idempotent": true,
+      "etag": "none"
+    },
+    {
+      "method": "POST",
+      "path": "/api/tenants/{tenantId}/pipelines/{pipelineId}/categories",
+      "section": "live-viewer-port-plan §3.7",
+      "summary": "Creates a new category.",
+      "request-shape": "CreateCategoryRequest { Name: string, Style: CategoryStyle, Active: bool = true }",
+      "response-shape": "Pipeline",
+      "status-codes": [
+        { "code": "200", "meaning": "Category created." },
+        { "code": "404", "meaning": "Pipeline does not exist." },
+        { "code": "409", "meaning": "Duplicate name." }
+      ],
+      "idempotent": false,
+      "etag": "none"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/tenants/{tenantId}/pipelines/{pipelineId}/categories/{categoryId}",
+      "section": "live-viewer-port-plan §3.7",
+      "summary": "Removes a category.",
+      "request-shape": "DeleteCategoryRequest { ExpectedETag: ETag }",
+      "response-shape": "Pipeline",
+      "status-codes": [
+        { "code": "200", "meaning": "Deleted (idempotent on the resource)." },
+        { "code": "409", "meaning": "ExpectedETag does not match the current category-list ETag." }
+      ],
+      "idempotent": true,
+      "etag": "required"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tenants/{tenantId}/pipelines/{pipelineId}/enrichers/{enricherId}/style",
+      "section": "live-viewer-port-plan §3.8",
+      "summary": "Replaces the rendering style for one enricher.",
+      "request-shape": "UpdateEnricherStyleRequest { Style: EnricherStyle }",
+      "response-shape": "Pipeline",
+      "status-codes": [
+        { "code": "200", "meaning": "Style applied." },
+        { "code": "404", "meaning": "Pipeline or enricher does not exist." }
+      ],
+      "idempotent": true,
+      "etag": "none"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tenants/{tenantId}/pipelines/{pipelineId}/enrichers/{enricherId}/active",
+      "section": "live-viewer-port-plan §3.8",
+      "summary": "Toggles whether an enricher contributes to pipeline events.",
+      "request-shape": "SetEnricherActiveRequest { Active: bool }",
+      "response-shape": "Pipeline",
+      "status-codes": [
+        { "code": "200", "meaning": "Toggle applied." },
+        { "code": "404", "meaning": "Pipeline or enricher does not exist." }
+      ],
+      "idempotent": true,
+      "etag": "none"
+    },
+    {
+      "method": "POST",
+      "path": "/api/tenants/{tenantId}/pipelines/{pipelineId}/enrichers",
+      "section": "live-viewer-port-plan §3.8",
+      "summary": "Creates a new enricher.",
+      "request-shape": "CreateEnricherRequest { Name: string, Style: EnricherStyle, Active: bool = true }",
+      "response-shape": "Pipeline",
+      "status-codes": [
+        { "code": "200", "meaning": "Enricher created." },
+        { "code": "404", "meaning": "Pipeline does not exist." },
+        { "code": "409", "meaning": "Duplicate name." }
+      ],
+      "idempotent": false,
+      "etag": "none"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/tenants/{tenantId}/pipelines/{pipelineId}/enrichers/{enricherId}",
+      "section": "live-viewer-port-plan §3.8",
+      "summary": "Removes an enricher.",
+      "request-shape": "DeleteEnricherRequest { ExpectedETag: ETag }",
+      "response-shape": "Pipeline",
+      "status-codes": [
+        { "code": "200", "meaning": "Deleted (idempotent on the resource)." },
+        { "code": "409", "meaning": "ExpectedETag does not match the current enricher-list ETag." }
+      ],
+      "idempotent": true,
+      "etag": "required"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tenants/{tenantId}/pipelines/{pipelineId}/enrichers/{enricherId}/config",
+      "section": "live-viewer-port-plan §3.8",
+      "summary": "Updates enricher-kind-specific configuration. The body is opaque JSON; the shape contract belongs to the enricher implementation, not the Contracts package.",
+      "request-shape": "UpdateEnricherConfigRequest { Config: JsonElement }",
+      "response-shape": "Pipeline",
+      "status-codes": [
+        { "code": "200", "meaning": "Config applied." },
+        { "code": "400", "meaning": "ServerPro's enricher loader rejected the JSON shape (ValidationException). ServerOSS treats the body as opaque and round-trips it without schema validation." },
+        { "code": "404", "meaning": "Pipeline or enricher does not exist." }
+      ],
+      "idempotent": true,
+      "etag": "none"
+    },
+    {
+      "method": "GET",
+      "path": "/api/tenants/{tenantId}/pipelines/{pipelineId}/sinks",
+      "summary": "Lists the configured-sink instances attached to the pipeline. The Dashboard's SinksLane hydrates from this. Distinct from GET /api/sinks, which lists what sink KINDS are available.",
+      "response-shape": "SinkInstance[] (FakeServer-local read-model)",
+      "status-codes": [
+        { "code": "200", "meaning": "Instance list (empty array when the pipeline has no sinks — a normal state)." },
+        { "code": "404", "meaning": "Pipeline does not exist — a fetch error, distinct from 'no sinks'." }
+      ],
+      "idempotent": true,
+      "etag": "none",
+      "notes": "Bootstrap-authoritative: the instance list is PROJECTED from the pipeline's bootstrap.sinks[] through BootstrapSinkCodec on every read, not served from a store. A hand-edited bootstrap + restart reflects here with zero store-vs-bootstrap drift. runState (live|test|disabled) rides through verbatim. The create/update/delete sink mutations live in a sibling FakeServer-local family (POST/PUT/DELETE .../sinks, GET .../sinks/editable-config); they are NOT part of the Contracts ILiveViewerAdminApi interface."
+    }
+  ],
+  "sse": {
+    "channels": [
+      {
+        "route": "GET /api/tenants/{tenantId}/events/stream",
+        "kind": "config-change",
+        "purpose": "Published after every successful ILiveViewerAdminApi mutation. A cross-tab and cross-operator AWARENESS hint, not a state-delivery channel. Tabs treat it as a signal to re-hydrate the affected slice via GET /live-viewer; they do NOT apply state from the payload (the GET against the canonical envelope is authoritative). The originating tab already has the authoritative state from its own PATCH-200, so it can drop events whose OriginToken matches its own token.",
+        "envelope-fields": [
+          { "name": "kind", "type": "string", "notes": "Discriminator, always \"config-change\"." },
+          { "name": "resourceKind", "type": "string", "notes": "\"level\", \"category\", or \"enricher\"." },
+          { "name": "verb", "type": "string", "notes": "\"create\", \"update\", \"delete\", \"reorder\", \"set-min\", \"set-flight-recorder\", or \"set-config\"." },
+          { "name": "resourceId", "type": "string?", "nullable": true, "notes": "The specific resource id; null for list-scoped verbs (reorder, set-min, set-flight-recorder)." },
+          { "name": "etag", "type": "string?", "nullable": true, "notes": "List-version token AFTER the mutation, for create/delete/reorder. Null on per-resource style/active/config mutations that don't bump the list ETag. Lets the SPA refresh its If-Match cache without an extra GET." },
+          { "name": "originToken", "type": "string?", "nullable": true, "notes": "Per-tab origin token captured from the X-Herald-Origin-Tab request header at broadcast time. Null when the mutation arrived without the header (server-issued change, batch job, external tool). The originating tab drops events whose token matches its own — self-echo dedup." }
+        ]
+      }
+    ]
+  },
+  "consumers": [
+    {
+      "name": "Dashboard SPA (the JSX Live Viewer)",
+      "implementation": "Herald.RestApi.FakeServer (the FakeServer honors the full wire shape end to end)",
+      "notes": "The SPA's api-client targets this exact route family. Against the FakeServer every route works: hydrate, mutate, re-hydrate, live feed."
+    },
+    {
+      "name": "Herald.DemoApp (PackageId Herald.DemoApp, v0.1.0-alpha.1)",
+      "implementation": "Herald.RestApi.FakeServer sample (samples/DemoApp) — this IS the public demo per the 2026-05-28 decision",
+      "notes": "Runs a real Herald.OSS pipeline over synthetic events, serves the JSX SPA, and honors this contract against the FakeServer stores. NOT the umbrella Modules/DemoApp (which wraps Herald.Server and 404s on this family)."
+    },
+    {
+      "name": "Herald.RestApi.Host",
+      "implementation": "implemented-reference-host — honors the route shapes over InMemoryLiveViewerAdmin",
+      "notes": "Conformance/reference host. In-memory, no live pipeline, does not serve the SPA, no demo seed. Proves the wire shape; does not back it with a real pipeline."
+    },
+    {
+      "name": "Herald.Server (Modules/Server)",
+      "implementation": "DOES NOT implement this family — speaks the legacy flat API (/api/config/..., /api/pipeline/{name}/..., /api/levels) only",
+      "notes": "The umbrella Modules/DemoApp wraps this server, which is why that package 404s on /live-viewer. Binding ILiveViewerAdminApi over Herald.Server's real pipeline is the open production gap (issue #38)."
+    }
+  ],
+  "implementation-gap": "The contract is fully honored by the FakeServer (the public demo) and by the in-memory reference host. It is NOT yet bound to a real Herald.Server pipeline. Issue #38 (Glenn D3) is the open production binding: implement ILiveViewerAdminApi over the live pipeline and host the tenant-scoped family in Herald.ServerOSS / a real server. The underlying pipeline operations already exist on HeraldManagementApi (GetLevelStyles, GetCategoryStyles, GetCustomLevels, SetMinimumLevel, SetFlightRecorderConfig, enricher add/remove) — the missing piece is the tenant-scoped routing shell plus the LiveViewerState mapping, not the pipeline operations themselves. See the planning record demoapp-jsx-server-api-gap for the full disposition.",
+  "related-records": [
+    "data/herald-oss/planning/demoapp-jsx-server-api-gap.json",
+    "data/herald-oss/demo/demoapp-fakeserver-seed.json"
+  ],
+  "prose-slug": "reference/live-viewer-admin-api",
+  "last-reviewed": "2026-05-28"
+}

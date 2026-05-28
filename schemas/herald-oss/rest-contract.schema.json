@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://herald.dev/schemas/herald-oss/rest-contract.schema.json",
+  "title": "Herald REST API contract reference",
+  "description": "Canonical record for a Herald REST API surface — the routes, request/response shapes, status codes, and behavioral contracts a client depends on. One record per cohesive API family. The same facts feed the API-reference page, the OpenAPI doc, the SPA client's expectations, and the server implementer's checklist, so they live in a structured record rather than free-form markdown. Prose explanation (the 'why this shape' narrative) lives in prose/<repo>/reference/; this record carries the queryable surface.",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "status",
+    "last-reviewed",
+    "contract-package",
+    "scope",
+    "shared-shapes",
+    "routes",
+    "consumers",
+    "prose-slug"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Stable identifier for the API family, used as the record file's base name."
+    },
+    "title": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": [
+        "implemented-reference-host",
+        "implemented-fakeserver",
+        "implemented-production",
+        "partial",
+        "planned"
+      ],
+      "description": "Maturity of the contract's IMPLEMENTATION. 'implemented-fakeserver' = the FakeServer honors the wire shape end to end; 'implemented-reference-host' = the in-memory Herald.RestApi.Host honors it; 'implemented-production' = a real pipeline-backed server honors it; 'partial'/'planned' carry the honest gap."
+    },
+    "first-defined": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the contract shape was first defined."
+    },
+    "contract-package": {
+      "type": "string",
+      "description": "The .NET package that owns the contract types (DTOs + interface). The wire shape is what consumers depend on; the package is where the shape is defined."
+    },
+    "scope": {
+      "type": "object",
+      "required": ["statement", "in-scope", "out-of-scope"],
+      "properties": {
+        "statement": {
+          "type": "string",
+          "contentMediaType": "text/markdown",
+          "description": "What this API family does, in plain words."
+        },
+        "in-scope": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "out-of-scope": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Operations a reader might expect here but that live elsewhere (or persist client-side only); name them so the reader does not hunt."
+        }
+      }
+    },
+    "auth": {
+      "type": "object",
+      "description": "Authorization contract for the family.",
+      "properties": {
+        "read-capability": { "type": "string" },
+        "write-capability": { "type": "string" },
+        "scoping": { "type": "string" },
+        "demo-note": {
+          "type": "string",
+          "description": "How the demo/no-auth path satisfies the capability check, if relevant."
+        }
+      }
+    },
+    "timing-contract": {
+      "type": "string",
+      "contentMediaType": "text/markdown",
+      "description": "Read-after-write / convergence guarantees the consumer can rely on (e.g. PATCH-200 means queryable on next GET)."
+    },
+    "shared-shapes": {
+      "type": "array",
+      "description": "DTO records reused across routes in the family. Each entry names the shape and its fields so the route table can reference by name.",
+      "items": {
+        "type": "object",
+        "required": ["name", "fields"],
+        "properties": {
+          "name": { "type": "string" },
+          "kind": {
+            "type": "string",
+            "enum": ["response", "request", "value", "envelope"]
+          },
+          "summary": { "type": "string", "contentMediaType": "text/markdown" },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "type"],
+              "properties": {
+                "name": { "type": "string" },
+                "type": { "type": "string" },
+                "nullable": { "type": "boolean" },
+                "notes": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["method", "path", "summary"],
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"]
+          },
+          "path": { "type": "string" },
+          "section": {
+            "type": "string",
+            "description": "Source-plan section reference (e.g. live-viewer-port-plan §3.2), when the route traces to a spec section."
+          },
+          "summary": { "type": "string", "contentMediaType": "text/markdown" },
+          "request-shape": {
+            "type": "string",
+            "description": "Name of a shared-shape, or an inline description for one-off bodies. Absent for bodyless requests."
+          },
+          "response-shape": {
+            "type": "string",
+            "description": "Name of a shared-shape, or an inline description."
+          },
+          "status-codes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["code", "meaning"],
+              "properties": {
+                "code": { "type": "string" },
+                "meaning": { "type": "string" }
+              }
+            }
+          },
+          "idempotent": { "type": "boolean" },
+          "etag": {
+            "type": "string",
+            "description": "Optimistic-concurrency posture for the route: 'required', 'opt-in', or 'none'."
+          },
+          "notes": { "type": "string", "contentMediaType": "text/markdown" }
+        }
+      }
+    },
+    "sse": {
+      "type": "object",
+      "description": "Server-sent-event channels the family interacts with.",
+      "properties": {
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["route", "kind", "purpose"],
+            "properties": {
+              "route": { "type": "string" },
+              "kind": { "type": "string", "description": "The envelope kind discriminator on the wire." },
+              "purpose": { "type": "string", "contentMediaType": "text/markdown" },
+              "envelope-fields": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["name", "type"],
+                  "properties": {
+                    "name": { "type": "string" },
+                    "type": { "type": "string" },
+                    "nullable": { "type": "boolean" },
+                    "notes": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "consumers": {
+      "type": "array",
+      "description": "Who depends on this contract today, and against which implementation.",
+      "items": {
+        "type": "object",
+        "required": ["name", "implementation"],
+        "properties": {
+          "name": { "type": "string" },
+          "implementation": { "type": "string" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "implementation-gap": {
+      "type": "string",
+      "contentMediaType": "text/markdown",
+      "description": "The honest state of the production implementation: which routes are backed by a real pipeline and which are mock/reference only. Names the open issue if there is one."
+    },
+    "related-records": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "prose-slug": {
+      "type": "string"
+    },
+    "last-reviewed": {
+      "type": "string",
+      "format": "date"
+    }
+  }
+}

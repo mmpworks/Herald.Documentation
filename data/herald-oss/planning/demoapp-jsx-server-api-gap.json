@@ -1,0 +1,85 @@
+{
+  "$schema": "../../../schemas/herald-oss/planning-decision.schema.json",
+  "id": "demoapp-jsx-server-api-gap",
+  "title": "The FakeServer is the public demo — and the production Live Viewer binding is still open",
+  "status": "decided-open-followups",
+  "decided": "2026-05-28",
+  "decision": {
+    "summary": "The public `herald-demo` is the FakeServer-based sample at `Herald.RestApi.FakeServer/samples/DemoApp` (PackageId Herald.DemoApp, v0.1.0-alpha.1). It serves the JSX SPA, seeds a demo tenant, runs a real Herald.OSS pipeline over synthetic events, and honors the tenant-scoped Live Viewer admin API the SPA depends on. The umbrella `Modules/DemoApp` — which wraps Herald.Server — is NOT the demo: Herald.Server speaks only the legacy flat API, so it 404s on the `/live-viewer` family the SPA calls.",
+    "rationale": "Two server stacks exist, and they speak different APIs. The JSX SPA was built against the tenant-scoped Live Viewer admin family. Only the FakeServer (and the in-memory reference host) implement that family. Herald.Server, which the umbrella DemoApp wraps, implements the legacy flat API and never registered the tenant-scoped routes — so the umbrella package shows the SPA but 404s the moment it tries to hydrate. The FakeServer sample is the one package that satisfies all four demo promises at once: serves the SPA, seeds a tenant, runs a real pipeline, and answers the API the SPA speaks. Pointing the demo at the reference host was rejected — it is in-memory, has no live pipeline, does not serve the SPA, and carries no seed, so it would show empty or fake data and break the 'watch a live Herald pipeline' promise."
+  },
+  "context-matrix": [
+    {
+      "option": "Herald.RestApi.FakeServer sample (samples/DemoApp) — THE DEMO",
+      "facts": {
+        "speaks": "tenant-scoped Live Viewer admin API",
+        "live-pipeline": true,
+        "serves-spa": true,
+        "demo-seed": true,
+        "packageId": "Herald.DemoApp v0.1.0-alpha.1"
+      },
+      "verdict": "chosen — satisfies all four demo promises"
+    },
+    {
+      "option": "Herald.Server (Modules/Server), wrapped by umbrella Modules/DemoApp",
+      "facts": {
+        "speaks": "legacy flat API (/api/config, /api/pipeline/{name}, /api/levels)",
+        "live-pipeline": true,
+        "serves-spa": true,
+        "demo-seed": true,
+        "tenant-scoped-live-viewer-family": false
+      },
+      "verdict": "rejected as the demo — 404s on the /live-viewer family the SPA needs; this is the two-package trap"
+    },
+    {
+      "option": "Herald.RestApi.Host (in-memory reference host)",
+      "facts": {
+        "speaks": "tenant-scoped Live Viewer admin API",
+        "live-pipeline": false,
+        "serves-spa": false,
+        "demo-seed": false,
+        "backing": "InMemoryLiveViewerAdmin"
+      },
+      "verdict": "rejected as the demo — in-memory, no live pipeline, no SPA, no seed; proves the wire shape only"
+    }
+  ],
+  "traps-avoided": [
+    {
+      "trap": "Two-server-stack confusion",
+      "why": "Herald.Server and Herald.RestApi.Host speak DIFFERENT APIs. Herald.Server speaks the legacy flat API; the reference host speaks the tenant-scoped Live Viewer family the SPA depends on. A reader who assumes 'the server is the server' will wire the SPA to the wrong one and watch it 404. The two stacks are not interchangeable."
+    },
+    {
+      "trap": "Two Herald.DemoApp packages",
+      "why": "The umbrella `Modules/DemoApp` (wraps Herald.Server) and the FakeServer sample `samples/DemoApp` (PackageId Herald.DemoApp v0.1.0-alpha.1) can both look like 'the demo'. Only the FakeServer sample is. The umbrella one 404s the SPA. Repacking or publishing the wrong one ships a broken first impression."
+    },
+    {
+      "trap": "Repointing the demo at the reference host to 'get the right API'",
+      "why": "The reference host speaks the right API but has no live pipeline, no SPA, and no seed. Swapping to it trades a 404 for empty data — it defeats the 'watch a real Herald pipeline' promise that is the whole reason the demo exists."
+    }
+  ],
+  "open-work": [
+    {
+      "item": "Bind ILiveViewerAdminApi to a real Herald.Server pipeline and host the tenant-scoped family there",
+      "issue": "#38 (Glenn D3)",
+      "state": "planned",
+      "owner": "Glenn (D3 scaffold), with Richard architecture review before the larger binding",
+      "notes": "The pipeline operations already exist on `HeraldManagementApi` (GetLevelStyles, GetCategoryStyles, GetCustomLevels, SetMinimumLevel, SetFlightRecorderConfig, enricher add/remove). The missing piece is the tenant-scoped routing shell plus the `LiveViewerState` mapping — not the underlying pipeline operations. The route-mapping glue in `LiveViewerAdminEndpoints` is portable; the `InMemoryLiveViewerAdmin` interface impl is portable. Two layered options were sketched: (A) a minimal first-impression fix that implements just GET /live-viewer over the existing HeraldManagementApi getters — clears the error banner, panels hydrate, live logs flow, but style edits and CRUD still 404; (B) the full production binding = #38 = everything in the SPA works, larger, warrants architecture review plus a plan plus code review plus tests."
+    },
+    {
+      "item": "Vue SPA deprecation",
+      "state": "planned",
+      "notes": "Orthogonal cleanup. The DemoApp already ships and serves the JSX SPA. The Vue port is a separate, deprecated parallel client. Removing it fixes none of the API-gap issues; it is independent tidy-up."
+    }
+  ],
+  "changes-already-made": [
+    "Modules/Server/Program.cs: renamed the primary demo pipeline `code-built-pipeline` -> `default` (the OSS dashboard targets the pipeline named `default`). Verified the pipeline registers as default/default and /health returns 200. Correct regardless of how the production binding is resolved.",
+    "Repacked the shipped JSX so its default scope is `default`/`default` rather than a stale `acme` artifact baked into an older nupkg build (the current JSX source already defaults to default/default in store-bridge.jsx)."
+  ],
+  "related-records": [
+    "data/herald-oss/rest-contracts/live-viewer-admin.json",
+    "data/herald-oss/demo/demoapp-fakeserver-seed.json"
+  ],
+  "source-doc": "E:/dev/herald/docs/_wip/demoapp-jsx-server-api-gap-2026-05-28.md",
+  "prose-slug": "explanation/planning/demoapp-jsx-server-api-gap",
+  "last-reviewed": "2026-05-28"
+}

@@ -1,0 +1,117 @@
+{
+  "$schema": "../../../schemas/herald-oss/demo-seed.schema.json",
+  "id": "demoapp-fakeserver-seed",
+  "title": "What the DemoApp seeds — tenant, pipeline, levels, enrichers, sinks, and the live-feed architecture",
+  "status": "current",
+  "package": {
+    "packageId": "Herald.DemoApp",
+    "version": "0.1.0-alpha.1",
+    "command": "dotnet tool install --global Herald.DemoApp ; herald-demo",
+    "source": "Herald.RestApi.FakeServer/samples/DemoApp",
+    "default-port": "first free port in 5210-5230 (5210 when free); override with --port N"
+  },
+  "seeder": {
+    "type": "DemoSeeder (Herald.RestApi.FakeServer/src/Herald.RestApi.FakeServer/Seeds/DemoSeeder.cs)",
+    "idempotent": true,
+    "notes": "Running the seed twice produces the same state — the in-memory stores accept replace semantics on duplicate ids. The catalog is populated BEFORE instances are seeded so the bootstrap codec can resolve each instance's Registered + Status from the live catalog. Demo mode is on by default in the DemoApp (Program.cs injects --demo unless --no-demo is passed), so the zero-flag run is the seeded happy path."
+  },
+  "tenant": {
+    "seed-tenant-id": "acme",
+    "seed-tenant-display": "Acme Corp",
+    "also-seeds": [
+      "default — the seeder always seeds an additional `default` tenant alongside `acme` (when the seed tenant id is not already `default`), because the OSS-port Dashboard's boot path issues GET /api/tenants/default/pipelines/default/sinks unconditionally. So the demo answers both the realistic-looking `acme` tenant and the `default`/`default` scope the SPA defaults to."
+    ],
+    "notes": "The seed tenant id defaults to `acme` so the demo material carries a realistic-looking tenant name. The current JSX SPA defaults its scope to `default`/`default` (store-bridge.jsx), which is why the `default` tenant must also exist. A stale older nupkg that defaulted the SPA to `acme` was the first of the three layers behind the original demo 404; the repacked build defaults to `default`/`default`."
+  },
+  "pipeline": {
+    "id": "default",
+    "display": "Default Pipeline",
+    "status": "Running",
+    "buffer": "memory, capacity 1024",
+    "minimum-level": "Warning (priority 3, 1-based)",
+    "notes": "The bootstrap is the QuickLogBuilder-producible JSON at the heart of the bootstrap-vs-chrome split (DemoSeeder.DefaultPipelineConfigJson). It stores NAMES — never slugs, never priority numbers — for levels/categories/enrichers, and a level NAME pointer for minimumLevel. The Pipeline JSON tab surfaces this exact shape; hand-editing it plus restarting reconfigures the pipeline. The loggers[] array ships a single fanOut marker ('Fan-Out (Sinks)') so the chain view draws the terminal step; the real fan-out is structural (Core builds the composite from the configured sinks)."
+  },
+  "levels": {
+    "count": 6,
+    "source": "Serilog's level set and nothing else — Herald.OSS ships no custom level. The level NAME is the identity (LevelId(name)).",
+    "items": [
+      { "name": "Fatal", "priority": 1, "color": "#FF4D4D", "decoration": "bold" },
+      { "name": "Error", "priority": 2, "color": "#FF6B6B" },
+      { "name": "Warning", "priority": 3, "color": "#FFD166" },
+      { "name": "Information", "priority": 4, "color": "#7DD3FC" },
+      { "name": "Debug", "priority": 5, "color": "#A3A3A3" },
+      { "name": "Verbose", "priority": 6, "color": "#6B7280", "decoration": "italic" }
+    ],
+    "notes": "Canonical capitalization (Fatal/Error/Warning/Information/Debug/Verbose) so the synthetic feed's emitted wire severities match exactly. The minimum-level floor seeds to Warning (priority 3). The flight recorder is NOT armed in the seed — loggers[] is the sole source of truth for FR presence, and the default bootstrap ships no FR entry, so the operator adds FR from the catalog before an arm/disarm has anything to act on."
+  },
+  "categories": {
+    "count": 0,
+    "notes": "Herald.OSS ships ZERO categories. Category is an application-chosen topic field that Herald.OSS passes through — it does not seed a starter set. The viewer's Categories panel fills dynamically from whatever categories actually arrive on the live feed, so the operator sees the real topics in their stream rather than a fabricated demo list."
+  },
+  "enrichers": {
+    "class-count": 7,
+    "classes": [
+      "ServiceIdentityEnricher",
+      "CorrelationIdEnricher",
+      "ActivityEnricher",
+      "MachineNameLogEnricher",
+      "ProcessIdLogEnricher",
+      "ThreadIdLogEnricher",
+      "ExceptionDetailEnricher"
+    ],
+    "panel-keying": "The bootstrap enrichers[] array lists the seven Core CLASS names because that is what drives execution (EnricherKindRegistry.Reconstruct plus the drain). The live-viewer enricher panel is the FIELD expansion of those classes, keyed by emitted field-name (snake_case), not class name. One class can emit several fields — ProcessId emits process_id plus process_name; ThreadId emits thread_id plus is_thread_pool_thread; ServiceIdentity emits four — so the panel is per-field. The snake key equals the SSE enrichers{} envelope key equals the SPA tint-match id: one id end to end. ExceptionDetailEnricher contributes NO panel field (it writes exception.* properties only on demand), so it is in the bootstrap class list but not in the panel.",
+    "active-by-default": [
+      "machine_name",
+      "process_id",
+      "thread_id",
+      "correlation_id"
+    ],
+    "inactive-by-default": [
+      "process_name",
+      "is_thread_pool_thread",
+      "trace_id",
+      "span_id",
+      "service_*"
+    ],
+    "notes": "The active four produce REAL values on the synthetic feed with zero or honest ambient context (the drain opens a real CorrelationScope per event). The companions and the context-dependent fields default inactive — they have no honest ambient state on the demo feed and would render blank, so the operator activates them once their app supplies the context. Scope note: only the auto-registered Core built-ins are seeded. Game enrichers (BuildInfo/Player/Scene/Session) and the Compliance SequenceNumberEnricher live under Addons and require an explicit Register() call, so they are NOT out-of-box and are not seeded."
+  },
+  "sinks": {
+    "seed-instances": [
+      {
+        "kind": "herald.console",
+        "name": "console",
+        "run-state": "live",
+        "enabled": true,
+        "purpose": "Terminal output — the human-readable stream in the console where herald-demo runs."
+      },
+      {
+        "kind": "http_json",
+        "name": "live-feed",
+        "run-state": "live",
+        "enabled": true,
+        "purpose": "POSTs each rendered event to the loopback {loopback}/api/logs/sse-publish endpoint so the browser sees the same stream. This is the honest source of the live view — a real sink, visible in the Sinks tab, with an editable target URL. A disabled live-feed takes the live view dark."
+      }
+    ],
+    "loaded-catalog": [
+      { "kind": "herald.console", "display": "Console", "package": "Herald.OSS" },
+      { "kind": "herald.text-file", "display": "Text File", "package": "Herald.Sinks.File" },
+      { "kind": "herald.json-file", "display": "JSON File", "package": "Herald.Sinks.File" },
+      { "kind": "herald.otlp", "display": "OTLP Exporter", "package": "Herald.Sinks.Otlp" },
+      { "kind": "http_json", "display": "HTTP JSON", "package": "Herald.Sinks.HttpJson" }
+    ],
+    "advertised-count": 80,
+    "notes": "Two sink INSTANCES are wired into the seed pipeline: console (terminal) and live-feed (the http_json loopback). The loaded CATALOG carries the five kinds the host ships a provider for and can build. Beyond those, the host advertises the remaining 80-plus sinks from an embedded, CI-validated manifest (all 86 real MMP.Herald.Sinks packages, each kindKeys[] expanded so multi-kind packages register every kind); advertised kinds have no shipped provider, so they give the install-dialog flow a target. A loaded kind is never also advertised. Package ids carry NO MMP. prefix on the loaded set (console ships in Herald.OSS Core; File/Otlp/HttpJson are the real published Herald.Sinks.* names). Download (NuGet pull -> available) is a separate concern from use (configure + add to a pipeline) — see project_sink_catalog_model."
+  },
+  "feed-architecture": {
+    "summary": "This is not a mock. A real Herald.OSS pipeline runs inside the tool. A source feeds synthetic log events through the canonical Default pipeline strategy; the pipeline fans out to two real sinks; the live view watches the same stream the console does. Programming the pipeline from the Live Viewer rebuilds it, and the change shows on the next event.",
+    "synthetic-feed": "The synthetic feed emits roughly 1-10 events/second (min interval 100 ms, max interval 1 s). It starts on host boot under demo mode. Its emitted wire severities match the six seeded level names exactly, so the feed and the panels agree.",
+    "external-producer": "POST newline-delimited JSON log envelopes to /api/logs/incoming to send your own events. The synthetic feed steps aside while a real producer is active, so your events flow through the same pipeline you see on screen.",
+    "loopback": "The http_json `live-feed` sink POSTs each rendered event to {loopback}/api/logs/sse-publish; the host resolves {loopback} to its own bound URL. POST to /api/logs/sse-publish is the internal HTTP-sink round-trip; it is a literal round-trip of what an external producer would POST to /api/logs/incoming. The browser receives the stream over the per-tenant SSE event stream."
+  },
+  "related-records": [
+    "data/herald-oss/rest-contracts/live-viewer-admin.json",
+    "data/herald-oss/planning/demoapp-jsx-server-api-gap.json"
+  ],
+  "prose-slug": "tutorials/running-the-demo/what-the-demo-seeds",
+  "last-reviewed": "2026-05-28"
+}
