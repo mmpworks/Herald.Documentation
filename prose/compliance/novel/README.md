@@ -1,6 +1,6 @@
 # Auditor stories
 
-A growing set of day-in-the-life audit narratives. Same team, same playbook, different industries, different chain-of-custody postures, different countries. Read in any order. Read all twenty-two if you want the contrast.
+A growing set of day-in-the-life audit narratives. Same team, same playbook, different industries, different chain-of-custody postures, different countries. Read in any order. Read all twenty-three if you want the contrast.
 
 ## The team
 
@@ -27,7 +27,7 @@ That week is the floor. Every story in this folder is calibrated against it.
 
 When the stories say **TesseraSeal**, they mean the product brand for a deployed Herald-ecosystem chain — Herald.Py instrumenting the capture surface, Herald Enterprise operating the ledger and seal job, Herald.Compliance presenting the regulator-facing surface where examiners pull verifier output and seal records. The wire form is FFIEC chain-of-custody v1.0a. Seals are Ed25519 over an HSM-held key. Verification is the `herald-verify` CLI documented in the spec §10.12 exit-code contract: 0 PASS, 1 procedure-could-not-begin, 2 procedure-began-and-failed, 3 chain-anomaly.
 
-Twenty-two distinct deployment contexts show up across these stories.
+Twenty-three distinct deployment contexts show up across these stories.
 
 ## The stories — domestic engagements
 
@@ -96,6 +96,8 @@ A German automotive-electronics Mittelstand company (Eberhardt Werkstoffe, Stutt
 | 12 | Multi-state federal credit union | US | Marketing-AI vendor swap; NCUA AIRES + CFPB §1033 |
 | 20 | Texas community bank | US | Partial (AI-decisioning); OCC + Texas DoB; recusal close-out |
 | 21 | Texas regional acquirer × community-bank merger | US | Cross-cloud chain consolidation (AWS → Azure); post-merger integration |
+| 22 | US payments network | US | Full streaming-mode (per-second seal); OCC + Fed + 9 state examiners + FTC |
+| 23 | FINRA-member broker-dealer (wealth management) | US | Full (rep-assist AI + client comms); first SRO-flavored engagement; appropriated requirement set |
 
 ## Reading these
 
@@ -113,7 +115,7 @@ The stories are not training material in the regulator-pack sense. The audit-pro
 
 ## Recurring threads
 
-Across the twenty-two stories, certain through-lines repeat:
+Across the twenty-three stories, certain through-lines repeat:
 
 - **Dawn's "It never is."** Calibrated to context at every kickoff. By NetiVa it has become "It never is. But under the INCD threat model, even when it is — you stress it harder." By Eberhardt × Lumière it lands as "It never is. Today the question is whether the joint chain holds at the handoff."
 - **The drive-in monologue** (or elevator monologue, or video-bridge monologue, depending on geography). Dawn and Raj — or Dawn and Tom, or Dawn alone — review prior engagements at the start of each new client. The thread accumulates. By Story 11, Dawn names ten prior contexts and slots Eberhardt × Lumière as a more rigorous version of Helmstad's CRO PGP-signed-PDF approach.
