@@ -30,3 +30,6 @@ Thumbs.db
 dist/
 build/
 out/
+
+# Never publish the private tree (repo is PUBLIC)
+private/
