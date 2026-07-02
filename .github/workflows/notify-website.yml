@@ -1,0 +1,45 @@
+# Notify the website to rebuild when new prose lands.
+#
+# The website (mmpworks/Herald.Website) syncs this repo's prose at build
+# time and auto-registers new sequential chapters / synopses / Q&A files
+# into its manifests. This workflow closes the loop: when prose changes
+# on main, it fires a repository_dispatch (event type "content-updated")
+# at the website repo, whose deploy.yml listens for exactly that event
+# and rebuilds — so content added here appears on the site with no
+# website commit. That is the blog behaviour.
+#
+# REQUIRED SECRET (create in THIS repo's settings → Secrets and
+# variables → Actions BEFORE this workflow can notify; until it exists
+# the step fails and nothing is dispatched — the website simply keeps
+# deploying on its own pushes / manual runs):
+#
+#   WEBSITE_DISPATCH_TOKEN — a GitHub Personal Access Token with push
+#     access to mmpworks/Herald.Website. Classic PAT: `repo` scope.
+#     Fine-grained: repository = mmpworks/Herald.Website, permission
+#     Contents = Read and write. This is what authorizes the
+#     repository_dispatch call below.
+
+name: notify-website
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'prose/**'
+
+permissions:
+  contents: read
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fire content-updated dispatch at the website
+        env:
+          GH_TOKEN: ${{ secrets.WEBSITE_DISPATCH_TOKEN }}
+        run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            repos/mmpworks/Herald.Website/dispatches \
+            -f event_type=content-updated
