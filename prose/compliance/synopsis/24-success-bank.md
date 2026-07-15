@@ -6,11 +6,11 @@
 **Outcome posture:** Confirmation — five confirmations; one remediated IT finding (key-registry retention floor) plus its BSA-side cross-reference; composite 2, URSIT 2; no MOU, no Commissioner's order.
 
 ## Type of audit
-An alternate-year, state-only TDoB examination framed so the state cycle carries the same weight the joint federal-state cycle carried two years earlier. What makes it distinctive is that the institution runs a verifiable evidence chain-of-custody — the first the Department has examined — and the dramatic hinge is the shift from *trust by attestation* (the historical norm: bank attestation + examiner reconciliation + secure-portal transport + confidentiality) to *trust by reproduction*, where the examiner re-runs the reference verifier instead of taking the bank's word. The emotional core is a newly commissioned IT examiner (Emmett Cole, Financial Examiner IV) who dismisses the chain as "signing your own homework with a fancier pen" and is turned, on-page, not by persuasion but by independently validating the signer and breaking-then-reproducing the verdict himself.
+An alternate-year, state-only TDoB examination framed so the state cycle carries the same weight the joint federal-state cycle carried two years earlier. What makes it distinctive is that the institution runs a verifiable evidence chain-of-custody — the first the Department has examined — and the dramatic hinge is the shift from *trust by attestation* (the historical norm: bank attestation + examiner reconciliation + secure-portal transport + confidentiality) to *trust by reproduction*, where the examiner re-runs the reference verifier instead of taking the bank's word. The emotional core is a long-serving but only recently commissioned IT examiner (Emmett Cole, Financial Examiner IV — fifteen years in the Department, commissioned eight months ago) who dismisses the chain as "signing your own homework with a fancier pen" and is turned, on-page, not by persuasion but by independently validating the signer and breaking-then-reproducing the verdict himself.
 
 ## Interested parties (spec readers)
 - **TDoB Examiner-in-Charge (Commissioned Bank Examiner, FE VI)** — signs the Report of Examination, fronts exit and board meetings; reads for finding language, rating discipline, and the boundary between "the bank has a good story" and "we verified it ourselves."
-- **TDoB IT examiner (newly commissioned, FE IV)** — InTREx / URSIT specialist; the skeptical-examiner persona; reads for how the "bank signs its own evidence" objection is answered by independent registry validation.
+- **TDoB IT examiner (FE IV, fifteen years in, recently commissioned)** — InTREx / URSIT specialist; the skeptical-examiner persona; reads for how the "bank signs its own evidence" objection is answered by independent registry validation.
 - **TDoB asset-quality examiner (FE V)** — loan classification; reads for how provenance complements (never replaces) reconciliation to the loan trial balance and GL.
 - **TDoB BSA/operations examiner (FE III)** — reads for the five-year BSA retention window against the key-registry retention floor.
 - **TDoB Assistant Bank Examiner (FE II)** — First-Day-Letter reconciliation; reads for the artifact-hash-to-seal confirmation step layered onto conventional footing/tying.
@@ -44,6 +44,16 @@ An alternate-year, state-only TDoB examination framed so the state cycle carries
 - **§14.13** — `audit.supervisory.*` attribute family (charter type, primary state supervisor, federal prudential supervisor, dual-supervision flag); integrity-bound but institution-asserted.
 - **Exam-artifact vocabulary** — `audit.exam_artifact.artifact_kind` (board_minutes, loan_file, call_report, gl_extract, policy, log, bsa_record) as a RECOMMENDED shared enumeration for cross-bank portability.
 - **`--profile tx-dob`** — presentation-only verifier profile; identical integrity verdict and exit code to the federal profile on the same chain (the determinism guarantee that makes a state exam comparable to a federal one).
+
+## Regulatory citations (the Texas exam layer)
+- **7 TAC §3.24** — Texas cybersecurity-incident notification: notify the Banking Commissioner as soon as practicable, before customer notification, no later than 15 days after determining a reportable incident; the interagency 36-hour federal notice satisfies it. The regulator-before-customer *ordering* is the relationship the chain proves.
+- **Texas Finance Code Title 3** — state-charter examination and supervision authority; the statutory basis for the exam and the enforcement ladder.
+- **FFIEC IT Examination Handbook + FDIC InTREx** — the IT-exam scaffolding TDoB adopts by reference; where the chain-verifier output lands in the IT-Audit evidence expectation.
+- **URSIT** — the four IT components (Audit / Management / Development & Acquisition / Support & Delivery); composite feeds the CAMELS Management and Sensitivity components.
+- **CAMELS** — the Uniform Financial Institutions Rating System composite; drives cycle length and enforcement exposure (composite 2 here).
+- **CSBS accreditation** — the trust substrate that makes the alternate-year state exam carry federal weight; the tooling-determinism confirmation (identical verdict under both profiles) reinforces the "comparable to federal" bar accreditation depends on.
+- **Retention floors** — Call Report 3 years, BSA records 5 years, examiner workpapers 2 years / next exam; the 5-year BSA window is the floor behind the key-registry-retention finding.
+- **Enforcement ladder** — Board Resolution → Memorandum of Understanding → Commissioner's order (up to a joint C&D under TFC §35.012); none triggered — the finding is a matter for board attention, not an order.
 
 ## Synopsis
 
