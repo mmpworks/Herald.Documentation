@@ -16,11 +16,15 @@ Four primitives. Each addresses a different attack class.
 
 **What it does.** Every captured event gets a `payload_hash` field that's the HMAC-SHA-256 of `prev_hash || canonical_event_bytes` under a per-tenant session key. The session key is derived from the tenant's long-lived IKM via HKDF-SHA-256 with the tenant_id bound into the HKDF info parameter.
 
+> Conforms to FFIEC chain-of-custody spec §4.1 (HMAC chain at capture).
+
 **The chain link.** Each entry's `prev_hash` is the previous entry's `payload_hash`. So every entry's MAC depends on the entire prior chain — modify any historical entry and every subsequent entry's MAC fails to verify.
 
 **The MAC IS the payload_hash.** This is subtle: the spec doesn't store SHA-256(payload) separately from the HMAC. The HMAC output IS the `payload_hash` field. One field, one purpose: integrity-bind the event under a tenant-specific key. The §7 step 9 MAC compute checks the HMAC; there's no separate "and then SHA-256 the canonical bytes too" step.
 
 **Why HKDF.** The IKM is long-lived (years). Per-event HMAC keys would be too painful to provision. HKDF derives a per-tenant 32-byte session key from the IKM that's good for the life of the IKM. The `info` parameter binds the tenant_id into the derivation, so the same IKM under a different tenant_id produces a different session key — closes the cross-tenant key-reuse risk.
+
+> Conforms to FFIEC chain-of-custody spec §4.1 (HKDF salt/info rationale). The static salt is a public constant; the per-tenant `info` ensures derived-key independence (NIST SP 800-56C §5.4).
 
 **Per-event stamp fields.** Every chain entry carries:
 - `seq` (int64) — monotonic per `run_id`, starting at 1
@@ -32,7 +36,11 @@ Four primitives. Each addresses a different attack class.
 - `mac_computed_at_utc` (RFC 3339 UTC) — writer's wallclock at MAC compute (forensic only)
 - `kms_handle_uri` (string) — KMS/HSM provenance pointer
 
+> Conforms to FFIEC chain-of-custody spec §4.1 (fingerprint formula). Publishing this formula is safe **because** spec §10.6 mandates an IKM of ≥256 bits drawn from a FIPS-validated CSPRNG. That entropy floor closes the offline fingerprint-brute-force attack class — the only attack the published formula would otherwise enable. The 16-byte truncation hides the full digest state (spec §4.1 length-extension audit). The §10.6 entropy mandate is the control this disclosure rests on.
+
 The `key_fingerprint` is the operational hero. The verifier asserts the looked-up IKM produces this fingerprint *before* computing any MAC. If a botched rotation has re-used `key_version=1` for a different IKM, the fingerprint mismatches and the verifier refuses without computing a MAC — preventing a MAC-failure storm that would otherwise bury the rotation error.
+
+> Conforms to FFIEC chain-of-custody spec §7 step 8 — botched-rotation detection at lookup time, no MAC compute on mismatch.
 
 ### §4.1.1 IKM delivery models (normative)
 
@@ -42,6 +50,8 @@ Two conformant ways for an SDK to obtain the IKM at runtime:
 2. **Session-key-delivered.** The HSM/KMS derives the session key inside the HSM and vends only the session key. The SDK never sees IKM bytes. Higher security assumption; HSM round-trip cost on session-key refresh.
 
 Both produce per-tenant determinism: the same IKM produces the same session key produces byte-identical `payload_hash` for byte-identical input. That property is what lets a verifier ten years from now reproduce a MAC.
+
+> Conforms to FFIEC chain-of-custody spec §4.1.1 — two conformant IKM-delivery models (session-key handshake).
 
 ### §4.1.2 Vendor-namespaced constants and FFIEC conformance (normative)
 
@@ -53,9 +63,7 @@ Both produce per-tenant determinism: the same IKM produces the same session key 
 
 **Posture is binary at the chain-file level.** Either the file's events were produced under FFIEC constants, or they weren't. Mixed-posture chains are not conformant.
 
-### §4.1.3 Per-event MAC algorithm agility (RECOMMENDED for v1.0b, candidate-normative for v1.x)
-
-**What it does.** Allows a chain entry to carry an additional `payload_hash_alt` field with a different MAC algorithm (e.g., HMAC-SHA-3-256). RECOMMENDED today; will land as candidate-normative in a future v1.x. Lets institutions hedge cryptographic-agility risk without forcing a wire-format change.
+> Conforms to FFIEC chain-of-custody spec §4.1.2 — the named constants `ffiec.chain-of-custody.v1.salt` / `.v1.info`; the `hkdf_inputs_digest` records which constants were in force.
 
 ---
 
@@ -71,6 +79,8 @@ Both produce per-tenant determinism: the same IKM produces the same session key 
 
 **Late-binding events.** Events arriving after their `received_at` UTC date is sealed are recorded with `ffiec.chain.late_binding = true` and included in the next day's seal. The original seal MUST NOT be altered. The verifier reports late-binding entries as a PASS-with-anomaly line.
 
+> Conforms to FFIEC chain-of-custody spec §4.2 — RFC 6962 tree, mandatory `(run_id, seq)` leaf ordering, empty-day root `SHA-256(b"")`.
+
 ### §4.2.1 Configurable cadence (cross-reference §10.27)
 
 Default cadence is daily. Institutions with sub-second decision rates may operate hourly seals; institutions with low-volume long-retention regimes may operate weekly. The cadence is in CC8.1. The seal record carries `cadence` in its `sign_payload`, so a verifier knows what window the seal covers.
@@ -78,10 +88,6 @@ Default cadence is daily. Institutions with sub-second decision rates may operat
 ### §4.2.2 Day-boundary semantics
 
 The `received_at` partition is the seal region's `received_at` (per §10.15 multi-region). Events captured in replication regions and replicated after the seal region's UTC-day boundary belong to the next day.
-
-### §4.3.2 forward look — algorithm rotation and quantum-readiness
-
-The seal record's `algorithm` field discriminates `"ed25519"` from future post-quantum signers. The dual-algorithm posture (Ed25519 + ML-DSA-65 or similar) is normated for institutions with long-retention horizons. The TesseraSeal posture (TCCP axis 1) is to ship hybrid-PQ early; the spec mandate is 2030-01-01.
 
 ---
 
@@ -107,15 +113,13 @@ The seal record's `algorithm` field discriminates `"ed25519"` from future post-q
 
 Each line terminated with a single `\n` byte (0x0A). The signature is over the byte-concatenation of the 12 lines.
 
+> Conforms to FFIEC chain-of-custody spec §4.3 — HSM-rooted Ed25519 root signature over the 12-line `sign_payload` byte form; signing key non-extractable per §10.5.
+
 ### §4.3.1 HSM unavailability (informative)
 
 Institutions SHOULD notify regulators within 72 hours if the HSM is unavailable to seal. Day's events get sealed when the HSM returns; late-binding discipline applies.
 
-### §4.3.2 Algorithm rotation and quantum-readiness commitment (normative)
-
-**The 30-day SLA.** When a signing algorithm is broken (collision attack on SHA-256, signature forgery on Ed25519), the spec working group commits to publishing a patch within 30 days that names the migration algorithm and the dual-algorithm window.
-
-**Dual-algorithm posture.** Institutions in long-retention regimes operate dual-algorithm seals (Ed25519 + a post-quantum algorithm) on every seal so the seal is recoverable under either algorithm assumption. The TCCP roadmap allows this today; the spec mandate is 2030-01-01.
+> The seal record's `algorithm` field discriminates `"ed25519"` from future signers, so a v1 verifier dispatches on it (see §7 step 11). The forward-design of algorithm rotation and quantum-readiness — the dual-algorithm posture and the working-group commitment — is candidate-normative and tracked separately, not in this published v1 surface.
 
 ---
 
@@ -130,6 +134,8 @@ Institutions SHOULD notify regulators within 72 hours if the HSM is unavailable 
 - `gen_ai.*` — OpenTelemetry GenAI semantic conventions (`gen_ai.request.model`, `gen_ai.response.model`)
 - `tool.*` — tool invocations
 - `audit.*` — institution-emitted operational evidence (`audit.routing.*`, `audit.deployment.*`, `audit.cross_border_transfer.*`, `audit.model_handover.*`, etc.)
+
+> Conforms to FFIEC chain-of-custody spec §4.4 — OTLP-native wire format and the `ffiec.chain.*` / `gen_ai.*` / `audit.*` attribute namespaces.
 
 **SDK MUST refuse incomplete model calls.** An entry with any `gen_ai.*` attribute and missing either `gen_ai.request.model` or `gen_ai.response.model` is non-conformant. SDKs reject before MAC compute; verifiers re-check at §7 step 12a (defense-in-depth).
 

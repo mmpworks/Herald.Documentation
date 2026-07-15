@@ -324,6 +324,8 @@ Raj wrote that down. Then he wrote a follow-up underneath, with a star next to i
 
 "If the field is absent at the source, it's absent in the canonical bytes — JCS doesn't emit a key for a field the producer didn't set. The HKDF derivation falls back to a documented single-tenant label. The fingerprint computation uses the empty string for the `utf8(tenant_id)` portion of `SHA-256(utf8(tenant_id) || ikm)[:16]`. Section 3 covers `tenant_id`, `key_version`, and `key_fingerprint` as definitions; the §3 character class — `^[A-Za-z0-9_.\-]{1,255}$` — is normatively enforced both at the SDK construct time and at the verifier's file-header pre-flight per §7 step 3a. Northbridge sets `tenant_id=\"northbridge-bank-prod\"` everywhere — we're explicitly not single-tenant in the SDK's sense, even though we're a single bank."
 
+> Conforms to FFIEC chain-of-custody spec §4.1 (fingerprint formula). Publishing the formula is safe because spec §10.6 mandates a ≥256-bit CSPRNG-generated IKM, which closes the offline fingerprint-brute-force attack class. The 16-byte truncation hides the full digest state (§4.1 length-extension audit).
+
 "Why?"
 
 "Because the bank has subsidiary entities. Each subsidiary is a separate `tenant_id` under the same Herald Enterprise deployment. The prod tenant is `northbridge-bank-prod`. The wealth-management subsidiary is `northbridge-wealth-prod`. The merchant-services subsidiary is `northbridge-merchant-prod`. Three tenants, three HKDF derivations, three independent chains."

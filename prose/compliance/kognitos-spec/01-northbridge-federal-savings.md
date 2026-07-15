@@ -292,6 +292,8 @@ He looked up.
 
 "`key_fingerprint` is `SHA-256(utf8(tenant_id) || ikm)[:16]` — it identifies which IKM generation produced the per-tenant HKDF key for this entry's MAC. It's inside the canonical bytes, so a re-emit under a different key version would break the MAC. `kms_handle_uri` is operational — `aws-cloudhsm:cluster/cluster-7y8a/key/k-northbridge-prod-2026q2` — it tells you which KMS, which key alias, which version generated the IKM. It's *outside* the canonical bytes. The fingerprint is the security pin; the URI is the operational label. Forensic, not security."
 
+> Conforms to FFIEC chain-of-custody spec §4.1 (fingerprint formula). Publishing the formula is safe because spec §10.6 mandates a ≥256-bit CSPRNG-generated IKM, which closes the offline fingerprint-brute-force attack class. The 16-byte truncation hides the full digest state (§4.1 length-extension audit).
+
 Raj wrote that down. Slowly.
 
 "Why the distinction?"

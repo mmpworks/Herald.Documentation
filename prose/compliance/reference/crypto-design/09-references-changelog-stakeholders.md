@@ -14,7 +14,7 @@ The closing material. Reference standards, the spec's evolution history, role-by
 - RFC 8785 — JCS (the canonicalization for hash inputs)
 - RFC 5869 — HKDF (the §4.1 session-key derivation)
 - RFC 2104 — HMAC
-- RFC 4868 — HMAC-SHA-256 keying recommendations (32-byte key minimum drives §10.6's IKM minimum)
+- RFC 4868 — HMAC-SHA-256 keying recommendations (32-byte key minimum drives FFIEC chain-of-custody spec §10.6's IKM minimum)
 - RFC 3339 — date and time formatting
 - FIPS 140-2 / FIPS 140-3 — HSM protection levels
 - FIPS 180-4 — SHA-2 family
@@ -97,15 +97,20 @@ The closing material. Reference standards, the spec's evolution history, role-by
 
 The closing material is the wayfinding layer. References tell you what standards the spec depends on and where the reference verifier lives. The change log tells you what's been amended and why. Stakeholder navigation tells each reader where to start. The schema appendix consolidates attribute lookup for implementers.
 
-A reader who finishes the plain-English walkthrough end-to-end has covered:
+A reader who finishes this published walkthrough has covered the
+ratified crypto design end to end:
 - §0–§3 — orientation, scope, definitions (`01-scope-and-overview.md`)
 - §4 — the four primitives (`02-the-four-primitives.md`)
 - §5–§7 — wire, storage, verification (`03-wire-storage-verification.md`)
 - §8–§9 — conformance + security (`04-conformance-and-security.md`)
 - §10.1–§10.18 — operational foundational (`05-operational-foundational.md`)
-- §10.19–§10.30 — chain coverage, M&A, run resume, streaming (`06-operational-md-and-resilience.md`)
-- §10.31–§10.55 — disclosure, edge attestation, training-phase, GenAI (`07-operational-disclosure-and-ai.md`)
-- §10.56–§10.71 — wave: hardware, frontier AI, banking institutional (`08-operational-prd4-wave.md`)
 - §11–§13 + Appendix A — references, change log, stakeholders, schema reference (this file)
 
-That's the spec, end to end, in plain English. The official spec is the authority — these notes are the onramp.
+The §10.19 and later operational waves — chain-coverage, M&A and
+run-resume, edge attestation, GenAI disclosure, the hardware and
+frontier-AI extensions — are situational, candidate-normative
+forward-design. They are tracked separately and are not part of this
+published surface.
+
+That's the ratified spec, in plain English. The official spec is the
+authority — these notes are the onramp.

@@ -12,6 +12,8 @@
 
 **Two encodings, one purpose.** OTLP carries the events on the network. JCS produces the bytes the per-event MAC is computed over. Two implementations producing the same logical event produce byte-identical JCS bytes — that's how the chain achieves cross-implementation byte-equivalence in the test-vector corpus.
 
+> Conforms to FFIEC chain-of-custody spec §5 — bytes input to any MAC or hash are RFC 8785 JCS-canonical.
+
 ### §5.0.1 Top-level wire-format kinds (normative)
 
 The v1 enumeration: `chain_entry`, `seal_record`, `anchor_record`, `cross_domain_transition`. Adding new kinds within v1 is **additive** — does NOT increment `format_version`. A v2 spec that changes per-event canonical-form rules or seal-record byte structure would increment `format_version`. The §7 unknown-wire-format-kind fallthrough rule handles forward-compat: a v1.0Y verifier seeing a kind it doesn't know PASSes with an anomaly marker, never crashes.
@@ -37,6 +39,9 @@ JCS is the universal canonicalization for everything in the chain that gets hash
 **What it says.** Three rules + a header rule.
 
 1. **Chain-stamp preservation.** The seven chain-stamp fields (`prev_hash`, `payload_hash`, `key_version`, `key_fingerprint`, `format_version`, `mac_computed_at_utc`, `kms_handle_uri`) MUST be preserved byte-for-byte. No canonicalization, normalization, re-encoding. A storage layer that base64-encode-decodes these fields without preserving padding is non-conformant.
+
+   > Conforms to FFIEC chain-of-custody spec §6 — the seven chain-stamp fields MUST be preserved byte-for-byte.
+
 2. **File format header.** Line-oriented files start with the header record (per §4.4 schema). Every line ends with `\n` (0x0A). The verifier rejects files whose last byte is not `\n` — that's the mid-write truncation refusal.
 3. **Empty-file structure.** A tenant-day with zero events is a single header line plus terminating `0x0A`. The verifier accepts the empty file as structurally valid and computes the empty-tree Merkle root (`SHA-256(b"")` = `e3b0c44…b855`). A zero-byte file is rejected.
 
@@ -76,6 +81,8 @@ Before any of the 12 steps execute:
 11. **Signature verification.** Reconstruct `sign_payload` per §4.3, dispatching on `sign_payload_version` (absent / `"v1.0a"` / `"v1.0b"` / unrecognized). Verify Ed25519 signature. Plus dual-algorithm dispatch for §4.3.2 posture. Plus the `key_versions` cross-check.
 12. **Cadence and dev-mode check.** `seal.cadence` matches institution; `seal.dev_mode == false` under `--strict`.
 12a. **GenAI model identifier completeness check.** For chain entries with any `gen_ai.*` attribute, BOTH `gen_ai.request.model` and `gen_ai.response.model` MUST be present. SDK-side refusal closes the source; §7 step 12a is defense-in-depth.
+
+> Conforms to FFIEC chain-of-custody spec §7 — the 12-step verification procedure. Step 8 (fingerprint check) precedes step 9 (MAC recompute), which uses the structurally-walked `expected_prev_hash`.
 
 ### Step ordering — normative for data-dependent steps
 

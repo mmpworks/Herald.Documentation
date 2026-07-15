@@ -260,23 +260,19 @@ article 10.
 
 #### Stamp every event with a Demo tag
 
-`demo-watermark`. Normally a **Pro Developer** capability. **Sentinel.
-Not a customer-facing feature.**
+`demo-watermark`. Normally a **Pro Developer** capability.
 
 Turns on the Demo watermark the free Pro Developer tier carries.
 
-Internal sentinel. When present, the customer's instances stamp every
-log event with a `LicenseTier: Demo` property as it leaves the
-pipeline. That's the shape of the free Pro Developer tier. It's how
-customers and downstream tools tell free-tier traffic apart from paid
-traffic. Don't check this on a paid license. It would tag the
-customer's production events with the Demo marker.
+When present, the customer's instances stamp every log event with a
+`LicenseTier: Demo` property as it leaves the pipeline. That's the
+shape of the free Pro Developer tier. It's how customers and downstream
+tools tell free-tier traffic apart from paid traffic. The free tier
+carries it; the paid tiers don't.
 
-The portal hides this row by default. It appears only when the operator
-picks the Pro Developer preset. That preset checks the box
-automatically and locks it. If a customer asks "how do I get rid of the
-Demo tag?" the answer is "upgrade to Pro Team," which mints a token
-without `demo-watermark`.
+If a customer asks "how do I get rid of the Demo tag?" the answer is
+"upgrade to Pro Team," which mints a paid token that doesn't carry the
+watermark.
 
 ## The presets
 
@@ -305,34 +301,17 @@ click. Eight presets ship today; more can be added as new SKUs land.
 Operators and sales don't have to think about this part. The shape
 matters anyway, because it's how the catalog stays trustworthy.
 
-```mermaid
-flowchart LR
-    src[data/licensing/capabilities/*.json<br/>data/licensing/presets/*.json]
-    schema[schemas/licensing/*.schema.json]
+Every read of the catalog — the operator portal, this customer-facing
+page, the customer's installation — pulls from the same JSON files
+under `data/licensing/`. Edit a capability once, and every surface
+that mentions it updates together.
 
-    src -.validates against.-> schema
-
-    src --> minter[Minter<br/>MMP.Licensing<br/>server side]
-    src --> verifier[Verifier<br/>MMP.Licensing.Contracts<br/>client side]
-    src --> portal[Operator portal<br/>MMP.Licensing.Portal<br/>checkbox UI]
-    src --> docs[This page<br/>customer-facing reference]
-    src --> manifest[/api/system/capabilities<br/>per-build manifest endpoint/]
-
-    minter --> token[Signed license token<br/>caps[] claim]
-    verifier --> gates[HeraldCapabilityGate.Require]
-    portal --> ux[Operator picks preset<br/>+ extras]
-    manifest --> dashboard[Dashboard mismatch warnings]
-```
-
-All five reads (minter, verifier, portal, this page, manifest) pull
-from the same JSON files under `data/licensing/`. A capability that
-gets renamed, retired, or added shows up everywhere at once. A
-capability that exists in one place but not another is a build-time
-failure. The schema validator catches it before the renderer runs.
-
-The C# side (`EditionCapabilityPresets.cs` in `MMP.Licensing.Contracts`)
-is regenerated from the same JSON during the licensing build. Glenn
-maintains the generator. The catalog files are the source.
+That's the docs-as-database discipline applied to licensing. A
+capability that gets renamed, retired, or added shows up everywhere at
+once. A capability that exists in one place but not another is a
+build-time failure — the schema validator catches it before anything
+renders. It's CUPID's *Composable* property: the catalog entries are
+the parts, and every surface is a composition of the same parts.
 
 ## Adding or retiring a capability
 

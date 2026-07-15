@@ -7,7 +7,6 @@ since: 2.0
 last-reviewed: 2026-05-21
 related:
   - explanation/how-licensing-works
-  - explanation/how-licensing-defends
   - operator-runbook/14-bootstrapping-the-license-server-on-azure
 related-records:
   - data/licensing/presets/herald-pro.json
@@ -286,10 +285,6 @@ of closing each gap.
 For the conceptual model (what a token is, how the engine
 verifies it, how the kid-map handles annual key rotation),
 read [how MMP.Licensing works](./how-licensing-works.md).
-
-For the security story (what each defense actually blocks,
-honest-mistake vs. adversarial coverage), read
-[how MMP.Licensing defends against attacks](./how-licensing-defends.md).
 
 For the operational side (the four gotchas hit during the
 first deployment, what the production-gap list is, what each

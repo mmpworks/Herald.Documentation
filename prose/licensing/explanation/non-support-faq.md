@@ -8,7 +8,6 @@ status: published
 last-reviewed: 2026-05-17
 related:
   - explanation/how-licensing-works
-  - explanation/how-licensing-defends
 related-records: []
 related-external:
   - repo: mmpworks/MMP.Licensing
@@ -48,11 +47,9 @@ same conversations: dev licensing, environments, pricing,
 security posture, and chain of custody.
 
 If you want the mechanics of how the system works today, read
-[how MMP.Licensing works](./how-licensing-works.md). For the
-threat model, read
-[how MMP.Licensing defends against attacks](./how-licensing-defends.md).
-This page is the third leg of that trio — it covers the edges we
-*haven't* built yet and explains why.
+[how MMP.Licensing works](./how-licensing-works.md). This page is
+the companion — it covers the edges we *haven't* built yet and
+explains why.
 
 > 💡 **The frame that matters most.** Pro and Enterprise are
 > NOT trying to be unforkable. Someone can absolutely fork
@@ -523,9 +520,6 @@ key never moved.
 > Azure Key Vault Premium is that vault. The license server is
 > the notary. The private key is the seal.
 
-For the threat-model walk-through behind this choice, see
-[how MMP.Licensing defends against attacks](./how-licensing-defends.md#why-the-private-signing-key-lives-in-an-hsm).
-
 ## 23. Will my SAST scanner flag the embedded public key?
 
 **Plain English:** "Probably not — we've already pre-submitted
@@ -617,4 +611,3 @@ prematurely.
 
 - [ADR-0001, the engineering rationale behind every item above](../../../../Modules/Herald.Licensing/doc/adr/0001-mmp-licensing-architecture.md)
 - [How MMP.Licensing works](./how-licensing-works.md) — the mechanics
-- [How MMP.Licensing defends against attacks](./how-licensing-defends.md) — the threat model

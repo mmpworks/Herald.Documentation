@@ -6,7 +6,6 @@ audience: new-to-licensing
 since: 2.0
 last-reviewed: 2026-05-17
 related:
-  - explanation/how-licensing-defends
   - explanation/where-the-license-server-runs
 related-records: []
 related-external:
@@ -24,9 +23,7 @@ This page is for someone who has never built or run a licensing
 system before. By the end, you should know what a license token
 is, how it reaches a customer's app, how the app verifies it
 without phoning home, and why the system is shaped the way it
-is. The companion page,
-[how MMP.Licensing defends against attacks](./how-licensing-defends.md),
-covers the security side.
+is.
 
 Two ideas run through everything below. First, a license token
 is a small piece of signed data, not a magic key. Second, the
@@ -398,11 +395,6 @@ licensing system and won't find here.
   error beats a service that quietly degrades.
 
 ## Where to go next
-
-For the security and abuse-resistance story, read
-[how MMP.Licensing defends against attacks](./how-licensing-defends.md).
-It picks up where this page leaves off, with the honest-mistake
-defenses and the adversarial defenses laid out side by side.
 
 For the engineering rationale (the trade-offs we considered, the
 alternatives we rejected, the design decisions recorded with

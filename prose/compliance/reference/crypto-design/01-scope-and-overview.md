@@ -121,7 +121,7 @@ The vocabulary table. Every reader bookmarks this section.
 | **Run** | A bounded sequence of events sharing one `run_id`, representing one logical agent invocation (e.g., one user's session with the assistant). |
 | **Tenant** | A regulated institution subscribed to a chain-of-custody implementation. Each tenant has independent keys + ledger. The `tenant_id` matches a regex character class — alphanumerics, underscore, hyphen, dot only — so the HKDF input parameter is unambiguously parseable. |
 | **Tenant-day** | All events for one tenant in one UTC calendar day. The aggregation unit for the daily Merkle seal. |
-| **IKM (Input Key Material)** | The long-lived per-tenant secret. Held in HSM/KMS, never on application hosts. Minimum 32 bytes per §10.6. Synonym in operations contexts: "master key." |
+| **IKM (Input Key Material)** | The long-lived per-tenant secret. Held in HSM/KMS, never on application hosts. ≥32 bytes (256 bits) of CSPRNG entropy per FFIEC chain-of-custody spec §10.6 / §10.6.1. Synonym in operations contexts: "master key." |
 | **Session key** | A 32-byte HMAC key derived from IKM via HKDF. Bound to one tenant. Held in process memory only. |
 | **`key_version`** | An integer ≥ 1 identifying which IKM generation produced a session key. Lets a verifier ten years from now look up the right IKM. |
 | **`key_fingerprint`** | A public 16-byte identity binding: the first 16 bytes of `SHA-256(utf8(tenant_id) \|\| ikm)`. Stamped on every chain entry. The verifier asserts the looked-up IKM produces this fingerprint *before* computing any MAC — so a botched rotation that re-uses `key_version=1` for a different IKM is caught at lookup time, not buried in a MAC-failure storm. |

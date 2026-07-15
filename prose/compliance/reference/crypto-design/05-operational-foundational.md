@@ -34,6 +34,8 @@
 
 The seal-job operator role is granted `sign` only; `extract`, `delete`, `import` MUST require separate authorization.
 
+> Conforms to FFIEC chain-of-custody spec §10.5 — FIPS 140-2 Level 3+ HSM, non-extractable signing key.
+
 **Fault-injection attacks (informative).** FIA / DFA against FIPS 140-2 Level 3 devices are accepted residual risk. Institutions in nation-state-attacker threat models select FIPS 140-3 Level 4 or Common Criteria EAL5+ HSMs.
 
 ## §10.6 IKM minimum length + §10.6.1 IKM generation requirements (normative)
@@ -42,15 +44,21 @@ The seal-job operator role is granted `sign` only; `extract`, `delete`, `import`
 
 **Why.** A weak-RNG IKM defeats the entire chain — per-tenant session-key isolation, fingerprint offline-non-grindability, layered authentication of §1.4 all depend on IKM unpredictability. Length minimum closes the offline-fingerprint-brute-force attack class.
 
+> Conforms to FFIEC chain-of-custody spec §10.6 / §10.6.1 — IKM ≥256 bits of FIPS-validated CSPRNG entropy. This is the control that makes the public `key_fingerprint` formula (§4.1) offline-non-grindable; it is the load-bearing dependency for safely publishing the fingerprint construction.
+
 ## §10.7 Software-key adapter exclusion in production (normative)
 
 **What.** Software-key adapters (IKM as bytes in a config file or environment variable) MAY ship in development/test builds but MUST be unreachable in production deployments. Two patterns satisfy: compile-time exclusion (build-flag removes the adapter source from the production binary) or run-time refusal (production runtime asserts the adapter is unreachable and aborts startup if it is).
 
 **Why.** A run-time-only flag protecting a software adapter is brittle — an attacker with environment-variable write access bypasses it. Compile-time exclusion is the strict pattern.
 
+> Conforms to FFIEC chain-of-custody spec §10.7 — software-key adapters unreachable in production via compile-time exclusion or run-time refusal.
+
 ## §10.8 Constant-time comparison (normative)
 
 **What.** Fingerprint compare and MAC compare MUST use constant-time primitives (Go's `crypto/subtle.ConstantTimeCompare`,.NET's `CryptographicOperations.FixedTimeEquals`, Python's `hmac.compare_digest`). Variable-time compare leaks bytes via timing.
+
+> Conforms to FFIEC chain-of-custody spec §10.8 — fingerprint and MAC comparisons MUST be constant-time.
 
 ## §10.9 IKM registry retention (normative)
 
@@ -89,9 +97,9 @@ Pattern A is preferred (preserves "one seal per day" invariant). Pattern B is co
 
 **Why.** FRE 901(b)(9) authentication of the process — the chain proves the result; these artifacts prove the process.
 
-## §10.14 Trusted-time integration (informative + forward commitment)
+## §10.14 Trusted-time integration (informative)
 
-**What.** RFC 3161 trusted-timestamp integration is RECOMMENDED for v1.0; a future v1.x extension MAY define a normative `audit.timestamp.rfc3161_token` attribute. The forward-commitment paragraph specifies that the v1.x extension MUST name pre-MAC vs post-MAC binding posture; mixing in the same chain is non-conformant.
+**What.** RFC 3161 trusted-timestamp integration is RECOMMENDED for v1.0. The v1.x forward-commitment design (a normative `audit.timestamp.rfc3161_token` attribute and its pre-MAC vs post-MAC binding posture) is candidate-normative and tracked separately, not part of this published v1 surface.
 
 ## §10.15 Multi-region resilience (normative) — *substantive*
 
