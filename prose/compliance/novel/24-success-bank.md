@@ -26,7 +26,7 @@ The full eight travel: Raj, Elena, Mike, Diana, Luis, Chen, Tom, Sonya. Raj has 
 
 **Sonya:** "Why us in the room at all?"
 
-**Raj:** "Because no examiner has ever seen a chain, and Cindy knows exactly how an examiner reacts to something they've never seen. She sat in that chair nine years at the FDIC. Her read is that a state examiner who's never met a chain-of-custody distrusts it on sight — that the first thing out of their mouth is going to be some version of *the bank signed its own evidence.* And she's right. So she retained us to be in the room when that happens. Not to argue for the chain. To help the examiner check it himself. That's the whole design of the thing — the examiner isn't supposed to take the bank's word. He's supposed to re-run it. Our job is to be there when he decides whether he believes that."
+**Raj:** "Because no examiner has ever seen a chain, and Cindy knows exactly how an examiner reacts to something they've never seen. She sat in that chair nine years at the FDIC. Her read is that a state examiner who's never met a chain-of-custody distrusts it on sight — that the first thing out of their mouth is going to be some version of *the bank signed its own evidence.* And she's right. So she retained us to be in the room when that happens. Not to argue for the chain. To help the examiner check it himself. That's the design — the examiner isn't supposed to take the bank's word. He's supposed to re-run it. Our job is to be there when he decides whether he believes that."
 
 Sonya looked out at the lake going past.
 
@@ -58,7 +58,7 @@ The SUV turned into the lot.
 
 The lobby was cool limestone and glass with a view straight out across the office-park lot toward the frontage road, the Barton Creek greenbelt running green behind it. A receptionist checked the team in against a list; the badges carried a photo and a numeric escort code. Cindy Martinez was at the elevator bay with Rachel Gonzalez beside her.
 
-**Cindy:** "Raj. Welcome to Austin. — I'll say the thing I said on the phone so the whole team hears it. I spent nine years examining banks for the FDIC out of Dallas. I know what a state examiner does when they walk into something they've never seen, and none of them have seen this. The Department set up Friday. Their Examiner-in-Charge is a commissioned examiner named Karen Wilson — twenty-three years, she signs the report. Her IT examiner is the one I'm watching. His name is Danny Tran, and he is going to distrust the chain on sight, and he is going to be right to, and I need him to be able to talk himself out of it. That's why you're here. Not to defend the chain. To stand next to the examiner while he tries to break it."
+**Cindy:** "Raj. Welcome to Austin. — I'll repeat what I said on the phone so the whole team hears it. I spent nine years examining banks for the FDIC out of Dallas. I know what a state examiner does when they walk into something they've never seen, and none of them have seen this. The Department set up Friday. Their Examiner-in-Charge is a commissioned examiner named Karen Wilson — twenty-three years, she signs the report. Her IT examiner is the one I'm watching. His name is Danny Tran, and he is going to distrust the chain on sight, and he is going to be right to, and I need him to be able to talk himself out of it. That's why you're here. Not to defend the chain. To stand next to the examiner while he tries to break it."
 
 **Raj:** "That's the engagement as I read it too. Three days. We walk the chain with your people, we're in the room when the Department works it, we help the examiner re-run whatever he wants to re-run under his own hand, and Tom runs his four questions with you on the internal-audit side. We don't argue the examiner into anything. If the chain can't survive him checking it himself, that's the finding, and we write it."
 
@@ -66,7 +66,7 @@ The lobby was cool limestone and glass with a view straight out across the offic
 
 Rachel put in one line before the elevator came.
 
-**Rachel:** "I told the Department the same thing I'm telling you. They don't have to believe me. The verifier is open source, the public key is published, and they can re-run any of it on their own laptops on the coffee-shop wifi across the street if they want. The whole point is that the bank doesn't get to be trusted. — Danny hasn't decided whether to believe that yet. That's the thing to watch this week."
+**Rachel:** "I told the Department the same thing I'm telling you. They don't have to believe me. The verifier is open source, the public key is published, and they can re-run any of it on their own laptops on the coffee-shop wifi across the street if they want. The whole point is that the bank doesn't get to be trusted. — Danny hasn't decided whether to believe that yet. That's what to watch this week."
 
 Tom, who had been quiet, wrote a line in his engagement notebook and turned it so only Raj could see it: *First time the examiner is a character and not a citation.*
 
@@ -97,13 +97,13 @@ The door across the hall opened before Rachel answered. A man in his late thirti
 
 **Rachel:** "Danny. Karen. — This is the readiness team the bank retained. Raj is their lead."
 
-**Karen:** "Wilson, Examiner-in-Charge. — I'll be straight with the room, because it saves time. The Department doesn't usually share a floor with a bank's consultants during an examination, and I thought hard about the optics before I agreed to it. I agreed because Ms. Martinez made a case I couldn't argue with — that the thing on these screens is something none of my examiners has seen, and that the fastest way for my IT examiner to test it is to have the people who understand it in the building while he does. You are not going to sit in my exit meeting and you are not going to touch my workpapers. But when Danny wants to re-run something, you can be in the room. That's the arrangement."
+**Karen:** "Wilson, Examiner-in-Charge. — I'll be straight with the room, because it saves time. The Department doesn't usually share a floor with a bank's consultants during an examination, and I thought hard about the optics before I agreed to it. I agreed because Ms. Martinez made a case I couldn't argue with — that what's on these screens is something none of my examiners has seen, and that the fastest way for my IT examiner to test it is to have the people who understand it in the building while he does. You are not going to sit in my exit meeting and you are not going to touch my workpapers. But when Danny wants to re-run something, you can be in the room. That's the arrangement."
 
 **Raj:** "Understood on all of it. We're here so your examiner can check the bank's evidence himself, not so he takes anyone's word — the bank's or ours. If it doesn't survive that, we'll be the first to write it down."
 
 Danny Tran had not sat down. He was looking at the screen wall, where Kyle had left a chain entry expanded.
 
-**Danny:** "Can I say the thing I'm going to be thinking all week, so nobody has to guess."
+**Danny:** "Can I say what I'm going to be thinking all week, so nobody has to guess."
 
 **Karen:** "Say it, Danny."
 
@@ -121,7 +121,7 @@ The room was quiet for a second. Raj did not look at Rachel and did not look at 
 
 ## 9:30 AM — The custody chain, which is Sonya's
 
-Sonya had spent twenty-two years proving where hardware had been — which loading dock, which sealed container, which RMA, which chip out of which tray — before she ever heard the phrase *chain-of-custody* used about a log file. She thought about the key registry as she thought about a tamper-evident shipping seal, and she started where she always started, with the thing you could hold.
+Sonya had spent twenty-two years proving where hardware had been — which loading dock, which sealed container, which RMA, which chip out of which tray — before she ever heard the phrase *chain-of-custody* used about a log file. She thought about the key registry as she thought about a tamper-evident shipping seal, and she started where she always started, with something she could hold.
 
 **Sonya:** "You said the bank's key, in the bank's module. Let's take that apart, because 'the bank's key' is doing more work in that sentence than it can hold. — The key that signs the daily seal lives inside a hardware security module. It's generated inside the module and it cannot leave the module. Nobody at this bank has ever seen it, including the woman who built the whole system. The module signs when it's asked to sign; it does not hand out the key. So the first thing to separate is the key from the people. The bank does not have the key. The module has the key. The bank has the ability to ask the module for a signature — which is a different power, and it's a power that leaves a record."
 
@@ -153,7 +153,7 @@ Danny closed the laptop halfway. Not all the way. Halfway.
 
 Danny went back across the hall to the Department's room and did not come back for fifty minutes. When he came back he had four lines of his own script on his laptop and the look of a man who had tried to catch someone in a lie and failed.
 
-Diana had watched him go and had said the thing the team was all thinking.
+Diana had watched him go and had said what the team was all thinking.
 
 **Diana:** "He's going to validate the manifest before he runs the verifier. He's going to do it in the wrong order on purpose — signer first, verifier second — so that when the verifier agrees it isn't telling him anything he didn't already prove by hand."
 
@@ -195,7 +195,7 @@ Reason:  per-event MAC recomputation failed at entry
 
 **Danny:** "Failed at the byte and named the offset. I put the artifact back; it passed again."
 
-He looked at Sonya, then at Rachel, then — briefly, and this was the thing Raj noticed — at Raj, the outside party with nothing to sell in the room.
+He looked at Sonya, then at Rachel, then — briefly, and this was what Raj noticed — at Raj, the outside party with nothing to sell in the room.
 
 **Danny:** "So it's not a fancy pen. The bank still signed its own evidence. But the bank can't change it after the fact without disagreeing with a signature I can check independently, and the bank can't get a forged key past a manifest custodied away from it. I trust the record because I re-ran it, not because anyone told me to. — I'll write that. Nobody in this room talked me into it, which is the only reason I believe it."
 
@@ -217,7 +217,7 @@ Mike had been holding one question all morning, because it was the one question 
 
 **Tom:** "Logged. The question is on the record; the window is on the record; the recusal frame is the spousal-disclosure paragraph and it's countersigned both sides."
 
-Mike put the question — how the cross-vendor handover schema composed with the bank's quarterly retraining when the upstream vendor versioned on a different cadence — and Steve answered it, precisely, for eleven of his twenty minutes, and used the other nine on the one clarification Mike asked back, and then took himself off the bridge without drifting into a word about anything else. Danny, who had come back across the hall to watch, said nothing during it and one thing after.
+Mike put the question — how the cross-vendor handover schema composed with the bank's quarterly retraining when the upstream vendor versioned on a different cadence — and Steve answered it, precisely, for eleven of his twenty minutes, and used the other nine on the one clarification Mike asked back, and then took himself off the bridge without drifting into a word about anything else. Danny, who had come back across the hall to watch, said nothing during it and one remark after.
 
 **Danny:** "That's the vendor."
 
@@ -229,7 +229,7 @@ Danny wrote something down. Raj could not see it and did not try to.
 
 Somebody had walked across the lot to Salt Traders and come back with trays of Gulf fish and hush puppies; nobody left the building past that. Danny came in with the Department's asset-quality examiner, a heavyset man named Ray Hernandez who had spent the morning in loan files, and Karen behind them, and for a few minutes the two rooms were one room.
 
-Ray had two credits he was calling substandard — a retail-strip loan out east where the guarantor's liquidity was gone, and an ag operating line paying interest out of principal — both already on the bank's own watch list, both adequately reserved, and he said so without heat, and Diana noted quietly to Raj that the bank not fighting the numbers was worth more to the exam than any control they'd walked all morning. But the thing that changed the afternoon came from Danny, and it was not a compliment.
+Ray had two credits he was calling substandard — a retail-strip loan out east where the guarantor's liquidity was gone, and an ag operating line paying interest out of principal — both already on the bank's own watch list, both adequately reserved, and he said so without heat, and Diana noted quietly to Raj that the bank not fighting the numbers was worth more to the exam than any control they'd walked all morning. But what changed the afternoon came from Danny, and it was not a compliment.
 
 **Danny:** "While I was in the registry this morning I looked at your retention on the key material. You've got the key registry set to hold three years. Where'd three come from?"
 
@@ -325,11 +325,11 @@ Dawn joined at three, in person, walking in from the Austin traffic in a way non
 
 Diana took it, because the boundary was an access-and-identity question and that was her lane.
 
-**Diana:** "Examiner Tran. One thing before you close the IT booklet, because it's the thing that separates understanding this tool from being sold it. The chain covers the bank's evidence. It does not cover your work. Your workpapers, your access to these files this week, the report you'll write — those are the Department's confidential supervisory information, custodied on your side, wiped off your laptops at exam close as they always are. They're not in this chain and they shouldn't be. If anyone told you the chain covers the examination itself, they'd be selling you something."
+**Diana:** "Examiner Tran. One point before you close the IT booklet, because it's what separates understanding this tool from being sold it. The chain covers the bank's evidence. It does not cover your work. Your workpapers, your access to these files this week, the report you'll write — those are the Department's confidential supervisory information, custodied on your side, wiped off your laptops at exam close as they always are. They're not in this chain and they shouldn't be. If anyone told you the chain covers the examination itself, they'd be selling you something."
 
 **Danny:** "Good. Wrong answer and I'd have written the bank up for over-claiming."
 
-**Dawn:** "There's one thing on the seam, and it's the vendor's to state so the bank doesn't over-promise it. Your *access* to the bank's evidence — which examiner pulled which confidential file, when, through the portal — that can be chain-bound on the bank's side, if the Department ever wants it. Not your workpapers. Just the fact of the access, against the bank's files. The specification has an access-trail primitive for it; it's the same mechanism the bank uses to record who inside the bank reads a privileged file. It means a year from now, if someone asks who saw a confidential customer record during this exam, there's an integrity-bound answer on the bank's side, independent of the bank's own say-so. — The vendor's position is that it's the Department's call whether to use it, and never the bank's."
+**Dawn:** "There's one item on that boundary, and it's the vendor's to state so the bank doesn't over-promise it. Your *access* to the bank's evidence — which examiner pulled which confidential file, when, through the portal — that can be chain-bound on the bank's side, if the Department ever wants it. Not your workpapers. Just the fact of the access, against the bank's files. The specification has an access-trail primitive for it; it's the same mechanism the bank uses to record who inside the bank reads a privileged file. It means a year from now, if someone asks who saw a confidential customer record during this exam, there's an integrity-bound answer on the bank's side, independent of the bank's own say-so. — The vendor's position is that it's the Department's call whether to use it, and never the bank's."
 
 **Karen:** "We'd use it. Confidentiality is a hard constraint for us, not a courtesy. As long as it's the fact of access on the bank's side and never our judgment or our workpapers, which stay ours."
 
@@ -347,11 +347,11 @@ Kyle ran it — the same chain under `--profile ffiec` and `--profile tx-dob`. I
 
 > ### Confirmation #4 — The verifier's Texas profile changes framing only, not the verdict; the scope boundary holds between bank evidence and examiner work product
 >
-> The verifier's Texas profile surfaces the charter authority, the dual-supervision posture, and the 7 TAC §3.24 reference, while the underlying integrity verdict and exit code are identical to the federal profile on the same chain — the determinism guarantee that lets a state-only cycle carry the same weight as a joint federal exam. The scope boundary held cleanly under the examiner's questioning: the chain covers institution-side evidence, not examiner workpapers or the Report of Examination, and the fact of examiner access to confidential files can be access-trail-bound on the bank's side without ever reaching the examiner's work product — the Department's call to use, never the bank's. The team walked the boundary; the vendor stated the seam; the examiner set the limit.
+> The verifier's Texas profile surfaces the charter authority, the dual-supervision posture, and the 7 TAC §3.24 reference, while the underlying integrity verdict and exit code are identical to the federal profile on the same chain — the determinism guarantee that lets a state-only cycle carry the same weight as a joint federal exam. The scope boundary held cleanly under the examiner's questioning: the chain covers institution-side evidence, not examiner workpapers or the Report of Examination, and the fact of examiner access to confidential files can be access-trail-bound on the bank's side without ever reaching the examiner's work product — the Department's call to use, never the bank's. The team walked the boundary; the vendor named the edge; the examiner set the limit.
 
 ## 4:30 PM — Raj closes the first day
 
-Raj gathered the team in the technical room after the Department went back across the hall, and did the thing he had watched Dawn do at the end of twenty first days, which was to make sure nobody had fallen for their own client.
+Raj gathered the team in the technical room after the Department went back across the hall, and did what he had watched Dawn do at the end of twenty first days, which was to make sure nobody had fallen for their own client.
 
 **Raj:** "Before anybody tells me this is the best-run bank we've seen. Findings. Real ones. What's the Department writing that we'd have written."
 
@@ -363,7 +363,7 @@ Raj gathered the team in the technical room after the Department went back acros
 
 **Chen:** "Ledger and seal reconcile across the whole window. The profile determinism ran clean under his own hand."
 
-**Raj:** "So we've got a sound bank with one remediated finding going to the board, two substandard credits the bank already reserved for, and a first-time examiner who talked himself into trusting the evidence by re-running it. — Here's the thing I want said out loud, because it's the trap. We are not here to make the Department like the chain. We're here so the Department can check it. Danny didn't believe a word this morning and he shouldn't have, and the reason he believes it now is that he broke it himself and it caught him and he fixed it and it caught him again. If he'd taken it on anybody's word — the bank's, Rachel's, ours — it'd be worth nothing, and it'd deserve to be. The chain earned its place in that room by surviving the one person who walked in wanting it to fail. Write it that way in the memo. Not the enthusiasm. The mechanism."
+**Raj:** "So we've got a sound bank with one remediated finding going to the board, two substandard credits the bank already reserved for, and a first-time examiner who talked himself into trusting the evidence by re-running it. — Here's what I want said out loud, because it's the trap. We are not here to make the Department like the chain. We're here so the Department can check it. Danny didn't believe a word this morning and he shouldn't have, and the reason he believes it now is that he broke it himself and it caught him and he fixed it and it caught him again. If he'd taken it on anybody's word — the bank's, Rachel's, ours — it'd be worth nothing, and it'd deserve to be. The chain earned its place in that room by surviving the one person who walked in wanting it to fail. Write it that way in the memo. Not the enthusiasm. The mechanism."
 
 Cindy had come in for the tail of it.
 
@@ -373,19 +373,19 @@ Cindy had come in for the tail of it.
 
 The reconciliation slate ran on Day 2: ten loan files traced from the origination system through the chain to the seal, ten board-and-committee minutes hashed against their year-old seals, the GL extract walked from its parent-job entry to the count of balances it produced, so a curated extract would have surfaced as a count mismatch. Every artifact the bank had staged through the portal hashed to the value sealed when it was produced. Ray Hernandez finished his loan classifications — the two substandard credits and nothing doubtful — and told Raj, unprompted, that it was the first exam where he'd been able to prove the appraisal driving a classification was the appraisal the bank held eight months ago and not one swapped in the week the examiners arrived. Diana's access-trail walk confirmed authenticated identity across every review and approval in the slate; no shared-login masquerade anywhere.
 
-Danny spent most of Day 2 in the Department's room and came across the hall twice — once to re-run a seal on a date he picked himself without telling anyone which, and once, late, to ask Sonya a question about module partition ceremonies that had nothing to do with the exam and everything to do with a man who had decided to actually understand the thing. Sonya answered it for forty minutes past when she needed to.
+Danny spent most of Day 2 in the Department's room and came across the hall twice — once to re-run a seal on a date he picked himself without telling anyone which, and once, late, to ask Sonya a question about module partition ceremonies that had nothing to do with the exam and everything to do with a man who had decided to actually understand the chain. Sonya answered it for forty minutes past when she needed to.
 
 The exit meeting was the Department's and the team was not in it, by the arrangement Karen had set on the first morning. What came back through Cindy was a composite of two, a URSIT of two with the one remediated retention finding sitting under Support and Delivery, the two substandard credits adequately reserved, no memorandum of understanding, no Commissioner's order. The Report of Examination would come from the Department in the usual weeks, stamped confidential supervisory information, the bank's to hold and not to publish. On Thursday afternoon, after the board meeting the team also wasn't in, Danny Tran crossed the hall one last time to collect a laptop bag he'd left, and stopped in the doorway of the technical room where Raj and Sonya were closing out the engagement file.
 
-**Danny:** "You're the outside firm. You had nothing to sell me. So I'll say the thing to you I'm not going to write in a report. — For fifteen years the last line of every evidence conclusion I've written has been some version of *as represented by management.* Every loan file, every incident timeline, every extract. I reconcile what I can tie out, I trust the rest, and I sign it *as represented,* because that's all the honesty the job entitles me to. Today's the first day I got to cross that line out on a few of them and write *verified* instead. Not all of them — the determination time is still the bank's assertion, the classifications are still my judgment. But the provenance, the completeness, the ordering — those I checked myself, with my own hands, and I don't have to trust anybody. That's new. In fifteen years, that's new."
+**Danny:** "You're the outside firm. You had nothing to sell me. So I'll say to you what I'm not going to write in a report. — For fifteen years the last line of every evidence conclusion I've written has been some version of *as represented by management.* Every loan file, every incident timeline, every extract. I reconcile what I can tie out, I trust the rest, and I sign it *as represented,* because that's all the honesty the job entitles me to. Today's the first day I got to cross that line out on a few of them and write *verified* instead. Not all of them — the determination time is still the bank's assertion, the classifications are still my judgment. But the provenance, the completeness, the ordering — those I checked myself, with my own hands, and I don't have to trust anybody. That's new. In fifteen years, that's new."
 
 **Raj:** "That's the idea. Nobody was ever supposed to make you trust them. You were just never handed the tools not to."
 
 Danny picked up his bag. He looked at Sonya.
 
-**Danny:** "The custody piece. You handed me the one thing I could check without believing anyone, and then you let me go check it. Most people in your position argue. You handed me a thread and stepped back."
+**Danny:** "The custody piece. You handed me the one piece I could check without believing anyone, and then you let me go check it. Most people in your position argue. You handed me a thread and stepped back."
 
-**Sonya:** "I spent twenty-two years proving where hardware had been to people who didn't want to take my word for it. You never win those by arguing. You win them by handing over the thing they can check and getting out of the way."
+**Sonya:** "I spent twenty-two years proving where hardware had been to people who didn't want to take my word for it. You never win those by arguing. You win them by handing over what they can check and getting out of the way."
 
 He nodded, and left, and that was the last the team saw of the first Texas Department of Banking examiner any of them had met.
 
