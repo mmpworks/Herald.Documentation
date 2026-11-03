@@ -1,10 +1,11 @@
 # Current State
-_as of 2026-08-12_
+_as of 2026-11-03_
 
 ## What we're building right now
 Herald.Documentation is the canonical "docs as a database" source for the Herald ecosystem (structured `data/`, prose `prose/`, `diagrams/`, `schemas/`, renderer `scripts/`) — READMEs, doc sites, and the public website all read from here. Two active threads right now: (1) the compliance auditor-story corpus under `prose/compliance/novel/` and its `synopsis/` mirror just landed chapter 24 ("Success Bank"), and (2) Herald.OSS technical docs (Live Viewer REST contract, DemoApp seed, 0.10.2 design-decision + security-posture artifacts) landed a few commits back. CI now notifies Herald.Website to rebuild whenever prose lands (`ci/notify-website`), so this repo drives the public site's content pipeline directly.
 
 ## Active decisions
+- 2026-11-03: `prose/herald-oss/reference/logging-practices.md` added: twelve logging practices mapped to Herald.OSS types, each linked to a sample in Herald.OSS `samples/logging-practices/` (separate PR there). The practice-to-API table also appears in the sample README, so it is a candidate for a structured record in `data/herald-oss/` on the next edit.
 - 2026-08-11: chapter 24 (Success Bank) added to the auditor-story novel corpus; synopsis mirror kept in lockstep (`prose/compliance/synopsis/24-success-bank.md`).
 - 2026-08-xx (via PR #3): CI wired to notify Herald.Website on prose changes — prose landing here now triggers a website rebuild, so prose commits are effectively publish events, not just repo-internal edits.
 - 2026-07-xx (via PR #2): FINRA Q&A companion doc added at `prose/compliance/q-and-a/finra.md` for the live Q&A surface.

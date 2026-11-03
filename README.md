@@ -142,6 +142,14 @@ a prose companion in the dual-register pattern.
   `prose/herald-oss/tutorials/running-the-demo/what-the-demo-seeds.md`.
   Schema: `schemas/herald-oss/demo-seed.schema.json`.
 
+### The logging-practices checklist (2026-11-03)
+
+- **Logging practices, each with its Herald API** — twelve common
+  logging practices, each mapped to the Herald.OSS type that covers it,
+  with a link to the source and to a runnable sample. The samples live
+  in Herald.OSS at `samples/logging-practices/`, one file per practice.
+  Prose: `prose/herald-oss/reference/logging-practices.md`.
+
 ### The dual-register pattern
 
 Each design-decision artifact ships in two registers. The
